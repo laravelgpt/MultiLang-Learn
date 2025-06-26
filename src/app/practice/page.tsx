@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Code, FileCode, Play, RefreshCw, Copy, Save, BrainCircuit, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { explainCode } from '@/ai/flows/explain-code';
 
 
 const codeExamples = [
@@ -77,8 +78,11 @@ console.log(greetUser("Programmer"));
 export default function PracticePage() {
     const [code, setCode] = useState(initialCode);
     const [output, setOutput] = useState("");
+    const [explanation, setExplanation] = useState("");
     const { toast } = useToast();
     const [isRunning, setIsRunning] = useState(false);
+    const [isExplaining, setIsExplaining] = useState(false);
+    const [activeTab, setActiveTab] = useState("editor");
     const workerRef = useRef<Worker | null>(null);
 
     useEffect(() => {
@@ -87,7 +91,7 @@ export default function PracticePage() {
         workerRef.current.onmessage = (e) => {
             const { output: workerOutput, error } = e.data;
             if (error) {
-                setOutput('Error: ' + error);
+                setOutput('Error: ' + String(error));
             } else {
                 setOutput(workerOutput || "Code executed successfully with no output.");
             }
@@ -109,18 +113,42 @@ export default function PracticePage() {
         
         setIsRunning(true);
         setOutput("Running code...");
+        setActiveTab("output");
         workerRef.current.postMessage({ code });
     };
     
     const handleExampleClick = (exampleCode: string) => {
         setCode(exampleCode);
         setOutput("");
+        setExplanation("");
+        setActiveTab("editor");
     };
 
     const handleCopy = () => {
         navigator.clipboard.writeText(code);
         toast({ title: 'Copied!', description: 'Code copied to clipboard.' });
     };
+
+    const handleExplainCode = async () => {
+        if (!code.trim()) {
+            toast({ title: 'Cannot explain empty code', description: 'Please enter some code in the editor first.', variant: 'destructive' });
+            return;
+        }
+        setIsExplaining(true);
+        setExplanation("");
+        setActiveTab("explanation");
+        try {
+            const result = await explainCode({ code });
+            setExplanation(result.explanation);
+        } catch (error) {
+            console.error(error);
+            setExplanation("Sorry, I had trouble explaining that code. Please check the console for details.");
+            toast({ title: 'AI Explanation Failed', description: 'There was an error generating the explanation.', variant: 'destructive' });
+        } finally {
+            setIsExplaining(false);
+        }
+    };
+
 
     return (
         <>
@@ -178,10 +206,11 @@ export default function PracticePage() {
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <Tabs defaultValue="editor">
-                                <TabsList className="grid w-full grid-cols-2">
+                            <Tabs value={activeTab} onValueChange={setActiveTab}>
+                                <TabsList className="grid w-full grid-cols-3">
                                     <TabsTrigger value="editor">Editor</TabsTrigger>
                                     <TabsTrigger value="output">Output</TabsTrigger>
+                                    <TabsTrigger value="explanation">AI Explanation</TabsTrigger>
                                 </TabsList>
                                 <TabsContent value="editor">
                                     <Textarea 
@@ -196,17 +225,36 @@ export default function PracticePage() {
                                         <pre className="text-sm whitespace-pre-wrap">{output || "Run code to see output..."}</pre>
                                     </div>
                                 </TabsContent>
+                                 <TabsContent value="explanation">
+                                    <div className="font-sans h-96 bg-muted rounded-md border p-4 overflow-auto">
+                                        {isExplaining && (
+                                            <div className="flex items-center justify-center h-full">
+                                                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                                                <p className="ml-4 text-muted-foreground">AI is thinking...</p>
+                                            </div>
+                                        )}
+                                        {explanation && !isExplaining && (
+                                            <p className="text-sm whitespace-pre-wrap">{explanation}</p>
+                                        )}
+                                        {!explanation && !isExplaining && (
+                                            <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
+                                                <BrainCircuit className="h-12 w-12 mb-4" />
+                                                <p>Click the purple AI button to get an explanation of your code.</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </TabsContent>
                             </Tabs>
                         </CardContent>
                     </Card>
                     <div className="absolute right-4 -bottom-4 flex flex-col gap-2">
-                         <Button variant="secondary" size="icon" className="rounded-full shadow-lg h-10 w-10 bg-purple-500 hover:bg-purple-600 text-white">
-                            <BrainCircuit className="h-5 w-5" />
+                         <Button onClick={handleExplainCode} disabled={isExplaining} variant="secondary" size="icon" className="rounded-full shadow-lg h-10 w-10 bg-purple-500 hover:bg-purple-600 text-white">
+                            {isExplaining ? <Loader2 className="h-5 w-5 animate-spin" /> : <BrainCircuit className="h-5 w-5" />}
                         </Button>
                         <Button onClick={handleCopy} variant="secondary" size="icon" className="rounded-full shadow-lg h-10 w-10 bg-blue-500 hover:bg-blue-600 text-white">
                             <Copy className="h-5 w-5" />
                         </Button>
-                        <Button variant="secondary" size="icon" className="rounded-full shadow-lg h-10 w-10 bg-primary hover:bg-primary/90 text-white">
+                        <Button variant="secondary" size="icon" className="rounded-full shadow-lg h-10 w-10 bg-primary hover:bg-primary/90 text-white" onClick={() => toast({ title: 'Feature not implemented', description: 'Saving code will be available soon!'})}>
                             <Save className="h-5 w-5" />
                         </Button>
                     </div>
