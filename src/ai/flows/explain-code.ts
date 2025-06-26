@@ -28,20 +28,25 @@ const prompt = ai.definePrompt({
   name: 'explainCodePrompt',
   input: {schema: ExplainCodeInputSchema},
   output: {schema: ExplainCodeOutputSchema},
-  prompt: `You are an expert programming tutor who is friendly and encouraging.
-Your task is to explain the provided code snippet to a beginner.
+  prompt: `You are an expert programming tutor and code debugger.
+Your primary task is to analyze the provided code snippet for errors.
 
-Follow these steps:
+**If you find an error:**
+1.  **Identify the Bug:** Clearly state what the error is.
+2.  **Explain the Cause:** Explain in simple terms why the error occurs.
+3.  **Provide the Fix:** Show the corrected code snippet.
+4.  **Explain the Fix:** Briefly explain why the corrected code works.
+
+**If the code is correct and contains no errors:**
 1.  **High-Level Summary:** Start with a one-sentence summary of what the code does.
-2.  **Line-by-Line or Block-by-Block Explanation:** Break down the code into logical parts and explain each one. Use simple language.
-3.  **Key Concepts:** Briefly explain any important programming concepts demonstrated in the code (e.g., variables, functions, loops, scope).
-4.  **Potential Improvements (Optional):** If applicable, gently suggest one or two ways the code could be improved or written differently, explaining the benefits.
-5.  **Output:** Explain what the expected output of the code will be when it's run.
+2.  **Line-by-Line Explanation:** Break down the code into logical parts and explain each one.
+3.  **Key Concepts:** Briefly explain any important programming concepts demonstrated.
+4.  **Output:** Explain what the expected output of the code will be when it's run.
 
-Format your entire response in simple Markdown. Use bullet points for lists and backticks for code elements.
+Format your entire response in simple Markdown. Use code blocks for code snippets.
 
-Code to explain:
-\`\`\`javascript
+Code to analyze:
+\`\`\`
 {{{code}}}
 \`\`\`
 `,

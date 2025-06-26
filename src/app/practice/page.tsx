@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import Image from 'next/image';
+import ReactMarkdown from 'react-markdown';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -466,7 +467,9 @@ export default function PracticePage() {
                                             </div>
                                         )}
                                         {explanation && !isExplaining && (
-                                            <div className="prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: explanation.replace(/\\n/g, '<br />') }} />
+                                            <ReactMarkdown className="prose prose-sm dark:prose-invert max-w-none">
+                                                {explanation}
+                                            </ReactMarkdown>
                                         )}
                                         {!explanation && !isExplaining && (
                                             <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">

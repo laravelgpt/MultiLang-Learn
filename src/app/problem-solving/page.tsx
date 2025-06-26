@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import ReactMarkdown from 'react-markdown';
 import { useLanguage } from '@/context/language-provider';
 import { decomposeProblem, type DecomposeProblemOutput } from '@/ai/flows/decompose-problem';
 import { explainCode } from '@/ai/flows/explain-code';
@@ -150,13 +151,13 @@ const ProblemDecomposer = () => {
 }
 
 
-const CodeExplainer = () => {
+const CodeDebugger = () => {
     const { t } = useLanguage();
     const { toast } = useToast();
     const [code, setCode] = useState('// Generate a custom error example to get started.');
     const [output, setOutput] = useState("");
     const [error, setError] = useState<{ message: string, lineNumber: number | null } | null>(null);
-    const [suggestion, setSuggestion] = useState("");
+    const [explanation, setExplanation] = useState("");
     const [isRunning, setIsRunning] = useState(false);
     const [isExplaining, setIsExplaining] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
@@ -217,7 +218,7 @@ const CodeExplainer = () => {
         setCode("// Generating example...");
         setGeneratedTitle("");
         setGeneratedDescription("");
-        setSuggestion("");
+        setExplanation("");
         setOutput("");
         setError(null);
 
@@ -241,20 +242,20 @@ const CodeExplainer = () => {
     };
 
 
-    const handleGetSuggestion = async () => {
+    const handleDebugCode = async () => {
         if (!code.trim() || code.startsWith('//')) {
             toast({ title: t('cannot_explain_empty_title'), description: t('cannot_explain_empty_desc'), variant: 'destructive' });
             return;
         }
         setIsExplaining(true);
-        setSuggestion("");
-        setActiveTab("suggestion");
+        setExplanation("");
+        setActiveTab("explanation");
         try {
             const result = await explainCode({ code });
-            setSuggestion(result.explanation);
+            setExplanation(result.explanation);
         } catch (error) {
             console.error(error);
-            setSuggestion("Sorry, I had trouble explaining that code. Please check the console for details.");
+            setExplanation("Sorry, I had trouble explaining that code. Please check the console for details.");
             toast({ title: t('ai_explanation_failed_title'), description: t('ai_explanation_failed_desc'), variant: 'destructive' });
         } finally {
             setIsExplaining(false);
@@ -310,7 +311,7 @@ const CodeExplainer = () => {
                 <Card>
                     <CardHeader>
                         <div className="flex flex-wrap items-center justify-between gap-4">
-                            <CardTitle className="text-xl flex items-center gap-2"><Code className="h-5 w-5" /> {t('interactive_code_editor')}</CardTitle>
+                            <CardTitle className="text-xl flex items-center gap-2"><Code className="h-5 w-5" /> {t('debugging_sandbox')}</CardTitle>
                              <div className="flex items-center gap-2">
                                 <Select value={selectedLanguage} onValueChange={(val) => setSelectedLanguage(val)}>
                                     <SelectTrigger className="w-auto">
@@ -328,9 +329,9 @@ const CodeExplainer = () => {
                                     {isRunning ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Play className="mr-2 h-4 w-4" />}
                                     {isRunning ? t('running') : t('run')}
                                 </Button>
-                                <Button onClick={handleGetSuggestion} disabled={isExplaining} className="bg-purple-600 hover:bg-purple-700 text-white w-[180px]">
+                                <Button onClick={handleDebugCode} disabled={isExplaining} className="bg-purple-600 hover:bg-purple-700 text-white w-[180px]">
                                     {isExplaining ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <BrainCircuit className="mr-2 h-4 w-4" />}
-                                    {isExplaining ? t('ai_suggesting') : t('get_ai_suggestion')}
+                                    {isExplaining ? t('ai_suggesting') : t('debug_with_ai')}
                                 </Button>
                             </div>
                         </div>
@@ -340,7 +341,7 @@ const CodeExplainer = () => {
                             <TabsList className="grid w-full grid-cols-3">
                                 <TabsTrigger value="editor">{t('editor')}</TabsTrigger>
                                 <TabsTrigger value="output">{t('output')}</TabsTrigger>
-                                <TabsTrigger value="suggestion">{t('ai_suggestion')}</TabsTrigger>
+                                <TabsTrigger value="explanation">{t('ai_explanation')}</TabsTrigger>
                             </TabsList>
                             <TabsContent value="editor">
                                 <Textarea 
@@ -385,7 +386,7 @@ const CodeExplainer = () => {
                                     )}
                                 </div>
                             </TabsContent>
-                             <TabsContent value="suggestion">
+                             <TabsContent value="explanation">
                                 <div className="font-sans h-96 bg-muted rounded-md border p-4 overflow-auto">
                                     {isExplaining && (
                                         <div className="flex items-center justify-center h-full">
@@ -393,13 +394,15 @@ const CodeExplainer = () => {
                                             <p className="ml-4 text-muted-foreground">{t('ai_is_thinking')}</p>
                                         </div>
                                     )}
-                                    {suggestion && !isExplaining && (
-                                        <div className="prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: suggestion.replace(/\\n/g, '<br />') }} />
+                                    {explanation && !isExplaining && (
+                                        <ReactMarkdown className="prose prose-sm dark:prose-invert max-w-none">
+                                            {explanation}
+                                        </ReactMarkdown>
                                     )}
-                                    {!suggestion && !isExplaining && (
+                                    {!explanation && !isExplaining && (
                                         <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
                                             <BrainCircuit className="h-12 w-12 mb-4" />
-                                            <p>{t('ai_suggestion_placeholder')}</p>
+                                            <p>{t('debugger_placeholder')}</p>
                                         </div>
                                     )}
                                 </div>
@@ -428,13 +431,13 @@ export default function ProblemSolvingPage() {
       <Tabs defaultValue="decomposer" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="decomposer">{t('problem_decomposer')}</TabsTrigger>
-          <TabsTrigger value="explainer">{t('code_explainer')}</TabsTrigger>
+          <TabsTrigger value="debugger">{t('code_debugger')}</TabsTrigger>
         </TabsList>
         <TabsContent value="decomposer">
           <ProblemDecomposer />
         </TabsContent>
-        <TabsContent value="explainer">
-          <CodeExplainer />
+        <TabsContent value="debugger">
+          <CodeDebugger />
         </TabsContent>
       </Tabs>
     </div>
