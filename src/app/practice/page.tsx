@@ -8,11 +8,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from '@/components/ui/textarea';
-import { Code, Play, RefreshCw, Copy, Save, BrainCircuit, Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { Code, Play, RefreshCw, Copy, Save, BrainCircuit, Loader2, CheckCircle, XCircle, Edit, Trash2, MoreHorizontal } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { explainCode } from '@/ai/flows/explain-code';
 import { useLanguage } from '@/context/language-provider';
 import { cn } from '@/lib/utils';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const initialCode = `// Welcome to the Practice Zone!
 // Select an example from the left or write your own code.
@@ -56,6 +58,14 @@ const practiceTopics = [
     },
 ];
 
+type SavedSnippet = {
+    id: string;
+    title: string;
+    description: string;
+    code: string;
+    language: string;
+};
+
 export default function PracticePage() {
     const { toast } = useToast();
     const { t } = useLanguage();
@@ -73,6 +83,9 @@ export default function PracticePage() {
         description: "Select an example from the left or write your own code."
     });
     const workerRef = useRef<Worker | null>(null);
+
+    const [savedSnippets, setSavedSnippets] = useState<SavedSnippet[]>([]);
+    const [snippetToDelete, setSnippetToDelete] = useState<SavedSnippet | null>(null);
 
     const filteredTopics = useMemo(() => {
         return practiceTopics.filter(topic => topic.language === selectedLanguage);
@@ -175,6 +188,51 @@ export default function PracticePage() {
         toast({ title: "Editor Reset", description: "The editor has been reset to the default state." });
     };
 
+    const handleSave = () => {
+        const newSnippet: SavedSnippet = {
+            id: `snippet-${Date.now()}`,
+            title: currentTopic.title || t('untitled_snippet'),
+            description: currentTopic.description || t('saved_on_date', { date: new Date().toLocaleDateString() }),
+            code: code,
+            language: selectedLanguage,
+        };
+
+        setSavedSnippets(prev => [newSnippet, ...prev]);
+        toast({
+            title: t('snippet_saved'),
+            description: t('snippet_saved_desc', { snippetTitle: newSnippet.title }),
+        });
+    };
+
+    const handleLoadSnippet = (snippet: SavedSnippet) => {
+        setCode(snippet.code);
+        setSelectedLanguage(snippet.language);
+        setCurrentTopic({ title: snippet.title, description: snippet.description });
+        setOutput("");
+        setError(null);
+        setExplanation("");
+        setActiveTab("editor");
+        toast({
+            title: `${t('loaded')}: ${snippet.title}`,
+            description: t('load_snippet_desc'),
+        });
+    };
+
+    const handleDeleteClick = (snippet: SavedSnippet) => {
+        setSnippetToDelete(snippet);
+    };
+
+    const handleDeleteConfirm = () => {
+        if (!snippetToDelete) return;
+        setSavedSnippets(prev => prev.filter(s => s.id !== snippetToDelete.id));
+        toast({
+            title: t('snippet_deleted'),
+            description: t('snippet_deleted_desc', { snippetTitle: snippetToDelete.title }),
+        });
+        setSnippetToDelete(null);
+    };
+
+
     return (
         <>
             <div className="flex items-center gap-4 mb-8">
@@ -187,29 +245,70 @@ export default function PracticePage() {
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
                 <div className="lg:col-span-1 space-y-4">
-                     <Card>
-                        <CardHeader>
-                            <CardTitle>Practice Topics</CardTitle>
-                            <CardDescription>Select a topic to load it into the editor and try it yourself.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="flex flex-col gap-3">
-                            {filteredTopics.map((example) => (
-                                <button
-                                    key={example.title}
-                                    onClick={() => handleLoadExample(example)}
-                                    className="p-3 rounded-md border text-left hover:bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
-                                >
-                                    <p className="font-semibold">{example.title}</p>
-                                    <p className="text-sm text-muted-foreground">{example.description}</p>
-                                </button>
-                            ))}
-                            {filteredTopics.length === 0 && (
-                                <p className="text-sm text-muted-foreground text-center py-4">
-                                    No practice topics available for this language yet.
-                                </p>
-                            )}
-                        </CardContent>
-                    </Card>
+                     <Tabs defaultValue="topics" className="w-full">
+                        <TabsList className="grid w-full grid-cols-2">
+                           <TabsTrigger value="topics">{t('practice_topics_tab')}</TabsTrigger>
+                           <TabsTrigger value="snippets">{t('my_snippets')}</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="topics" className="mt-4">
+                           <Card>
+                                <CardHeader>
+                                    <CardTitle>{t('practice_topics_tab')}</CardTitle>
+                                    <CardDescription>Select a topic to load it into the editor.</CardDescription>
+                                </CardHeader>
+                                <CardContent className="flex flex-col gap-3 max-h-[60vh] overflow-y-auto">
+                                    {filteredTopics.map((example) => (
+                                        <button
+                                            key={example.title}
+                                            onClick={() => handleLoadExample(example)}
+                                            className="p-3 rounded-md border text-left hover:bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
+                                        >
+                                            <p className="font-semibold">{example.title}</p>
+                                            <p className="text-sm text-muted-foreground">{example.description}</p>
+                                        </button>
+                                    ))}
+                                    {filteredTopics.length === 0 && (
+                                        <p className="text-sm text-muted-foreground text-center py-4">
+                                            No practice topics available for this language yet.
+                                        </p>
+                                    )}
+                                </CardContent>
+                           </Card>
+                        </TabsContent>
+                        <TabsContent value="snippets" className="mt-4">
+                           <Card>
+                                <CardHeader>
+                                   <CardTitle>{t('my_snippets')}</CardTitle>
+                                   <CardDescription>{t('review_saved_code')}</CardDescription>
+                                </CardHeader>
+                                <CardContent className="flex flex-col gap-3 max-h-[60vh] overflow-y-auto">
+                                   {savedSnippets.length > 0 ? savedSnippets.map((snippet) => (
+                                     <div key={snippet.id} className="p-3 rounded-md border text-left hover:bg-muted transition-colors group">
+                                         <div className="flex justify-between items-start">
+                                            <div className="flex-1 pr-2">
+                                                <p className="font-semibold">{snippet.title}</p>
+                                                <p className="text-sm text-muted-foreground">{snippet.description}</p>
+                                            </div>
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" size="icon" className="h-7 w-7 flex-shrink-0">
+                                                        <MoreHorizontal className="h-4 w-4" />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end">
+                                                    <DropdownMenuItem onSelect={() => handleLoadSnippet(snippet)}><Edit className="mr-2 h-4 w-4" />{t('edit')}</DropdownMenuItem>
+                                                    <DropdownMenuItem onSelect={() => handleDeleteClick(snippet)} className="text-destructive"><Trash2 className="mr-2 h-4 w-4" />{t('delete')}</DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                         </div>
+                                     </div>
+                                   )) : (
+                                     <div className="text-center py-8 text-muted-foreground">{t('no_saved_snippets')}</div>
+                                   )}
+                                </CardContent>
+                           </Card>
+                        </TabsContent>
+                    </Tabs>
                 </div>
 
                 <div className="lg:col-span-2">
@@ -224,7 +323,7 @@ export default function PracticePage() {
                                     </Button>
                                     <Button variant="ghost" size="sm" onClick={handleCopy}><Copy /> {t('copy_code')}</Button>
                                     <Button variant="ghost" size="sm" onClick={handleReset}><RefreshCw /> {t('reset_code')}</Button>
-                                    <Button variant="ghost" size="sm" onClick={() => toast({ title: t('save_feature_soon_title'), description: t('save_feature_soon_desc')})}><Save /> {t('save_feature')}</Button>
+                                    <Button variant="ghost" size="sm" onClick={handleSave}><Save /> {t('save_snippet')}</Button>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Select value={selectedLanguage} onValueChange={(val) => setSelectedLanguage(val)}>
@@ -320,6 +419,21 @@ export default function PracticePage() {
                     </Card>
                 </div>
             </div>
+
+            <AlertDialog open={!!snippetToDelete} onOpenChange={(isOpen) => !isOpen && setSnippetToDelete(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>{t('are_you_sure_delete_snippet')}</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            {t('delete_snippet_confirm', { snippetTitle: snippetToDelete?.title || "" })}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel onClick={() => setSnippetToDelete(null)}>{t('cancel')}</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive hover:bg-destructive/90">{t('delete')}</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </>
     );
 }
