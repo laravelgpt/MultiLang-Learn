@@ -1,3 +1,5 @@
+"use client";
+
 import { PageHeader } from "@/components/admin/page-header";
 import { ChatbotPersonaGenerator } from "@/components/admin/chatbot-persona-generator";
 import { Button } from "@/components/ui/button";
@@ -9,8 +11,18 @@ import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/hooks/use-toast";
 
 export default function SettingsPage() {
+  const { toast } = useToast();
+
+  const handleSave = (message: string) => {
+    toast({
+      title: "Settings Saved",
+      description: message,
+    });
+  };
+  
   return (
     <>
       <PageHeader
@@ -47,6 +59,9 @@ export default function SettingsPage() {
                   <Switch id="maintenance-mode" />
                 </div>
               </CardContent>
+              <CardFooter>
+                 <Button onClick={() => handleSave("Platform settings have been updated.")}>Save Platform Settings</Button>
+              </CardFooter>
             </Card>
 
              <Card>
@@ -69,6 +84,9 @@ export default function SettingsPage() {
                   </Select>
                 </div>
               </CardContent>
+               <CardFooter>
+                 <Button onClick={() => handleSave("Localization settings have been updated.")}>Save Localization</Button>
+              </CardFooter>
             </Card>
             
             <Card>
@@ -91,7 +109,7 @@ export default function SettingsPage() {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button>Save Email Settings</Button>
+                <Button onClick={() => handleSave("Email settings have been updated.")}>Save Email Settings</Button>
               </CardFooter>
             </Card>
 
@@ -159,7 +177,7 @@ export default function SettingsPage() {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button>Save AI Settings</Button>
+                <Button onClick={() => handleSave("AI settings have been updated.")}>Save AI Settings</Button>
               </CardFooter>
             </Card>
         </TabsContent>

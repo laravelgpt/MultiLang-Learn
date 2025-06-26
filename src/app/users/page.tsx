@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { PageHeader } from "@/components/admin/page-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -7,9 +10,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { MoreHorizontal, PlusCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-const users = [
+const usersData = [
     { id: 'usr_1', name: 'John Doe', email: 'john.doe@example.com', role: 'User', joined: '2023-10-25', status: 'Active', avatar: 'https://placehold.co/40x40.png' },
     { id: 'usr_2', name: 'Jane Smith', email: 'jane.smith@example.com', role: 'Admin', joined: '2023-09-15', status: 'Active', avatar: 'https://placehold.co/40x40.png' },
     { id: 'usr_3', name: 'Sam Wilson', email: 'sam.wilson@example.com', role: 'User', joined: '2024-01-10', status: 'Active', avatar: 'https://placehold.co/40x40.png' },
@@ -17,7 +22,32 @@ const users = [
     { id: 'usr_5', name: 'Bob Johnson', email: 'bob.johnson@example.com', role: 'User', joined: '2024-05-01', status: 'Active', avatar: 'https://placehold.co/40x40.png' },
 ];
 
+type User = typeof usersData[0];
+
 export default function UsersPage() {
+    const [users, setUsers] = useState(usersData);
+    const [isConfirmOpen, setConfirmOpen] = useState(false);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const { toast } = useToast();
+
+    const handleDeactivateClick = (user: User) => {
+        setSelectedUser(user);
+        setConfirmOpen(true);
+    };
+
+    const handleDeactivateConfirm = () => {
+        if (!selectedUser) return;
+        setUsers(users.map(u => 
+            u.id === selectedUser.id ? { ...u, status: 'Inactive' } : u
+        ));
+        toast({
+            title: "User Deactivated",
+            description: `${selectedUser.name} has been successfully deactivated.`,
+        });
+        setConfirmOpen(false);
+        setSelectedUser(null);
+    };
+    
     return (
         <>
             <PageHeader
@@ -101,7 +131,13 @@ export default function UsersPage() {
                                                 <DropdownMenuItem>Reset Password</DropdownMenuItem>
                                                 <DropdownMenuItem>Promote to Admin</DropdownMenuItem>
                                                 <DropdownMenuSeparator />
-                                                <DropdownMenuItem className="text-destructive">Deactivate Account</DropdownMenuItem>
+                                                <DropdownMenuItem 
+                                                    className="text-destructive" 
+                                                    onSelect={() => handleDeactivateClick(user)}
+                                                    disabled={user.status === 'Inactive'}
+                                                >
+                                                    Deactivate Account
+                                                </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </TableCell>
@@ -111,6 +147,22 @@ export default function UsersPage() {
                     </Table>
                 </CardContent>
             </Card>
+
+            <AlertDialog open={isConfirmOpen} onOpenChange={setConfirmOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This action will deactivate the account for <span className="font-semibold">{selectedUser?.name}</span>. They will lose access to the platform. This can be undone later.
+                    </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeactivateConfirm} className="bg-destructive hover:bg-destructive/90">Deactivate</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
         </>
     );
 }

@@ -1,23 +1,30 @@
+"use client";
+
+import { useState } from "react";
 import { PageHeader } from "@/components/admin/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { CheckCircle, DollarSign, XCircle } from "lucide-react";
 import Image from "next/image";
 
-const plans = [
+const plansData = [
   { name: "Free Tier", price: "$0", description: "Basic access for all users.", features: ["Access to 2 languages", "Community support"] },
   { name: "Premium Monthly", price: "$9.99/mo", description: "Full access on a monthly basis.", features: ["Unlimited languages", "AI Tutor access", "Priority support"] },
   { name: "Premium Yearly", price: "$99/yr", description: "Get 2 months free with yearly billing.", features: ["Unlimited languages", "AI Tutor access", "Priority support"] },
 ];
 
 const paymentMethods = [
-  { name: "Stripe", icon: "https://placehold.co/80x32.png", enabled: true },
-  { name: "PayPal", icon: "https://placehold.co/80x32.png", enabled: true },
-  { name: "bKash", icon: "https://placehold.co/80x32.png", enabled: true },
-  { name: "Nagad", icon: "https://placehold.co/80x32.png", enabled: false },
+  { name: "Stripe", icon: "https://placehold.co/80x32.png", enabled: true, "data-ai-hint": "payment gateway logo" },
+  { name: "PayPal", icon: "https://placehold.co/80x32.png", enabled: true, "data-ai-hint": "payment gateway logo" },
+  { name: "bKash", icon: "https://placehold.co/80x32.png", enabled: true, "data-ai-hint": "payment gateway logo" },
+  { name: "Nagad", icon: "https://placehold.co/80x32.png", enabled: false, "data-ai-hint": "payment gateway logo" },
 ];
 
 const manualPayments = [
@@ -30,7 +37,32 @@ const failedTransactions = [
     { id: 'FTXN102', user: 'user4@example.com', amount: '$99.00', reason: 'Card declined', date: '2024-07-18' },
 ];
 
+type Plan = typeof plansData[0];
+
 export default function SubscriptionsPage() {
+  const [plans, setPlans] = useState(plansData);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingPlan, setEditingPlan] = useState<Partial<Plan> & { features: string } | null>(null);
+
+  const handleEdit = (plan: Plan) => {
+    setEditingPlan({ ...plan, features: plan.features.join('\n') });
+    setIsDialogOpen(true);
+  };
+  
+  const handleSave = () => {
+    if (!editingPlan) return;
+
+    const updatedPlan = {
+      ...editingPlan,
+      features: editingPlan.features.split('\n').filter(feat => feat.trim() !== '')
+    };
+    
+    setPlans(plans.map(p => p.name === updatedPlan.name ? updatedPlan as Plan : p));
+    
+    setIsDialogOpen(false);
+    setEditingPlan(null);
+  };
+
   return (
     <>
       <PageHeader
@@ -57,7 +89,7 @@ export default function SubscriptionsPage() {
                             </ul>
                         </CardContent>
                         <CardFooter>
-                            <Button variant="outline" className="w-full">Edit Plan</Button>
+                            <Button variant="outline" className="w-full" onClick={() => handleEdit(plan)}>Edit Plan</Button>
                         </CardFooter>
                     </Card>
                 ))}
@@ -143,6 +175,39 @@ export default function SubscriptionsPage() {
             </CardContent>
         </Card>
       </div>
+
+       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Plan: {editingPlan?.name}</DialogTitle>
+            <DialogDescription>
+              Update the details for this subscription plan.
+            </DialogDescription>
+          </DialogHeader>
+          {editingPlan && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="price" className="text-right">Price</Label>
+                <Input id="price" value={editingPlan.price} onChange={(e) => setEditingPlan({...editingPlan, price: e.target.value})} className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="description" className="text-right">Description</Label>
+                <Input id="description" value={editingPlan.description} onChange={(e) => setEditingPlan({...editingPlan, description: e.target.value})} className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-start gap-4">
+                <Label htmlFor="features" className="text-right pt-2">Features</Label>
+                <Textarea id="features" value={editingPlan.features} onChange={(e) => setEditingPlan({...editingPlan, features: e.target.value})} className="col-span-3" rows={5} placeholder="One feature per line" />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <DialogClose asChild>
+                <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button onClick={handleSave}>Save changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
