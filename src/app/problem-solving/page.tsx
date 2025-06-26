@@ -1,35 +1,89 @@
+
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useLanguage } from '@/context/language-provider';
 import { decomposeProblem, type DecomposeProblemOutput } from '@/ai/flows/decompose-problem';
+import { explainCode } from '@/ai/flows/explain-code';
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { Zap, BrainCircuit, Lightbulb, ListChecks, Goal, CheckCircle, Boxes, Loader2 } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Zap, BrainCircuit, Lightbulb, ListChecks, Goal, CheckCircle, Boxes, Loader2, FileCode, Code, Play, RefreshCw } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import Image from "next/image";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from '@/hooks/use-toast';
 
-const formSchema = z.object({
+
+const decomposerFormSchema = z.object({
   problemStatement: z.string().min(10, { message: "Problem statement must be at least 10 characters." }),
 });
 
-export default function ProblemSolvingPage() {
+const buggyCodeExamples = [
+    {
+        title: "Incorrect Loop Condition",
+        description: "A classic off-by-one error in a loop.",
+        tag: "javascript",
+        code: `const fruits = ["Apple", "Banana", "Cherry"];
+
+// The loop runs one time too many, causing an error
+for (let i = 0; i <= fruits.length; i++) {
+  console.log(fruits[i]);
+}`
+    },
+    {
+        title: "Misunderstanding 'this'",
+        description: "Incorrect usage of 'this' inside a method.",
+        tag: "javascript",
+        code: `const person = {
+  name: "John",
+  greet: function() {
+    // 'this' refers to the wrong context here
+    setTimeout(function() {
+      console.log("Hello, " + this.name);
+    }, 1000);
+  }
+};
+
+person.greet(); // Outputs "Hello, undefined"`
+    },
+    {
+        title: "Mutation of Props in React",
+        description: "A common mistake in React where a component tries to modify its props.",
+        tag: "javascript",
+        code: `// In React, props are read-only. This will cause an error.
+function Welcome(props) {
+  // Trying to change a prop is not allowed.
+  props.name = "New Name"; 
+  return <h1>Hello, {props.name}</h1>;
+}
+
+// Correct approach is using state.
+`
+    }
+];
+
+
+const ProblemDecomposer = () => {
   const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [analysis, setAnalysis] = useState<DecomposeProblemOutput | null>(null);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof decomposerFormSchema>>({
+    resolver: zodResolver(decomposerFormSchema),
     defaultValues: {
       problemStatement: "",
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof decomposerFormSchema>) {
     setIsLoading(true);
     setAnalysis(null);
     try {
@@ -37,7 +91,6 @@ export default function ProblemSolvingPage() {
       setAnalysis(result);
     } catch (error) {
       console.error(error);
-      // You can add a toast notification here for the user
     } finally {
       setIsLoading(false);
     }
@@ -65,16 +118,7 @@ export default function ProblemSolvingPage() {
   );
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center gap-4">
-        <Zap className="h-10 w-10 text-primary shrink-0" />
-        <div>
-          <h1 className="font-headline text-3xl font-bold text-primary">{t('problem_solving_title')}</h1>
-          <p className="text-lg text-muted-foreground">{t('problem_solving_desc')}</p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start mt-6">
         <Card>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -144,6 +188,194 @@ export default function ProblemSolvingPage() {
           </CardContent>
         </Card>
       </div>
+  );
+}
+
+
+const CodeExplainer = () => {
+    const { t } = useLanguage();
+    const { toast } = useToast();
+    const [code, setCode] = useState('// Click an example on the left to load it here');
+    const [output, setOutput] = useState("");
+    const [suggestion, setSuggestion] = useState("");
+    const [isRunning, setIsRunning] = useState(false);
+    const [isExplaining, setIsExplaining] = useState(false);
+    const [activeTab, setActiveTab] = useState("editor");
+    const workerRef = useRef<Worker | null>(null);
+
+    useEffect(() => {
+        workerRef.current = new Worker('/code-runner.js');
+        workerRef.current.onmessage = (e) => {
+            const { output: workerOutput, error } = e.data;
+            if (error) {
+                setOutput('Error: ' + String(error));
+            } else {
+                setOutput(workerOutput || "Code executed successfully with no output.");
+            }
+            setIsRunning(false);
+        };
+        workerRef.current.onerror = (e) => {
+            setOutput('An error occurred in the code runner: ' + e.message);
+            setIsRunning(false);
+        };
+        return () => {
+            workerRef.current?.terminate();
+        };
+    }, []);
+
+    const handleRunCode = () => {
+        if (!workerRef.current) return;
+        setIsRunning(true);
+        setOutput("Running code...");
+        setActiveTab("output");
+        workerRef.current.postMessage({ code });
+    };
+
+    const handleExampleClick = (exampleCode: string) => {
+        setCode(exampleCode);
+        setOutput("");
+        setSuggestion("");
+        setActiveTab("editor");
+    };
+
+    const handleGetSuggestion = async () => {
+        if (!code.trim()) {
+            toast({ title: t('cannot_explain_empty_title'), description: t('cannot_explain_empty_desc'), variant: 'destructive' });
+            return;
+        }
+        setIsExplaining(true);
+        setSuggestion("");
+        setActiveTab("suggestion");
+        try {
+            const result = await explainCode({ code });
+            setSuggestion(result.explanation);
+        } catch (error) {
+            console.error(error);
+            setSuggestion("Sorry, I had trouble explaining that code. Please check the console for details.");
+            toast({ title: t('ai_explanation_failed_title'), description: t('ai_explanation_failed_desc'), variant: 'destructive' });
+        } finally {
+            setIsExplaining(false);
+        }
+    };
+
+    return (
+         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start mt-6">
+            <div className="lg:col-span-1 space-y-4">
+                <h2 className="text-xl font-bold flex items-center gap-2"><FileCode className="h-5 w-5" /> {t('error_examples')}</h2>
+                {buggyCodeExamples.map((example, index) => (
+                    <Card key={index} className="cursor-pointer hover:border-primary" onClick={() => handleExampleClick(example.code)}>
+                        <CardHeader>
+                            <CardTitle className="text-lg">{example.title}</CardTitle>
+                            <CardDescription>{example.description}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Badge variant="outline">{example.tag}</Badge>
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
+
+            <div className="lg:col-span-2">
+                <Card>
+                    <CardHeader>
+                        <div className="flex flex-wrap items-center justify-between gap-4">
+                            <CardTitle className="text-xl flex items-center gap-2"><Code className="h-5 w-5" /> {t('interactive_code_editor')}</CardTitle>
+                             <div className="flex items-center gap-2">
+                                <Select defaultValue="javascript">
+                                    <SelectTrigger className="w-auto">
+                                        <div className='flex items-center gap-2'>
+                                            <Image src="https://placehold.co/16x16.png" width={16} height={16} alt="JS" data-ai-hint="javascript logo" />
+                                            <SelectValue placeholder={t('language')} />
+                                        </div>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="javascript">JavaScript</SelectItem>
+                                        <SelectItem value="python" disabled>Python</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <Button onClick={handleRunCode} disabled={isRunning} className="bg-green-600 hover:bg-green-700 text-white w-[90px]">
+                                    {isRunning ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Play className="mr-2 h-4 w-4" />}
+                                    {isRunning ? t('running') : t('run')}
+                                </Button>
+                                <Button onClick={handleGetSuggestion} disabled={isExplaining} className="bg-purple-600 hover:bg-purple-700 text-white w-[180px]">
+                                    {isExplaining ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <BrainCircuit className="mr-2 h-4 w-4" />}
+                                    {isExplaining ? t('ai_suggesting') : t('get_ai_suggestion')}
+                                </Button>
+                            </div>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <Tabs value={activeTab} onValueChange={setActiveTab}>
+                            <TabsList className="grid w-full grid-cols-3">
+                                <TabsTrigger value="editor">{t('editor')}</TabsTrigger>
+                                <TabsTrigger value="output">{t('output')}</TabsTrigger>
+                                <TabsTrigger value="suggestion">{t('ai_suggestion')}</TabsTrigger>
+                            </TabsList>
+                            <TabsContent value="editor">
+                                <Textarea 
+                                    value={code}
+                                    onChange={(e) => setCode(e.target.value)}
+                                    className="font-mono h-96 bg-muted rounded-md border" 
+                                    placeholder="Write your code here..."
+                                />
+                            </TabsContent>
+                            <TabsContent value="output">
+                                <div className="font-mono h-96 bg-muted rounded-md border p-4 overflow-auto">
+                                    <pre className="text-sm whitespace-pre-wrap">{output || t('run_to_see_output')}</pre>
+                                </div>
+                            </TabsContent>
+                             <TabsContent value="suggestion">
+                                <div className="font-sans h-96 bg-muted rounded-md border p-4 overflow-auto">
+                                    {isExplaining && (
+                                        <div className="flex items-center justify-center h-full">
+                                            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                                            <p className="ml-4 text-muted-foreground">{t('ai_is_thinking')}</p>
+                                        </div>
+                                    )}
+                                    {suggestion && !isExplaining && (
+                                        <div className="prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: suggestion.replace(/\n/g, '<br />') }} />
+                                    )}
+                                    {!suggestion && !isExplaining && (
+                                        <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
+                                            <BrainCircuit className="h-12 w-12 mb-4" />
+                                            <p>{t('ai_suggestion_placeholder')}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </TabsContent>
+                        </Tabs>
+                    </CardContent>
+                </Card>
+            </div>
+        </div>
+    );
+}
+
+export default function ProblemSolvingPage() {
+  const { t } = useLanguage();
+  
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex items-center gap-4">
+        <Zap className="h-10 w-10 text-primary shrink-0" />
+        <div>
+          <h1 className="font-headline text-3xl font-bold text-primary">{t('problem_solving_title')}</h1>
+          <p className="text-lg text-muted-foreground">{t('problem_solving_desc')}</p>
+        </div>
+      </div>
+
+      <Tabs defaultValue="decomposer" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="decomposer">{t('problem_decomposer')}</TabsTrigger>
+          <TabsTrigger value="explainer">{t('code_explainer')}</TabsTrigger>
+        </TabsList>
+        <TabsContent value="decomposer">
+          <ProblemDecomposer />
+        </TabsContent>
+        <TabsContent value="explainer">
+          <CodeExplainer />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
