@@ -203,6 +203,8 @@ export const translations: Record<Language, Record<string, string>> = {
     "lesson_not_found_desc": "The lesson you are looking for does not exist or has not been created yet.",
     "from_topic": "From topic",
     "lesson_content_coming_soon": "Content for this lesson is coming soon!",
+    "try_it_yourself": "Try it Yourself",
+    "run_and_edit_from_lesson": "Run and edit the code from this lesson.",
   },
   bn: {
     welcome_back: "ফিরে আসার জন্য স্বাগতম, গিট ফ্রপ!",
@@ -405,6 +407,8 @@ export const translations: Record<Language, Record<string, string>> = {
     "lesson_not_found_desc": "আপনি যে পাঠটি খুঁজছেন তা বিদ্যমান নেই বা এখনও তৈরি করা হয়নি।",
     "from_topic": "বিষয় থেকে",
     "lesson_content_coming_soon": "এই পাঠের জন্য বিষয়বস্তু শীঘ্রই আসছে!",
+    "try_it_yourself": "নিজে চেষ্টা করুন",
+    "run_and_edit_from_lesson": "এই পাঠ থেকে কোড চালান এবং সম্পাদনা করুন।",
   },
   hi: {
     welcome_back: "वापस स्वागत है, गिट फ्रप!",
@@ -607,6 +611,8 @@ export const translations: Record<Language, Record<string, string>> = {
     "lesson_not_found_desc": "आप जिस पाठ की तलाश कर रहे हैं वह मौजूद नहीं है या अभी तक नहीं बनाया गया है।",
     "from_topic": "विषय से",
     "lesson_content_coming_soon": "इस पाठ के लिए सामग्री जल्द ही आ रही है!",
+    "try_it_yourself": "स्वयं চেষ্টা করুন",
+    "run_and_edit_from_lesson": "इस पाठ से कोड चलाएं और संपादित करें।",
   },
   ur: {
     welcome_back: "واپس خوش آمدید، گٹ فرپ!",
@@ -809,5 +815,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "lesson_not_found_desc": "آپ جس سبق کی تلاش میں ہیں وہ موجود نہیں ہے یا ابھی تک نہیں بنایا گیا ہے۔",
     "from_topic": "موضوع سے",
     "lesson_content_coming_soon": "اس سبق کے لیے مواد جلد آرہا ہے!",
+    "try_it_yourself": "خود کوشش کریں",
+    "run_and_edit_from_lesson": "اس سبق سے کوڈ چلائیں اور ترمیم کریں۔",
   },
 };

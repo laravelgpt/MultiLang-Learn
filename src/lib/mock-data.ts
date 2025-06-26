@@ -1,5 +1,6 @@
+
 export type Attachment = { type: 'pdf' | 'youtube' | 'code' | 'link'; url: string };
-export type Lesson = { id: string; title: string; difficulty: 'Beginner' | 'Intermediate' | 'Advanced'; attachments: Attachment[]; content?: string };
+export type Lesson = { id: string; title: string; difficulty: 'Beginner' | 'Intermediate' | 'Advanced'; attachments: Attachment[]; content?: string; codeSnippet?: string; };
 export type Topic = { id: string; title: string; lessons: Lesson[] };
 export type LanguageCurriculum = { name: string; topics: Topic[] };
 export type LanguageSummary = { id: string; name: string; icon: string; topics: number; lessons: number; popularity: number; difficulty: 'Beginner' | 'Intermediate' | 'Advanced'; }
@@ -73,12 +74,12 @@ export const languagesCurriculumData: Record<string, LanguageCurriculum> = {
     topics: [
       { id: 't10', title: 'Introduction to JavaScript', lessons: [
         { id: 'l10-1', title: 'What is JavaScript?', difficulty: 'Beginner', attachments: [], content: 'JavaScript, often abbreviated as JS, is a programming language that is one of the core technologies of the World Wide Web, alongside HTML and CSS. As of 2023, 98.7% of websites use JavaScript on the client side for webpage behavior, often incorporating third-party libraries.' },
-        { id: 'l10-2', title: 'JavaScript in the Browser', difficulty: 'Beginner', attachments: [], content: "You can add JavaScript to an HTML document in three ways:\n\n*   **Inline:** `onclick=\"alert('Hello')\"` (not recommended)\n*   **Internal:** Using `<script>` tags in the `<head>` or `<body>`.\n*   **External:** Linking to a `.js` file: `<script src=\"myscripts.js\"></script>`" },
+        { id: 'l10-2', title: 'JavaScript in the Browser', difficulty: 'Beginner', attachments: [], content: "You can add JavaScript to an HTML document in three ways:\n\n*   **Inline:** `onclick=\"alert('Hello')\"` (not recommended)\n*   **Internal:** Using `<script>` tags in the `<head>` or `<body>`.\n*   **External:** Linking to a `.js` file: `<script src=\"myscripts.js\"></script>`", codeSnippet: `console.log("Hello from an interactive script tag!");` },
         { id: 'l10-3', title: 'Setting up a Development Environment', difficulty: 'Beginner', attachments: [] },
       ]},
       { id: 't11', title: 'JavaScript Fundamentals', lessons: [
-          { id: 'l11-1', title: 'Variables, Constants, and Data Types', difficulty: 'Beginner', attachments: [] },
-          { id: 'l11-2', title: 'Operators', difficulty: 'Beginner', attachments: [] },
+          { id: 'l11-1', title: 'Variables, Constants, and Data Types', difficulty: 'Beginner', attachments: [], codeSnippet: `let message = "Hello, JavaScript!";\nconst year = 2024;\nlet isLearning = true;\n\nconsole.log(message);\nconsole.log("Current year:", year);\nconsole.log("Are you learning?", isLearning);` },
+          { id: 'l11-2', title: 'Operators', difficulty: 'Beginner', attachments: [], codeSnippet: `let a = 10;\nlet b = 5;\n\nconsole.log('Addition:', a + b);\nconsole.log('Subtraction:', a - b);\nconsole.log('Multiplication:', a * b);\nconsole.log('Division:', a / b);` },
           { id: 'l11-3', title: 'Control Flow: Conditionals and Loops', difficulty: 'Intermediate', attachments: [] },
       ]},
       { id: 't12', title: 'Functions', lessons: [
