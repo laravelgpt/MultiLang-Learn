@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { LogOut, BookOpenCheck } from 'lucide-react';
 import { UserSidebarNav } from '@/components/user/sidebar-nav';
 import Link from 'next/link';
+import { UserHeader } from '@/components/user/header';
 
 export default function DashboardLayout({
   children,
@@ -43,8 +44,10 @@ export default function DashboardLayout({
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
-        <SidebarToggle className="md:hidden" />
-        <main className="p-4 sm:p-6 lg:p-8">{children}</main>
+        <div className="flex flex-col h-screen overflow-hidden">
+          <UserHeader />
+          <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">{children}</main>
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );

@@ -1,15 +1,14 @@
-
 "use client";
 
 import { useState } from 'react';
-import { PageHeader } from "@/components/admin/page-header";
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { Code, FileCode, Play, RefreshCw, Copy, Save } from 'lucide-react';
+import { Code, FileCode, Play, RefreshCw, Copy, Save, ChevronRight } from 'lucide-react';
 
 const codeExamples = [
     {
@@ -60,7 +59,10 @@ for (const fruit of fruits) {
     }
 ];
 
-const initialCode = `function greetUser(name) {
+const initialCode = `// Welcome to the Practice Zone!
+// Try writing some code and run it to see the output
+
+function greetUser(name) {
   return \`Hello, \${name}! Welcome to LearnCode.\`;
 }
 
@@ -87,10 +89,12 @@ export default function PracticePage() {
         };
 
         try {
+          // IMPORTANT: Using eval in a real-world application is a security risk.
+          // This should be replaced with a sandboxed execution environment (e.g., Web Worker, iframe).
           eval(code);
           setOutput(capturedOutput || "Code executed successfully with no output.");
         } catch (error: any) {
-          setOutput(\`Error: \${error.message}\`);
+          setOutput(\`Error: ${error.message}\`);
         } finally {
           console.log = originalLog;
         }
@@ -103,10 +107,13 @@ export default function PracticePage() {
 
     return (
         <>
-            <PageHeader
-                title="Practice & Examples"
-                description="Practice your coding skills with our interactive code editor and examples."
-            />
+            <div className="flex items-center gap-4 mb-8">
+                <Code size={40} className="text-primary shrink-0" />
+                <div>
+                    <h1 className="font-headline text-3xl font-bold text-primary">Practice & Examples</h1>
+                    <p className="text-lg text-muted-foreground">Practice your coding skills with our interactive code editor and examples.</p>
+                </div>
+            </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
                 {/* Left Column: Code Examples */}
@@ -129,12 +136,15 @@ export default function PracticePage() {
                 <div className="lg:col-span-2 relative">
                     <Card>
                         <CardHeader>
-                            <div className="flex flex-wrap items-center justify-between gap-2">
-                                <CardTitle className="text-xl flex items-center gap-2"><Code className="h-5 w-5" /> Interactive Code Editor</CardTitle>
+                            <div className="flex flex-wrap items-center justify-between gap-4">
+                                <CardTitle className="text-xl flex items-center gap-2"><ChevronRight className="h-5 w-5" /> <Code className="h-5 w-5" /> Interactive Code Editor</CardTitle>
                                 <div className="flex items-center gap-2">
                                     <Select defaultValue="javascript">
-                                        <SelectTrigger className="w-[150px]">
-                                            <SelectValue placeholder="Language" />
+                                        <SelectTrigger className="w-auto">
+                                            <div className='flex items-center gap-2'>
+                                                <Image src="https://placehold.co/16x16/facc15/facc15.png" width={16} height={16} alt="JS" data-ai-hint="javascript logo" />
+                                                <SelectValue placeholder="Language" />
+                                            </div>
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="javascript">JavaScript</SelectItem>
@@ -143,7 +153,7 @@ export default function PracticePage() {
                                         </SelectContent>
                                     </Select>
                                     <Button variant="outline" size="sm" onClick={() => setCode(initialCode)}><RefreshCw className="mr-2 h-4 w-4" />Reset</Button>
-                                    <Button onClick={handleRunCode} className="bg-green-600 hover:bg-green-700">
+                                    <Button onClick={handleRunCode} className="bg-green-600 hover:bg-green-700 text-white">
                                         <Play className="mr-2 h-4 w-4" /> Run
                                     </Button>
                                 </div>
@@ -159,7 +169,7 @@ export default function PracticePage() {
                                     <Textarea 
                                         value={code}
                                         onChange={(e) => setCode(e.target.value)}
-                                        className="font-mono h-96 bg-background rounded-md border" 
+                                        className="font-mono h-96 bg-muted rounded-md border" 
                                         placeholder="Write your code here..."
                                     />
                                 </TabsContent>
@@ -171,16 +181,19 @@ export default function PracticePage() {
                             </Tabs>
                         </CardContent>
                     </Card>
-                    <div className="absolute right-4 bottom-4 flex flex-col gap-2">
-                        <Button variant="secondary" size="icon" className="rounded-full shadow-lg">
-                            <Copy className="h-4 w-4" />
+                    <div className="absolute right-4 -bottom-4 flex flex-col gap-2">
+                        <Button variant="secondary" size="icon" className="rounded-full shadow-lg h-10 w-10 bg-green-500 hover:bg-green-600 text-white">
+                            <Code className="h-5 w-5" />
                         </Button>
-                        <Button variant="secondary" size="icon" className="rounded-full shadow-lg">
-                            <Save className="h-4 w-4" />
+                        <Button variant="secondary" size="icon" className="rounded-full shadow-lg h-10 w-10 bg-blue-500 hover:bg-blue-600 text-white">
+                            <Copy className="h-5 w-5" />
+                        </Button>
+                        <Button variant="secondary" size="icon" className="rounded-full shadow-lg h-10 w-10 bg-purple-500 hover:bg-purple-600 text-white">
+                            <Save className="h-5 w-5" />
                         </Button>
                     </div>
                 </div>
             </div>
         </>
-    )
+    );
 }

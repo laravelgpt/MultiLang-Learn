@@ -26,19 +26,22 @@ const programmingLanguages = [
         id: "js",
         name: "JavaScript",
         progress: 65,
-        icon: "https://placehold.co/24x24.png",
+        icon: "https://placehold.co/24x24/facc15/facc15.png",
+        hint: "javascript logo"
     },
     {
         id: "pascal",
         name: "Pascal",
         progress: 0,
-        icon: "https://placehold.co/24x24.png",
+        icon: "https://placehold.co/24x24/4ade80/4ade80.png",
+        hint: "pascal logo"
     },
     {
         id: "py",
         name: "Python",
         progress: 0,
-        icon: "https://placehold.co/24x24.png",
+        icon: "https://placehold.co/24x24/60a5fa/60a5fa.png",
+        hint: "python logo"
     },
 ];
 
@@ -75,7 +78,7 @@ export function UserSidebarNav() {
         <div className="space-y-3">
           {programmingLanguages.map(lang => (
             <Link href={`/languages/${lang.id}`} key={lang.id} className="flex items-center gap-3 group-data-[collapsed=true]/sidebar:justify-center">
-              <Image src={lang.icon} alt={lang.name} width={24} height={24} data-ai-hint="language logo"/>
+              <Image src={lang.icon} alt={lang.name} width={24} height={24} data-ai-hint={lang.hint} className="rounded-sm"/>
               <div className="flex-1 group-data-[collapsed=true]/sidebar:hidden">
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-medium">{lang.name}</span>
@@ -110,7 +113,9 @@ export function UserSidebarNav() {
       <Separator className="my-0" />
 
       <div className="p-4 space-y-2 group-data-[collapsed=true]/sidebar:p-2 group-data-[collapsed=true]/sidebar:space-y-2">
-         <p className="text-xs font-semibold text-muted-foreground uppercase group-data-[collapsed=true]/sidebar:hidden">Recent Badges</p>
+         <p className="flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase group-data-[collapsed=true]/sidebar:hidden">
+           Recent Badges <Award className="h-4 w-4" />
+         </p>
          <div className="flex gap-2 group-data-[collapsed=false]/sidebar:justify-start group-data-[collapsed=true]/sidebar:justify-center">
             {recentBadges.map(badge => (
                 <div key={badge.name} title={badge.name} className={`h-8 w-8 rounded-full flex items-center justify-center text-white ${badge.color}`}>
