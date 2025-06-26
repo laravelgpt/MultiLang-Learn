@@ -68,6 +68,10 @@ export async function addLanguageAction(formData: FormData) {
                     lessonCount: lessonCount,
                 });
 
+                if (!lessonResults || !lessonResults.lessons) {
+                    throw new Error(`AI lesson generation failed for topic: "${topic.title}".`);
+                }
+
                 const lessons: Lesson[] = lessonResults.lessons.map((l, lessonIndex) => ({
                     id: `l-${languageId}-${topicIndex}-${lessonIndex}`,
                     title: l.title,
@@ -120,8 +124,9 @@ export async function addLanguageAction(formData: FormData) {
 
     } catch (error) {
         console.error("Failed to add language:", error);
+        const errorMessage = error instanceof Error ? error.message : "AI generation failed.";
         return {
-            error: "Could not save the language. AI generation failed.",
+            error: `Could not save the language. ${errorMessage}`,
         };
     }
 }
