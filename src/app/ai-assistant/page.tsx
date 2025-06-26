@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Bot, Send, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/context/language-provider';
 
 type Message = {
     sender: 'user' | 'ai';
@@ -16,8 +17,9 @@ type Message = {
 }
 
 export default function AiAssistantPage() {
+    const { t } = useLanguage();
     const [messages, setMessages] = useState<Message[]>([
-        { sender: 'ai', text: "Hello! I'm your AI programming assistant. How can I help you today?" }
+        { sender: 'ai', text: t('ai_greeting') }
     ]);
     const [input, setInput] = useState('');
     const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -32,7 +34,7 @@ export default function AiAssistantPage() {
 
         // Mock AI response
         setTimeout(() => {
-            const aiResponse: Message = { sender: 'ai', text: "That's a great question! Let me help you with that." };
+            const aiResponse: Message = { sender: 'ai', text: t('ai_mock_response') };
             setMessages(prev => [...prev, aiResponse]);
         }, 1000);
     }
@@ -51,14 +53,14 @@ export default function AiAssistantPage() {
             <div className="flex items-center gap-4 mb-8">
                 <Bot size={40} className="text-primary shrink-0" />
                 <div>
-                    <h1 className="font-headline text-3xl font-bold text-primary">AI Assistant</h1>
-                    <p className="text-lg text-muted-foreground">Ask your coding questions and get instant help.</p>
+                    <h1 className="font-headline text-3xl font-bold text-primary">{t('ai_assistant_page_title')}</h1>
+                    <p className="text-lg text-muted-foreground">{t('ask_coding_questions')}</p>
                 </div>
             </div>
 
             <Card className="flex-1 flex flex-col">
                 <CardHeader>
-                    <CardTitle>Chat</CardTitle>
+                    <CardTitle>{t('chat')}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-1 overflow-hidden">
                     <ScrollArea className="h-full pr-4" ref={scrollAreaRef}>
@@ -91,10 +93,10 @@ export default function AiAssistantPage() {
                         <Input
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
-                            placeholder="Type your question..."
+                            placeholder={t('type_your_question')}
                         />
                         <Button type="submit">
-                            <Send className="h-4 w-4 mr-2" /> Send
+                            <Send className="h-4 w-4 mr-2" /> {t('send')}
                         </Button>
                     </form>
                 </CardFooter>
@@ -102,5 +104,3 @@ export default function AiAssistantPage() {
         </div>
     )
 }
-
-    

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useLanguage } from "@/context/language-provider";
 
 const languagesData = [
   { id: 'py', name: 'Python', icon: 'https://placehold.co/64x64.png', description: 'A versatile language for web development, data science, and more.' },
@@ -17,11 +18,13 @@ const languagesData = [
 ];
 
 export default function UserLanguagesPage() {
+  const { t } = useLanguage();
+
   return (
     <>
       <PageHeader
-        title="Choose a Language"
-        description="Select a language to start your learning journey."
+        title={t('choose_language')}
+        description={t('select_language_journey')}
       />
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {languagesData.map((lang) => (
@@ -37,7 +40,7 @@ export default function UserLanguagesPage() {
             <CardFooter>
               <Button asChild className="w-full">
                 <Link href={`/languages/${lang.id}`}>
-                  Start Learning <ArrowRight className="ml-2 h-4 w-4" />
+                  {t('start_learning')} <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </CardFooter>

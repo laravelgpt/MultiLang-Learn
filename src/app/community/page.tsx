@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { MessageSquare, Heart, Eye, Search, PlusCircle, User, Users, BarChart } from "lucide-react";
+import { useLanguage } from "@/context/language-provider";
 
 const posts = [
     {
@@ -121,12 +122,14 @@ const featuredMembers = [
 ];
 
 export default function CommunityPage() {
+    const { t } = useLanguage();
+
     return (
         <>
-            <PageHeader title="Community Hub" description="Ask questions, share knowledge, and connect with other learners.">
+            <PageHeader title={t('community_hub')} description={t('ask_share_connect')}>
                 <Button>
                     <PlusCircle className="mr-2 h-4 w-4" />
-                    Start New Discussion
+                    {t('start_new_discussion')}
                 </Button>
             </PageHeader>
 
@@ -135,7 +138,7 @@ export default function CommunityPage() {
                 <div className="lg:col-span-3 space-y-6">
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                        <Input placeholder="Search discussions..." className="pl-10" />
+                        <Input placeholder={t('search_discussions')} className="pl-10" />
                     </div>
 
                     <div className="space-y-6">
@@ -175,7 +178,7 @@ export default function CommunityPage() {
                                             <span>{post.views}</span>
                                         </div>
                                     </div>
-                                    <Button variant="outline">View Discussion</Button>
+                                    <Button variant="outline">{t('view_discussion')}</Button>
                                 </CardFooter>
                             </Card>
                         ))}
@@ -186,7 +189,7 @@ export default function CommunityPage() {
                 <aside className="space-y-6 lg:sticky lg:top-8">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Trending Topics</CardTitle>
+                            <CardTitle>{t('trending_topics')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <ul className="space-y-2">
@@ -200,28 +203,28 @@ export default function CommunityPage() {
                     </Card>
                     <Card>
                         <CardHeader>
-                            <CardTitle>Community Stats</CardTitle>
+                            <CardTitle>{t('community_stats')}</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                              <div className="flex items-center gap-3">
                                 <Users className="h-6 w-6 text-primary"/>
                                 <div>
                                     <p className="font-bold text-lg">12,405</p>
-                                    <p className="text-sm text-muted-foreground">Total Members</p>
+                                    <p className="text-sm text-muted-foreground">{t('total_members')}</p>
                                 </div>
                             </div>
                              <div className="flex items-center gap-3">
                                 <BarChart className="h-6 w-6 text-primary"/>
                                 <div>
                                     <p className="font-bold text-lg">1,832</p>
-                                    <p className="text-sm text-muted-foreground">Active Discussions</p>
+                                    <p className="text-sm text-muted-foreground">{t('active_discussions')}</p>
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
                      <Card>
                         <CardHeader>
-                            <CardTitle>Featured Members</CardTitle>
+                            <CardTitle>{t('featured_members')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <ul className="space-y-4">

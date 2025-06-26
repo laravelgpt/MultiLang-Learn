@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Star, CircleDot, Code, Bot, Save } from 'lucide-react';
+import { useLanguage } from "@/context/language-provider";
 
 const challenges = [
     {
@@ -149,22 +150,24 @@ const challenges = [
 
 
 export default function ChallengesPage() {
+    const { t } = useLanguage();
+
     return (
         <div className="relative flex flex-col gap-6 min-h-[calc(100vh-150px)]">
             <div className="flex items-center gap-4 mb-2">
                 <Trophy className="h-10 w-10 text-primary shrink-0" />
                 <div>
-                    <h1 className="font-headline text-3xl font-bold text-primary">Challenges</h1>
-                    <p className="text-lg text-muted-foreground">Challenge yourself with coding problems and improve your programming skills.</p>
+                    <h1 className="font-headline text-3xl font-bold text-primary">{t('challenges')}</h1>
+                    <p className="text-lg text-muted-foreground">{t('challenge_yourself')}</p>
                 </div>
             </div>
 
             <Tabs defaultValue="all-challenges" className="w-full">
                 <TabsList>
-                    <TabsTrigger value="all-challenges">All Challenges</TabsTrigger>
-                    <TabsTrigger value="daily-challenge">Daily Challenge</TabsTrigger>
-                    <TabsTrigger value="solve-challenge">Solve Challenge</TabsTrigger>
-                    <TabsTrigger value="my-submissions">My Submissions</TabsTrigger>
+                    <TabsTrigger value="all-challenges">{t('all_challenges')}</TabsTrigger>
+                    <TabsTrigger value="daily-challenge">{t('daily_challenge_tab')}</TabsTrigger>
+                    <TabsTrigger value="solve-challenge">{t('solve_challenge')}</TabsTrigger>
+                    <TabsTrigger value="my-submissions">{t('my_submissions')}</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="all-challenges" className="mt-6">
@@ -173,7 +176,7 @@ export default function ChallengesPage() {
                             <SelectTrigger className="w-[180px]">
                                 <div className='flex items-center gap-2'>
                                     <Image src="https://placehold.co/16x16.png" width={16} height={16} alt="JS" data-ai-hint="javascript logo" />
-                                    <SelectValue placeholder="Language" />
+                                    <SelectValue placeholder={t('language')} />
                                 </div>
                             </SelectTrigger>
                             <SelectContent>
@@ -214,21 +217,21 @@ export default function ChallengesPage() {
                  <TabsContent value="daily-challenge">
                     <Card>
                         <CardContent className="p-6 text-center text-muted-foreground">
-                            Daily challenge will be available here.
+                            {t('daily_challenge_available_here')}
                         </CardContent>
                     </Card>
                 </TabsContent>
                 <TabsContent value="solve-challenge">
                      <Card>
                         <CardContent className="p-6 text-center text-muted-foreground">
-                            The interface to solve challenges will appear here.
+                            {t('solve_interface_here')}
                         </CardContent>
                     </Card>
                 </TabsContent>
                 <TabsContent value="my-submissions">
                      <Card>
                         <CardContent className="p-6 text-center text-muted-foreground">
-                            Your past submissions will be listed here.
+                            {t('submissions_list_here')}
                         </CardContent>
                     </Card>
                 </TabsContent>

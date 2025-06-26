@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ArrowLeft, FileText, Youtube, Code, Link as LinkIcon, BookOpen } from "lucide-react";
 import Link from 'next/link';
+import { useLanguage } from "@/context/language-provider";
 
 // Mock Data - should be the same as the admin page
 const languagesData: Record<string, { name: string; topics: Topic[] }> = {
@@ -187,19 +188,20 @@ const AttachmentIcon = ({ type }: { type: Attachment['type'] }) => {
 
 export default function LanguageCurriculumPage({ params }: { params: { langId: string } }) {
   const language = useMemo(() => languagesData[params.langId] || { name: 'Unknown', topics: [] }, [params.langId]);
+  const { t } = useLanguage();
   
   return (
     <>
-      <PageHeader title={`${language.name} Curriculum`}>
+      <PageHeader title={t('language_curriculum', { language: language.name })}>
         <Button variant="outline" asChild>
-          <Link href="/languages"><ArrowLeft className="mr-2 h-4 w-4" /> Back to Languages</Link>
+          <Link href="/languages"><ArrowLeft className="mr-2 h-4 w-4" /> {t('back_to_languages')}</Link>
         </Button>
       </PageHeader>
       
       <Card>
         <CardHeader>
-          <CardTitle>Topics & Lessons</CardTitle>
-          <CardDescription>Follow the path to master {language.name}.</CardDescription>
+          <CardTitle>{t('topics_lessons')}</CardTitle>
+          <CardDescription>{t('master_language_path', { language: language.name })}</CardDescription>
         </CardHeader>
         <CardContent>
           <Accordion type="multiple" className="w-full" defaultValue={language.topics.length > 0 ? [language.topics[0].id] : []}>
@@ -212,7 +214,7 @@ export default function LanguageCurriculumPage({ params }: { params: { langId: s
                   <div className="p-4 space-y-4">
                     {topic.lessons.length === 0 ? (
                       <div className="text-center py-8 text-muted-foreground">
-                        <p>Lessons are coming soon for this topic!</p>
+                        <p>{t('lessons_coming_soon')}</p>
                       </div>
                     ) : (
                       <div className="space-y-3">
@@ -239,7 +241,7 @@ export default function LanguageCurriculumPage({ params }: { params: { langId: s
                                 </div>
                               </div>
                             </div>
-                            <Button size="sm" variant="ghost">Start Lesson</Button>
+                            <Button size="sm" variant="ghost">{t('start_lesson')}</Button>
                           </div>
                         ))}
                       </div>
@@ -250,7 +252,7 @@ export default function LanguageCurriculumPage({ params }: { params: { langId: s
             ))}
              {language.topics.length === 0 && (
               <div className="text-center py-12 text-muted-foreground">
-                  <p>Curriculum coming soon for {language.name}.</p>
+                  <p>{t('curriculum_coming_soon', { language: language.name })}</p>
               </div>
             )}
           </Accordion>

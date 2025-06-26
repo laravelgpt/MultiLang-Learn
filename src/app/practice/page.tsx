@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Code, FileCode, Play, RefreshCw, Copy, Save, BrainCircuit, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { explainCode } from '@/ai/flows/explain-code';
+import { useLanguage } from '@/context/language-provider';
 
 
 const codeExamples = [
@@ -80,6 +81,7 @@ export default function PracticePage() {
     const [output, setOutput] = useState("");
     const [explanation, setExplanation] = useState("");
     const { toast } = useToast();
+    const { t } = useLanguage();
     const [isRunning, setIsRunning] = useState(false);
     const [isExplaining, setIsExplaining] = useState(false);
     const [activeTab, setActiveTab] = useState("editor");
@@ -126,12 +128,12 @@ export default function PracticePage() {
 
     const handleCopy = () => {
         navigator.clipboard.writeText(code);
-        toast({ title: 'Copied!', description: 'Code copied to clipboard.' });
+        toast({ title: t('copied_to_clipboard_title'), description: t('copied_to_clipboard_desc') });
     };
 
     const handleExplainCode = async () => {
         if (!code.trim()) {
-            toast({ title: 'Cannot explain empty code', description: 'Please enter some code in the editor first.', variant: 'destructive' });
+            toast({ title: t('cannot_explain_empty_title'), description: t('cannot_explain_empty_desc'), variant: 'destructive' });
             return;
         }
         setIsExplaining(true);
@@ -143,7 +145,7 @@ export default function PracticePage() {
         } catch (error) {
             console.error(error);
             setExplanation("Sorry, I had trouble explaining that code. Please check the console for details.");
-            toast({ title: 'AI Explanation Failed', description: 'There was an error generating the explanation.', variant: 'destructive' });
+            toast({ title: t('ai_explanation_failed_title'), description: t('ai_explanation_failed_desc'), variant: 'destructive' });
         } finally {
             setIsExplaining(false);
         }
@@ -155,15 +157,15 @@ export default function PracticePage() {
             <div className="flex items-center gap-4 mb-8">
                 <FileCode size={40} className="text-primary shrink-0" />
                 <div>
-                    <h1 className="font-headline text-3xl font-bold text-primary">Practice & Examples</h1>
-                    <p className="text-lg text-muted-foreground">Practice your coding skills with our interactive code editor and examples.</p>
+                    <h1 className="font-headline text-3xl font-bold text-primary">{t('practice_and_examples')}</h1>
+                    <p className="text-lg text-muted-foreground">{t('practice_skills_interactive')}</p>
                 </div>
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
                 {/* Left Column: Code Examples */}
                 <div className="lg:col-span-1 space-y-4">
-                    <h2 className="text-xl font-bold flex items-center gap-2"><FileCode className="h-5 w-5" /> Code Examples</h2>
+                    <h2 className="text-xl font-bold flex items-center gap-2"><FileCode className="h-5 w-5" /> {t('code_examples')}</h2>
                     {codeExamples.map((example, index) => (
                         <Card key={index} className="cursor-pointer hover:border-primary" onClick={() => handleExampleClick(example.code)}>
                             <CardHeader>
@@ -182,13 +184,13 @@ export default function PracticePage() {
                     <Card>
                         <CardHeader>
                             <div className="flex flex-wrap items-center justify-between gap-4">
-                                <CardTitle className="text-xl flex items-center gap-2"><Code className="h-5 w-5" /> Interactive Code Editor</CardTitle>
+                                <CardTitle className="text-xl flex items-center gap-2"><Code className="h-5 w-5" /> {t('interactive_code_editor')}</CardTitle>
                                 <div className="flex items-center gap-2">
                                     <Select defaultValue="javascript">
                                         <SelectTrigger className="w-auto">
                                             <div className='flex items-center gap-2'>
                                                 <Image src="https://placehold.co/16x16.png" width={16} height={16} alt="JS" data-ai-hint="javascript logo" />
-                                                <SelectValue placeholder="Language" />
+                                                <SelectValue placeholder={t('language')} />
                                             </div>
                                         </SelectTrigger>
                                         <SelectContent>
@@ -200,7 +202,7 @@ export default function PracticePage() {
                                     <Button variant="outline" size="icon" onClick={() => setCode(initialCode)}><RefreshCw className="h-4 w-4" /></Button>
                                     <Button onClick={handleRunCode} disabled={isRunning} className="bg-green-600 hover:bg-green-700 text-white w-[90px]">
                                         {isRunning ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Play className="mr-2 h-4 w-4" />}
-                                        {isRunning ? "Running" : "Run"}
+                                        {isRunning ? t('running') : t('run')}
                                     </Button>
                                 </div>
                             </div>
@@ -208,9 +210,9 @@ export default function PracticePage() {
                         <CardContent>
                             <Tabs value={activeTab} onValueChange={setActiveTab}>
                                 <TabsList className="grid w-full grid-cols-3">
-                                    <TabsTrigger value="editor">Editor</TabsTrigger>
-                                    <TabsTrigger value="output">Output</TabsTrigger>
-                                    <TabsTrigger value="explanation">AI Explanation</TabsTrigger>
+                                    <TabsTrigger value="editor">{t('editor')}</TabsTrigger>
+                                    <TabsTrigger value="output">{t('output')}</TabsTrigger>
+                                    <TabsTrigger value="explanation">{t('ai_explanation')}</TabsTrigger>
                                 </TabsList>
                                 <TabsContent value="editor">
                                     <Textarea 
@@ -222,7 +224,7 @@ export default function PracticePage() {
                                 </TabsContent>
                                 <TabsContent value="output">
                                     <div className="font-mono h-96 bg-muted rounded-md border p-4 overflow-auto">
-                                        <pre className="text-sm whitespace-pre-wrap">{output || "Run code to see output..."}</pre>
+                                        <pre className="text-sm whitespace-pre-wrap">{output || t('run_to_see_output')}</pre>
                                     </div>
                                 </TabsContent>
                                  <TabsContent value="explanation">
@@ -230,7 +232,7 @@ export default function PracticePage() {
                                         {isExplaining && (
                                             <div className="flex items-center justify-center h-full">
                                                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                                                <p className="ml-4 text-muted-foreground">AI is thinking...</p>
+                                                <p className="ml-4 text-muted-foreground">{t('ai_is_thinking')}</p>
                                             </div>
                                         )}
                                         {explanation && !isExplaining && (
@@ -239,7 +241,7 @@ export default function PracticePage() {
                                         {!explanation && !isExplaining && (
                                             <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
                                                 <BrainCircuit className="h-12 w-12 mb-4" />
-                                                <p>Click the purple AI button to get an explanation of your code.</p>
+                                                <p>{t('click_ai_button_for_explanation')}</p>
                                             </div>
                                         )}
                                     </div>
@@ -254,7 +256,7 @@ export default function PracticePage() {
                         <Button onClick={handleCopy} variant="secondary" size="icon" className="rounded-full shadow-lg h-10 w-10 bg-blue-500 hover:bg-blue-600 text-white">
                             <Copy className="h-5 w-5" />
                         </Button>
-                        <Button variant="secondary" size="icon" className="rounded-full shadow-lg h-10 w-10 bg-primary hover:bg-primary/90 text-white" onClick={() => toast({ title: 'Feature not implemented', description: 'Saving code will be available soon!'})}>
+                        <Button variant="secondary" size="icon" className="rounded-full shadow-lg h-10 w-10 bg-primary hover:bg-primary/90 text-white" onClick={() => toast({ title: t('feature_not_implemented_title'), description: t('feature_not_implemented_desc')})}>
                             <Save className="h-5 w-5" />
                         </Button>
                     </div>
