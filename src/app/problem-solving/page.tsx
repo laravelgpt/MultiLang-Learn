@@ -18,12 +18,12 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Zap, BrainCircuit, Lightbulb, ListChecks, Goal, CheckCircle, Boxes, Loader2, FileCode, Code, Play, XCircle } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-import Image from "next/image";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { useProgrammingLanguage, type LanguageId } from '@/context/programming-language-provider';
+import { Badge } from '@/components/ui/badge';
 
 
 const decomposerFormSchema = z.object({
@@ -154,6 +154,7 @@ const ProblemDecomposer = () => {
 const CodeDebugger = () => {
     const { t } = useLanguage();
     const { toast } = useToast();
+    const { selectedLanguage } = useProgrammingLanguage();
     const [code, setCode] = useState('// Generate a custom error example to get started.');
     const [output, setOutput] = useState("");
     const [error, setError] = useState<{ message: string, lineNumber: number | null } | null>(null);
@@ -163,11 +164,18 @@ const CodeDebugger = () => {
     const [isGenerating, setIsGenerating] = useState(false);
     const [activeTab, setActiveTab] = useState("editor");
     const workerRef = useRef<Worker | null>(null);
-    const [selectedLanguage, setSelectedLanguage] = useState("javascript");
     const [topic, setTopic] = useState("");
     const [difficulty, setDifficulty] = useState("Medium");
     const [generatedTitle, setGeneratedTitle] = useState("");
     const [generatedDescription, setGeneratedDescription] = useState("");
+
+    const languageNameMap: Record<string, string> = {
+        all: 'Overall', js: 'JavaScript', py: 'Python', go: 'Go', rust: 'Rust',
+        java: 'Java', cpp: 'C++', pascal: 'Pascal', csharp: 'C#',
+        typescript: 'TypeScript', swift: 'Swift', kotlin: 'Kotlin', php: 'PHP',
+        ruby: 'Ruby', sql: 'SQL', dart: 'Dart', r: 'R', elixir: 'Elixir',
+        haskell: 'Haskell', lua: 'Lua', perl: 'Perl', scala: 'Scala', bash: 'Bash',
+    };
 
     const parseLineNumber = (stack: string): number | null => {
         const match = /<anonymous>:(\d+):/.exec(stack);
@@ -210,6 +218,15 @@ const CodeDebugger = () => {
     };
 
     const handleGenerateExample = async () => {
+        if (selectedLanguage === 'all') {
+            toast({
+                title: t('select_language_for_example_title'),
+                description: t('select_language_for_example_desc'),
+                variant: "destructive",
+            });
+            return;
+        }
+
         if (!topic) {
             toast({ title: "Topic is required", description: "Please enter a topic to generate an example.", variant: "destructive" });
             return;
@@ -224,7 +241,7 @@ const CodeDebugger = () => {
 
         try {
             const result = await generateCodeExample({
-                language: selectedLanguage,
+                language: languageNameMap[selectedLanguage] || selectedLanguage,
                 topic,
                 difficulty
             });
@@ -311,20 +328,11 @@ const CodeDebugger = () => {
                 <Card>
                     <CardHeader>
                         <div className="flex flex-wrap items-center justify-between gap-4">
-                            <CardTitle className="text-xl flex items-center gap-2"><Code className="h-5 w-5" /> {t('debugging_sandbox')}</CardTitle>
+                            <div className="flex items-center gap-4">
+                               <CardTitle className="text-xl flex items-center gap-2"><Code className="h-5 w-5" /> {t('debugging_sandbox')}</CardTitle>
+                               <Badge variant="outline">{languageNameMap[selectedLanguage] || 'Select language'}</Badge>
+                            </div>
                              <div className="flex items-center gap-2">
-                                <Select value={selectedLanguage} onValueChange={(val) => setSelectedLanguage(val)}>
-                                    <SelectTrigger className="w-auto">
-                                        <div className='flex items-center gap-2'>
-                                            <Image src="https://placehold.co/16x16.png" width={16} height={16} alt="JS" data-ai-hint="javascript logo" />
-                                            <SelectValue placeholder={t('language')} />
-                                        </div>
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="javascript">JavaScript</SelectItem>
-                                        <SelectItem value="python">Python</SelectItem>
-                                    </SelectContent>
-                                </Select>
                                 <Button onClick={handleRunCode} disabled={isRunning} className="bg-green-600 hover:bg-green-700 text-white w-[90px]">
                                     {isRunning ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Play className="mr-2 h-4 w-4" />}
                                     {isRunning ? t('running') : t('run')}

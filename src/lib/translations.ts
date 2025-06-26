@@ -180,6 +180,8 @@ export const translations: Record<Language, Record<string, string>> = {
     "difficulty": "Difficulty",
     "generate_example": "Generate Example",
     "debugging_sandbox": "Debugging Sandbox",
+    "select_language_for_example_title": "Select a Language",
+    "select_language_for_example_desc": "Please select a specific programming language from the sidebar to generate an example.",
     // projects/page.tsx
     "apply_your_skills": "Apply your skills by building real-world projects.",
     "all_projects": "All Projects",
@@ -212,6 +214,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "are_you_sure": "Are you absolutely sure?",
     "delete_task_confirm": "This action cannot be undone. This will permanently delete the task '{taskTitle}'.",
     "cancel": "Cancel",
+    "delete": "Delete",
     "add_task": "Add Task",
     "task_added": "Task Added",
     "task_updated": "Task Updated",
@@ -409,6 +412,8 @@ export const translations: Record<Language, Record<string, string>> = {
     "difficulty": "কঠিনতা",
     "generate_example": "উদাহরণ তৈরি করুন",
     "debugging_sandbox": "ডিবাগিং স্যান্ডবক্স",
+    "select_language_for_example_title": "একটি ভাষা নির্বাচন করুন",
+    "select_language_for_example_desc": "একটি উদাহরণ তৈরি করতে সাইডবার থেকে একটি নির্দিষ্ট প্রোগ্রামিং ভাষা নির্বাচন করুন।",
     // projects/page.tsx
     "apply_your_skills": "বাস্তব-বিশ্বের প্রকল্প তৈরি করে আপনার দক্ষতা প্রয়োগ করুন।",
     "all_projects": "সমস্ত প্রকল্প",
@@ -639,6 +644,8 @@ export const translations: Record<Language, Record<string, string>> = {
     "difficulty": "कठिनाई",
     "generate_example": "उदाहरण उत्पन्न करें",
     "debugging_sandbox": "डीबगिंग सैंडबॉक्स",
+    "select_language_for_example_title": "एक भाषा चुनें",
+    "select_language_for_example_desc": "एक उदाहरण बनाने के लिए कृपया साइडबार से एक विशिष्ट प्रोग्रामिंग भाषा चुनें।",
     // projects/page.tsx
     "apply_your_skills": "वास्तविक-विश्व परियोजनाओं का निर्माण करके अपने कौशल को लागू करें।",
     "all_projects": "सभी परियोजनाएं",
@@ -868,6 +875,8 @@ export const translations: Record<Language, Record<string, string>> = {
     "difficulty": "مشکل",
     "generate_example": "مثال بنائیں",
     "debugging_sandbox": "ڈیبگنگ سینڈ باکس",
+    "select_language_for_example_title": "زبان منتخب کریں",
+    "select_language_for_example_desc": "مثال بنانے کے لیے براہ کرم سائڈبار سے ایک مخصوص پروگرامنگ زبان منتخب کریں۔",
     // projects/page.tsx
     "apply_your_skills": "حقیقی دنیا کے منصوبے بنا کر اپنی صلاحیتوں کا اطلاق کریں۔",
     "all_projects": "تمام پروجیکٹس",
