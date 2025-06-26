@@ -217,6 +217,7 @@ const CodeExplainer = () => {
     const [isExplaining, setIsExplaining] = useState(false);
     const [activeTab, setActiveTab] = useState("editor");
     const workerRef = useRef<Worker | null>(null);
+    const [selectedLanguage, setSelectedLanguage] = useState("javascript");
 
     useEffect(() => {
         workerRef.current = new Worker('/code-runner.js');
@@ -247,13 +248,24 @@ const CodeExplainer = () => {
     };
 
     const handleCategoryClick = (difficulty: keyof typeof errorExamplesByDifficulty) => {
-        const examples = errorExamplesByDifficulty[difficulty];
-        if (examples && examples.length > 0) {
-            const randomIndex = Math.floor(Math.random() * examples.length);
-            setCode(examples[randomIndex].code);
+        const examplesForDifficulty = errorExamplesByDifficulty[difficulty];
+        const filteredExamples = examplesForDifficulty.filter(ex =>
+            ex.tag === selectedLanguage || (selectedLanguage === 'javascript' && ex.tag === 'react')
+        );
+
+        if (filteredExamples.length > 0) {
+            const randomIndex = Math.floor(Math.random() * filteredExamples.length);
+            setCode(filteredExamples[randomIndex].code);
             setOutput("");
             setSuggestion("");
             setActiveTab("editor");
+        } else {
+            toast({
+                title: "No Examples Found",
+                description: `Could not find any '${difficulty}' examples for ${selectedLanguage}.`,
+                variant: 'destructive',
+            });
+            setCode(`// No '${difficulty}' examples found for ${selectedLanguage}. Try another category.`);
         }
     };
 
@@ -296,7 +308,7 @@ const CodeExplainer = () => {
                             <CardDescription>Click to load a random '{difficulty}' example.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <Badge variant="outline">{examples.length} examples available</Badge>
+                            <Badge variant="outline">{examples.filter(ex => ex.tag === selectedLanguage || (selectedLanguage === 'javascript' && ex.tag === 'react')).length} examples available</Badge>
                         </CardContent>
                     </Card>
                 ))}
@@ -308,7 +320,7 @@ const CodeExplainer = () => {
                         <div className="flex flex-wrap items-center justify-between gap-4">
                             <CardTitle className="text-xl flex items-center gap-2"><Code className="h-5 w-5" /> {t('interactive_code_editor')}</CardTitle>
                              <div className="flex items-center gap-2">
-                                <Select defaultValue="javascript">
+                                <Select value={selectedLanguage} onValueChange={(val) => setSelectedLanguage(val)}>
                                     <SelectTrigger className="w-auto">
                                         <div className='flex items-center gap-2'>
                                             <Image src="https://placehold.co/16x16.png" width={16} height={16} alt="JS" data-ai-hint="javascript logo" />
