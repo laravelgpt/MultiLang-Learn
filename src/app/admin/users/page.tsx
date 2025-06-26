@@ -29,16 +29,6 @@ const usersData = [
     { id: 'usr_8', name: 'Sarah Black', email: 'sarah.black@example.com', role: 'User', joined: '2024-06-12', status: 'Inactive', avatar: 'https://placehold.co/40x40.png' },
     { id: 'usr_9', name: 'David King', email: 'david.king@example.com', role: 'Admin', joined: '2023-11-30', status: 'Active', avatar: 'https://placehold.co/40x40.png' },
     { id: 'usr_10', name: 'Laura Hill', email: 'laura.hill@example.com', role: 'User', joined: '2024-07-01', status: 'Active', avatar: 'https://placehold.co/40x40.png' },
-    { id: 'usr_11', name: 'Chris Evans', email: 'chris.evans@example.com', role: 'User', joined: '2024-03-15', status: 'Active', avatar: 'https://placehold.co/40x40.png' },
-    { id: 'usr_12', name: 'Olivia Martinez', email: 'olivia.martinez@example.com', role: 'User', joined: '2024-05-22', status: 'Active', avatar: 'https://placehold.co/40x40.png' },
-    { id: 'usr_13', name: 'Daniel Taylor', email: 'daniel.taylor@example.com', role: 'User', joined: '2024-01-05', status: 'Active', avatar: 'https://placehold.co/40x40.png' },
-    { id: 'usr_14', name: 'Sophia Rodriguez', email: 'sophia.rodriguez@example.com', role: 'User', joined: '2024-06-28', status: 'Inactive', avatar: 'https://placehold.co/40x40.png' },
-    { id: 'usr_15', name: 'James Lee', email: 'james.lee@example.com', role: 'User', joined: '2024-02-01', status: 'Active', avatar: 'https://placehold.co/40x40.png' },
-    { id: 'usr_16', name: 'Liam Garcia', email: 'liam.g@example.com', role: 'User', joined: '2024-07-02', status: 'Active', avatar: 'https://placehold.co/40x40.png' },
-    { id: 'usr_17', name: 'Emma Martinez', email: 'emma.m@example.com', role: 'User', joined: '2024-07-03', status: 'Inactive', avatar: 'https://placehold.co/40x40.png' },
-    { id: 'usr_18', name: 'Noah Rodriguez', email: 'noah.r@example.com', role: 'User', joined: '2024-07-04', status: 'Active', avatar: 'https://placehold.co/40x40.png' },
-    { id: 'usr_19', name: 'Isabella Hernandez', email: 'isabella.h@example.com', role: 'Admin', joined: '2024-07-05', status: 'Active', avatar: 'https://placehold.co/40x40.png' },
-    { id: 'usr_20', name: 'William Lopez', email: 'william.l@example.com', role: 'User', joined: '2024-07-06', status: 'Active', avatar: 'https://placehold.co/40x40.png' }
 ];
 
 type User = typeof usersData[0];

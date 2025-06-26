@@ -51,39 +51,6 @@ const learningHistoryData = {
     'usr_10': [
         { language: 'JavaScript', progress: 10, completedTopics: 13, totalTopics: 128, lastActivity: '2024-07-10' },
     ],
-    'usr_11': [
-        { language: 'C++', progress: 40, completedTopics: 57, totalTopics: 142, lastActivity: '2024-07-05' },
-    ],
-    'usr_12': [
-        { language: 'JavaScript', progress: 75, completedTopics: 96, totalTopics: 128, lastActivity: '2024-07-29' },
-    ],
-    'usr_13': [
-        { language: 'Python', progress: 10, completedTopics: 11, totalTopics: 115, lastActivity: '2024-03-01' },
-    ],
-    'usr_14': [
-        { language: 'Java', progress: 2, completedTopics: 2, totalTopics: 130, lastActivity: '2024-07-02' },
-    ],
-    'usr_15': [
-        { language: 'Java', progress: 80, completedTopics: 104, totalTopics: 130, lastActivity: '2024-07-26' },
-        { language: 'C++', progress: 25, completedTopics: 35, totalTopics: 142, lastActivity: '2024-07-10' },
-    ],
-    'usr_16': [
-        { language: 'Go', progress: 90, completedTopics: 101, totalTopics: 112, lastActivity: '2024-07-30' },
-    ],
-    'usr_17': [
-        { language: 'JavaScript', progress: 5, completedTopics: 6, totalTopics: 128, lastActivity: '2024-07-11' },
-    ],
-    'usr_18': [
-        { language: 'Python', progress: 33, completedTopics: 38, totalTopics: 115, lastActivity: '2024-07-28' },
-        { language: 'JavaScript', progress: 22, completedTopics: 28, totalTopics: 128, lastActivity: '2024-07-25' },
-    ],
-    'usr_19': [
-        { language: 'Java', progress: 100, completedTopics: 130, totalTopics: 130, lastActivity: '2024-07-29' },
-        { language: 'Go', progress: 100, completedTopics: 112, totalTopics: 112, lastActivity: '2024-07-29' },
-    ],
-    'usr_20': [
-        { language: 'Go', progress: 50, completedTopics: 56, totalTopics: 112, lastActivity: '2024-07-29' },
-    ]
 };
 
 type LearningHistoryDialogProps = {
