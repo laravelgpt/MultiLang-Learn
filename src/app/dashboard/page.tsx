@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,34 +17,10 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsToolti
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "@/components/ui/chart"
 import { useLanguage } from "@/context/language-provider";
 import { useProgrammingLanguage, type LanguageId } from "@/context/programming-language-provider";
+import { getLanguagesSummary } from "@/services/languageService";
+import type { LanguageSummary } from "@/lib/mock-data";
+import { Skeleton } from "@/components/ui/skeleton";
 
-
-const programmingLanguagesData = [
-    {
-        id: "js",
-        name: "JavaScript",
-        description: "Dynamic language for web development.",
-        progress: 65,
-        icon: "https://placehold.co/48x48.png",
-        hint: "javascript logo"
-    },
-    {
-        id: "pascal",
-        name: "Pascal",
-        description: "Educational programming language.",
-        progress: 0,
-        icon: "https://placehold.co/48x48.png",
-        hint: "pascal logo"
-    },
-    {
-        id: "py",
-        name: "Python",
-        description: "Versatile language for data science and web.",
-        progress: 80,
-        icon: "https://placehold.co/48x48.png",
-        hint: "python logo"
-    },
-];
 
 const progressDataData = [
   { month: 'Jan', points: 200 },
@@ -81,9 +57,20 @@ const languageSpecificData: Record<string, any> = {
 export default function UserDashboardPage() {
   const { t } = useLanguage();
   const { selectedLanguage } = useProgrammingLanguage();
-  const [programmingLanguages, setProgrammingLanguages] = useState(programmingLanguagesData);
+  const [programmingLanguages, setProgrammingLanguages] = useState<LanguageSummary[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [progressData, setProgressData] = useState(progressDataData);
   const [awards, setAwards] = useState(awardsData);
+
+  useEffect(() => {
+    async function fetchLanguages() {
+        setIsLoading(true);
+        const summary = await getLanguagesSummary();
+        setProgrammingLanguages(summary.slice(0, 6)); 
+        setIsLoading(false);
+    }
+    fetchLanguages();
+  }, []);
 
   const statCards = [
     { title: t('topics_completed'), value: "25", change: t('from_last_week', {change: 2}), icon: BookOpen, iconBg: "bg-blue-100 dark:bg-blue-900/50", iconColor: "text-blue-500 dark:text-blue-400" },
@@ -265,33 +252,54 @@ export default function UserDashboardPage() {
                     <h2 className="text-2xl font-bold font-headline mb-1">{t('your_languages')}</h2>
                     <p className="text-muted-foreground mb-4">{t('master_languages')}</p>
                     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                        {programmingLanguages.map((lang) => (
-                            <Card key={lang.id} className="flex flex-col">
-                                <CardHeader>
-                                    <div className="flex items-center gap-4">
-                                        <Image src={lang.icon} alt={lang.name} width={48} height={48} className="rounded-lg" data-ai-hint={lang.hint} />
-                                        <div>
-                                            <CardTitle className="text-xl">{lang.name}</CardTitle>
-                                            <CardDescription>{lang.description}</CardDescription>
+                        {isLoading ? (
+                            Array.from({ length: 6 }).map((_, i) => (
+                                <Card key={i}>
+                                    <CardHeader className="flex flex-row items-center gap-4 p-6">
+                                        <Skeleton className="h-12 w-12 rounded-lg" />
+                                        <div className="flex-1 space-y-2">
+                                            <Skeleton className="h-5 w-3/4" />
+                                            <Skeleton className="h-4 w-full" />
                                         </div>
-                                    </div>
-                                </CardHeader>
-                                <CardContent className="flex-grow space-y-2">
-                                     <div className="flex justify-between items-center text-sm text-muted-foreground">
-                                         <span>{t('progress_bar')}</span>
-                                         <span>{lang.progress}%</span>
-                                     </div>
-                                     <Progress value={lang.progress} />
-                                </CardContent>
-                                <CardFooter>
-                                    <Button asChild className="w-full" variant="outline">
-                                        <Link href={`/languages/${lang.id}`}>
-                                            {t('start_learning')} <ArrowRight className="ml-2 h-4 w-4" />
-                                        </Link>
-                                    </Button>
-                                </CardFooter>
-                            </Card>
-                        ))}
+                                    </CardHeader>
+                                    <CardContent className="px-6 pt-0 pb-6 space-y-3">
+                                        <Skeleton className="h-4 w-full" />
+                                        <Skeleton className="h-4 w-1/2" />
+                                    </CardContent>
+                                    <CardFooter className="p-6 pt-0">
+                                         <Skeleton className="h-10 w-full" />
+                                    </CardFooter>
+                                </Card>
+                            ))
+                        ) : (
+                            programmingLanguages.map((lang) => (
+                                <Card key={lang.id} className="flex flex-col">
+                                    <CardHeader>
+                                        <div className="flex items-center gap-4">
+                                            <Image src={lang.icon} alt={lang.name} width={48} height={48} className="rounded-lg" data-ai-hint={`${lang.name} logo`} />
+                                            <div>
+                                                <CardTitle className="text-xl">{lang.name}</CardTitle>
+                                                <CardDescription>{lang.description}</CardDescription>
+                                            </div>
+                                        </div>
+                                    </CardHeader>
+                                    <CardContent className="flex-grow space-y-2">
+                                         <div className="flex justify-between items-center text-sm text-muted-foreground">
+                                             <span>{t('progress_bar')}</span>
+                                             <span>{lang.progress}%</span>
+                                         </div>
+                                         <Progress value={lang.progress} />
+                                    </CardContent>
+                                    <CardFooter>
+                                        <Button asChild className="w-full" variant="outline">
+                                            <Link href={`/languages/${lang.id}`}>
+                                                {t('start_learning')} <ArrowRight className="ml-2 h-4 w-4" />
+                                            </Link>
+                                        </Button>
+                                    </CardFooter>
+                                </Card>
+                            ))
+                        )}
                     </div>
                 </div>
             </div>

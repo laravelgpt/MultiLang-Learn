@@ -57,6 +57,8 @@ export async function addLanguageAction(formData: FormData) {
             topics: aiResult.topics.length,
             lessons: 0,
             popularity: 0,
+            description: `A ${difficulty}-level programming language.`,
+            progress: 0,
         };
         
         const newLanguageCurriculum: LanguageCurriculum = {
@@ -73,6 +75,7 @@ export async function addLanguageAction(formData: FormData) {
 
         revalidatePath('/admin/languages');
         revalidatePath('/languages');
+        revalidatePath('/dashboard');
         
         return {
             success: true,
@@ -97,6 +100,7 @@ export async function deleteLanguageAction(langId: string) {
         await deleteLanguageCurriculum(langId);
         revalidatePath('/admin/languages');
         revalidatePath('/languages');
+        revalidatePath('/dashboard');
         return { success: true };
     } catch (error) {
         console.error("Failed to delete language:", error);
@@ -138,6 +142,8 @@ export async function generateTopicsAction(formData: FormData) {
         }
 
         revalidatePath(`/admin/languages/${langId}`);
+        revalidatePath('/admin/languages');
+        revalidatePath('/dashboard');
         
         return {
             success: true,

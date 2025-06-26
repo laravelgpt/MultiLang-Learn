@@ -62,6 +62,12 @@ export async function addTopic(langId: string, topic: Omit<Topic, 'id' | 'lesson
             lessons: [],
         };
         curriculum.topics.push(newTopic);
+        
+        const summary = languagesSummaryData.find(s => s.id === langId);
+        if (summary) {
+            summary.topics = curriculum.topics.length;
+        }
+
         return Promise.resolve(newTopic);
     }
     return Promise.resolve(null);
@@ -77,6 +83,12 @@ export async function addLesson(langId: string, topicId: string, lesson: Omit<Le
             id: `l-${Date.now()}`,
         };
         topic.lessons.push(newLesson);
+
+        const summary = languagesSummaryData.find(s => s.id === langId);
+        if (summary) {
+            summary.lessons = (summary.lessons || 0) + 1;
+        }
+
         return Promise.resolve(newLesson);
     }
     return Promise.resolve(null);
