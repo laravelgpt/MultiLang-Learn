@@ -7,7 +7,6 @@ import ReactMarkdown from 'react-markdown';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from '@/components/ui/textarea';
 import { Code, Play, RefreshCw, Copy, Save, BrainCircuit, Loader2, CheckCircle, XCircle, Edit, Trash2, MoreHorizontal } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -16,6 +15,7 @@ import { useLanguage } from '@/context/language-provider';
 import { cn } from '@/lib/utils';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useProgrammingLanguage, type LanguageId } from '@/context/programming-language-provider';
 
 const initialCode = `// Welcome to the Practice Zone!
 // Select an example from the left or write your own code.
@@ -107,19 +107,6 @@ const practiceTopics = [
     },
 ];
 
-const availableLanguages = [
-    {id: "js", name: "JavaScript"},
-    {id: "py", name: "Python"},
-    {id: "csharp", name: "C#"},
-    {id: "typescript", name: "TypeScript"},
-    {id: "go", name: "Go"},
-    {id: "ruby", name: "Ruby"},
-    {id: "rust", name: "Rust"},
-    {id: "swift", name: "Swift"},
-    {id: "kotlin", name: "Kotlin"},
-    {id: "sql", name: "SQL"},
-]
-
 type SavedSnippet = {
     id: string;
     title: string;
@@ -131,6 +118,7 @@ type SavedSnippet = {
 export default function PracticePage() {
     const { toast } = useToast();
     const { t } = useLanguage();
+    const { selectedLanguage, setSelectedLanguage } = useProgrammingLanguage();
     
     const [code, setCode] = useState(initialCode);
     const [output, setOutput] = useState("");
@@ -139,7 +127,6 @@ export default function PracticePage() {
     const [isRunning, setIsRunning] = useState(false);
     const [isExplaining, setIsExplaining] = useState(false);
     const [activeTab, setActiveTab] = useState("editor");
-    const [selectedLanguage, setSelectedLanguage] = useState("js");
     const [currentTopic, setCurrentTopic] = useState({
         title: "Interactive Code Editor",
         description: "Select an example from the left or write your own code."
@@ -150,6 +137,9 @@ export default function PracticePage() {
     const [snippetToDelete, setSnippetToDelete] = useState<SavedSnippet | null>(null);
 
     const filteredTopics = useMemo(() => {
+        if (selectedLanguage === 'all') {
+            return practiceTopics;
+        }
         return practiceTopics.filter(topic => topic.language === selectedLanguage);
     }, [selectedLanguage]);
 
@@ -189,7 +179,7 @@ export default function PracticePage() {
     
     const handleLoadExample = (example: typeof practiceTopics[0]) => {
         setCode(example.code);
-        setSelectedLanguage(example.language);
+        setSelectedLanguage(example.language as LanguageId);
         setCurrentTopic({ title: example.title, description: example.description });
         setOutput("");
         setError(null);
@@ -268,7 +258,7 @@ export default function PracticePage() {
 
     const handleLoadSnippet = (snippet: SavedSnippet) => {
         setCode(snippet.code);
-        setSelectedLanguage(snippet.language);
+        setSelectedLanguage(snippet.language as LanguageId);
         setCurrentTopic({ title: snippet.title, description: snippet.description });
         setOutput("");
         setError(null);
@@ -388,19 +378,6 @@ export default function PracticePage() {
                                     <Button variant="ghost" size="sm" onClick={handleSave}><Save /> {t('save_snippet')}</Button>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <Select value={selectedLanguage} onValueChange={(val) => setSelectedLanguage(val)}>
-                                        <SelectTrigger className="w-[180px]">
-                                            <div className='flex items-center gap-2'>
-                                                <Image src={`https://placehold.co/16x16.png`} width={16} height={16} alt={selectedLanguage} data-ai-hint={`${selectedLanguage} logo`} />
-                                                <SelectValue placeholder={t('language')} />
-                                            </div>
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {availableLanguages.map(lang => (
-                                                <SelectItem key={lang.id} value={lang.id}>{lang.name}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
                                     <Button onClick={handleRunCode} disabled={isRunning} className="bg-green-600 hover:bg-green-700 text-white w-[90px]">
                                         {isRunning ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Play className="mr-2 h-4 w-4" />}
                                         {isRunning ? t('running') : t('run')}

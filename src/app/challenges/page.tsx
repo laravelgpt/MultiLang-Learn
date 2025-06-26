@@ -1,15 +1,15 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Star, CircleDot } from 'lucide-react';
 import { useLanguage } from "@/context/language-provider";
+import { useProgrammingLanguage } from "@/context/programming-language-provider";
 
 const challengesData = [
     {
@@ -19,7 +19,7 @@ const challengesData = [
         difficulty: "Easy",
         points: 10,
         tests: 5,
-        language: "javascript",
+        language: "js",
     },
     {
         id: 2,
@@ -28,7 +28,7 @@ const challengesData = [
         difficulty: "Easy",
         points: 15,
         tests: 8,
-        language: "javascript",
+        language: "js",
     },
     {
         id: 3,
@@ -37,7 +37,7 @@ const challengesData = [
         difficulty: "Easy",
         points: 10,
         tests: 3,
-        language: "python",
+        language: "py",
     },
      {
         id: 4,
@@ -46,7 +46,7 @@ const challengesData = [
         difficulty: "Medium",
         points: 25,
         tests: 12,
-        language: "python",
+        language: "py",
     },
     {
         id: 5,
@@ -55,7 +55,7 @@ const challengesData = [
         difficulty: "Medium",
         points: 20,
         tests: 7,
-        language: "javascript",
+        language: "js",
     },
     {
         id: 6,
@@ -64,7 +64,7 @@ const challengesData = [
         difficulty: "Medium",
         points: 30,
         tests: 15,
-        language: "python",
+        language: "py",
     },
     {
         id: 7,
@@ -100,7 +100,7 @@ const challengesData = [
         difficulty: "Hard",
         points: 45,
         tests: 18,
-        language: "javascript",
+        language: "js",
     },
     {
         id: 11,
@@ -109,7 +109,7 @@ const challengesData = [
         difficulty: "Easy",
         points: 10,
         tests: 6,
-        language: "python",
+        language: "py",
     },
     {
         id: 12,
@@ -127,7 +127,7 @@ const challengesData = [
         difficulty: "Easy",
         points: 15,
         tests: 8,
-        language: "python",
+        language: "py",
     },
     {
         id: 14,
@@ -136,7 +136,7 @@ const challengesData = [
         difficulty: "Medium",
         points: 35,
         tests: 10,
-        language: "javascript",
+        language: "js",
     },
     {
         id: 15,
@@ -152,7 +152,14 @@ const challengesData = [
 
 export default function ChallengesPage() {
     const { t } = useLanguage();
-    const [challenges, setChallenges] = useState(challengesData);
+    const { selectedLanguage } = useProgrammingLanguage();
+
+    const filteredChallenges = useMemo(() => {
+        if (selectedLanguage === 'all') {
+            return challengesData;
+        }
+        return challengesData.filter(challenge => challenge.language === selectedLanguage);
+    }, [selectedLanguage]);
 
     return (
         <div className="relative flex flex-col gap-6 min-h-[calc(100vh-150px)]">
@@ -173,24 +180,8 @@ export default function ChallengesPage() {
                 </TabsList>
 
                 <TabsContent value="all-challenges" className="mt-6">
-                    <div className="flex items-center justify-end mb-6">
-                         <Select defaultValue="javascript">
-                            <SelectTrigger className="w-[180px]">
-                                <div className='flex items-center gap-2'>
-                                    <Image src="https://placehold.co/16x16.png" width={16} height={16} alt="JS" data-ai-hint="javascript logo" />
-                                    <SelectValue placeholder={t('language')} />
-                                </div>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="javascript">JavaScript</SelectItem>
-                                <SelectItem value="python">Python</SelectItem>
-                                <SelectItem value="pascal" disabled>Pascal</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {challenges.map((challenge) => (
+                        {filteredChallenges.map((challenge) => (
                              <Card key={challenge.id} className="flex flex-col hover:shadow-lg transition-shadow cursor-pointer">
                                 <CardHeader className="pb-4">
                                     <div className="flex justify-between items-center">
@@ -214,6 +205,13 @@ export default function ChallengesPage() {
                                 </CardContent>
                             </Card>
                         ))}
+                        {filteredChallenges.length === 0 && (
+                             <Card className="md:col-span-2 lg:col-span-3">
+                                <CardContent className="p-6 text-center text-muted-foreground">
+                                    <p>No challenges available for the selected language. Try selecting "Overall Dashboard" to see all challenges.</p>
+                                </CardContent>
+                            </Card>
+                        )}
                     </div>
                 </TabsContent>
                  <TabsContent value="daily-challenge">

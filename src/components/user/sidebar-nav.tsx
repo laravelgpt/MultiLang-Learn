@@ -24,18 +24,10 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/context/language-provider";
 import { useProgrammingLanguage, type LanguageId } from "@/context/programming-language-provider";
+import { useEffect, useState } from "react";
+import { getLanguagesSummary } from "@/services/languageService";
+import type { LanguageSummary } from "@/lib/mock-data";
 
-const programmingLanguages = [
-    { id: "js", name: "JavaScript", icon: "https://placehold.co/24x24.png", hint: "javascript logo" },
-    { id: "py", name: "Python", icon: "https://placehold.co/24x24.png", hint: "python logo" },
-    { id: "go", name: "Go", icon: "https://placehold.co/24x24.png", hint: "go logo" },
-    { id: "rust", name: "Rust", icon: "https://placehold.co/24x24.png", hint: "rust logo" },
-    { id: "csharp", name: "C#", icon: "https://placehold.co/24x24.png", hint: "csharp logo" },
-    { id: "typescript", name: "TypeScript", icon: "https://placehold.co/24x24.png", hint: "typescript logo" },
-    { id: "java", name: "Java", icon: "https://placehold.co/24x24.png", hint: "java logo" },
-    { id: "cpp", name: "C++", icon: "https://placehold.co/24x24.png", hint: "c++ logo" },
-    { id: "ruby", name: "Ruby", icon: "https://placehold.co/24x24.png", hint: "ruby logo" },
-];
 
 const recentBadges = [
     { name: "First Steps", icon: Award, color: "bg-yellow-400" },
@@ -48,6 +40,15 @@ export function UserSidebarNav() {
   const { t } = useLanguage();
   const { isCollapsed } = useSidebar();
   const { selectedLanguage, setSelectedLanguage } = useProgrammingLanguage();
+  const [availableLanguages, setAvailableLanguages] = useState<LanguageSummary[]>([]);
+
+  useEffect(() => {
+    async function fetchLanguages() {
+        const summary = await getLanguagesSummary();
+        setAvailableLanguages(summary);
+    }
+    fetchLanguages();
+  }, []);
 
   const navItems = [
     { href: "/dashboard", label: t('dashboard'), icon: LayoutDashboard },
@@ -63,7 +64,7 @@ export function UserSidebarNav() {
   
   const languagesForSelect = [
     { id: 'all', name: t('overall_dashboard') },
-    ...programmingLanguages
+    ...availableLanguages
   ];
 
 
@@ -88,7 +89,7 @@ export function UserSidebarNav() {
                             <div className="flex items-center gap-3">
                                 {lang.id === 'all' 
                                 ? <Globe className="h-5 w-5 text-muted-foreground"/> 
-                                : <Image src={lang.icon!} alt={lang.name} width={20} height={20} data-ai-hint={lang.hint} className="rounded-sm"/>
+                                : <Image src={lang.icon} alt={lang.name} width={20} height={20} data-ai-hint={`${lang.name} logo`} className="rounded-sm"/>
                                 }
                                 <span>{lang.name}</span>
                             </div>
