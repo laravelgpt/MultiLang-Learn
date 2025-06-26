@@ -1,15 +1,15 @@
 
 "use client";
 
-import { useState, useMemo } from "react";
-import Image from "next/image";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, Star, CircleDot } from 'lucide-react';
+import { Trophy, Star, CircleDot, ArrowRight, Calendar } from 'lucide-react';
 import { useLanguage } from "@/context/language-provider";
 import { useProgrammingLanguage } from "@/context/programming-language-provider";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const challengesData = [
     {
@@ -149,10 +149,24 @@ const challengesData = [
     }
 ];
 
+const submissionsData = [
+    { id: 1, challengeTitle: "Reverse a String", language: "js", status: "Accepted", date: "2024-07-28" },
+    { id: 2, challengeTitle: "FizzBuzz", language: "py", status: "Accepted", date: "2024-07-27" },
+    { id: 3, challengeTitle: "Two Sum", language: "js", status: "Wrong Answer", date: "2024-07-26" },
+    { id: 4, challengeTitle: "Palindrome Checker", language: "js", status: "Accepted", date: "2024-07-25" },
+];
+
 
 export default function ChallengesPage() {
     const { t } = useLanguage();
     const { selectedLanguage } = useProgrammingLanguage();
+    const [dailyChallenge, setDailyChallenge] = useState<typeof challengesData[0] | null>(null);
+
+    useEffect(() => {
+        const dayOfYear = Math.floor((new Date().getTime() - new Date(new Date().getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
+        const challengeIndex = dayOfYear % challengesData.length;
+        setDailyChallenge(challengesData[challengeIndex]);
+    }, []);
 
     const filteredChallenges = useMemo(() => {
         if (selectedLanguage === 'all') {
@@ -175,7 +189,6 @@ export default function ChallengesPage() {
                 <TabsList>
                     <TabsTrigger value="all-challenges">{t('all_challenges')}</TabsTrigger>
                     <TabsTrigger value="daily-challenge">{t('daily_challenge_tab')}</TabsTrigger>
-                    <TabsTrigger value="solve-challenge">{t('solve_challenge')}</TabsTrigger>
                     <TabsTrigger value="my-submissions">{t('my_submissions')}</TabsTrigger>
                 </TabsList>
 
@@ -208,30 +221,86 @@ export default function ChallengesPage() {
                         {filteredChallenges.length === 0 && (
                              <Card className="md:col-span-2 lg:col-span-3">
                                 <CardContent className="p-6 text-center text-muted-foreground">
-                                    <p>No challenges available for the selected language. Try selecting "Overall Dashboard" to see all challenges.</p>
+                                    <p>{t('no_challenges_for_language')}</p>
                                 </CardContent>
                             </Card>
                         )}
                     </div>
                 </TabsContent>
-                 <TabsContent value="daily-challenge">
-                    <Card>
-                        <CardContent className="p-6 text-center text-muted-foreground">
-                            {t('daily_challenge_available_here')}
-                        </CardContent>
-                    </Card>
+                 <TabsContent value="daily-challenge" className="mt-6">
+                    {dailyChallenge ? (
+                         <Card className="bg-gradient-to-br from-primary/10 to-background">
+                            <CardHeader>
+                                <div className="flex justify-between items-center">
+                                    <div className="flex items-center gap-2 text-primary">
+                                        <Calendar className="h-5 w-5" />
+                                        <CardTitle className="text-2xl font-headline">{t('daily_challenge_title')}</CardTitle>
+                                    </div>
+                                    <Badge variant="outline">{new Date().toLocaleDateString(undefined, { month: 'long', day: 'numeric' })}</Badge>
+                                </div>
+                                <CardDescription>{t('daily_challenge_desc')}</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                 <h2 className="text-xl font-bold">{dailyChallenge.title}</h2>
+                                 <p className="text-muted-foreground">{dailyChallenge.description}</p>
+                                 <div className="flex items-center gap-4 text-sm">
+                                      <Badge variant={
+                                          dailyChallenge.difficulty === 'Easy' ? 'secondary' :
+                                          dailyChallenge.difficulty === 'Medium' ? 'outline' : 'default'
+                                      }>{dailyChallenge.difficulty}</Badge>
+                                      <div className="flex items-center gap-1 text-yellow-500">
+                                          <Star className="h-4 w-4 fill-current" />
+                                          <span className="font-semibold text-muted-foreground">{dailyChallenge.points} pts</span>
+                                      </div>
+                                      <div className="flex items-center gap-1 text-muted-foreground">
+                                          <CircleDot className="h-4 w-4" />
+                                          <span>{dailyChallenge.tests} tests</span>
+                                      </div>
+                                 </div>
+                                 <Button size="lg" className="mt-4">
+                                     {t('start_challenge')} <ArrowRight className="ml-2 h-4 w-4" />
+                                 </Button>
+                            </CardContent>
+                        </Card>
+                    ) : (
+                         <Card>
+                            <CardContent className="p-6 text-center text-muted-foreground">
+                                {t('daily_challenge_loading')}
+                            </CardContent>
+                        </Card>
+                    )}
                 </TabsContent>
-                <TabsContent value="solve-challenge">
+                <TabsContent value="my-submissions" className="mt-6">
                      <Card>
-                        <CardContent className="p-6 text-center text-muted-foreground">
-                            {t('solve_interface_here')}
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-                <TabsContent value="my-submissions">
-                     <Card>
-                        <CardContent className="p-6 text-center text-muted-foreground">
-                            {t('submissions_list_here')}
+                        <CardHeader>
+                            <CardTitle>{t('my_submissions')}</CardTitle>
+                            <CardDescription>{t('my_submissions_desc')}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                           <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>{t('challenge_title')}</TableHead>
+                                        <TableHead>{t('language')}</TableHead>
+                                        <TableHead>{t('status')}</TableHead>
+                                        <TableHead>{t('date')}</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {submissionsData.map((sub) => (
+                                        <TableRow key={sub.id}>
+                                            <TableCell className="font-medium">{sub.challengeTitle}</TableCell>
+                                            <TableCell>{sub.language.toUpperCase()}</TableCell>
+                                            <TableCell>
+                                                <Badge variant={sub.status === 'Accepted' ? 'default' : 'destructive'} className={sub.status === 'Accepted' ? 'bg-green-600' : ''}>
+                                                    {sub.status}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell>{sub.date}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
                         </CardContent>
                     </Card>
                 </TabsContent>
