@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { useLanguage } from '@/context/language-provider';
 import { decomposeProblem, type DecomposeProblemOutput } from '@/ai/flows/decompose-problem';
 import { explainCode } from '@/ai/flows/explain-code';
+import { generateCodeExample } from '@/ai/flows/generate-code-example';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,11 +17,11 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Zap, BrainCircuit, Lightbulb, ListChecks, Goal, CheckCircle, Boxes, Loader2, FileCode, Code, Play } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
 import Image from "next/image";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { Input } from '@/components/ui/input';
 
 
 const decomposerFormSchema = z.object({
@@ -147,73 +148,23 @@ const ProblemDecomposer = () => {
   );
 }
 
-const errorExamplesData = [
-    {
-        title: "Off-by-One Error",
-        description: "This loop is supposed to print numbers 1 to 5, but it's not working correctly. Can you spot the off-by-one error?",
-        difficulty: "Easy",
-        language: "javascript",
-        code: `for (let i = 1; i < 5; i++) {
-  console.log(i);
-}`
-    },
-    {
-        title: "Incorrect 'this' Context",
-        description: "The 'sayHello' method should print the user's name, but it's returning undefined. Why is 'this' not working as expected?",
-        difficulty: "Medium",
-        language: "javascript",
-        code: `const user = {
-  name: "Alice",
-  sayHello: function() {
-    setTimeout(function() {
-      console.log("Hello, " + this.name);
-    }, 100);
-  }
-};
-
-user.sayHello();`
-    },
-    {
-        title: "Asynchronous Promise Issue",
-        description: "This function is meant to fetch user data and return the user's name, but it returns a Promise object instead of the name.",
-        difficulty: "Hard",
-        language: "javascript",
-        code: `async function getUserName(userId) {
-  const response = await fetch('https://jsonplaceholder.typicode.com/users/' + userId);
-  const user = await response.json();
-  return user.name;
-}
-
-const userName = getUserName(1);
-console.log(userName);`
-    },
-    {
-        title: "Closure in a Loop Problem",
-        description: "This code should print 0, 1, 2, 3, 4 after a delay, but it prints 5 five times. What's wrong with the closure?",
-        difficulty: "Hard",
-        language: "javascript",
-        code: `for (var i = 0; i < 5; i++) {
-  setTimeout(function() {
-    console.log(i);
-  }, i * 100);
-}`
-    }
-];
-
 
 const CodeExplainer = () => {
     const { t } = useLanguage();
     const { toast } = useToast();
-    const [code, setCode] = useState('// Click on an example to load it here.');
+    const [code, setCode] = useState('// Generate a custom error example to get started.');
     const [output, setOutput] = useState("");
     const [suggestion, setSuggestion] = useState("");
     const [isRunning, setIsRunning] = useState(false);
     const [isExplaining, setIsExplaining] = useState(false);
+    const [isGenerating, setIsGenerating] = useState(false);
     const [activeTab, setActiveTab] = useState("editor");
     const workerRef = useRef<Worker | null>(null);
     const [selectedLanguage, setSelectedLanguage] = useState("javascript");
-    const [errorExamples, setErrorExamples] = useState(errorExamplesData);
-
+    const [topic, setTopic] = useState("");
+    const [difficulty, setDifficulty] = useState("Medium");
+    const [generatedTitle, setGeneratedTitle] = useState("");
+    const [generatedDescription, setGeneratedDescription] = useState("");
 
     useEffect(() => {
         workerRef.current = new Worker('/code-runner.js');
@@ -243,15 +194,40 @@ const CodeExplainer = () => {
         workerRef.current.postMessage({ code });
     };
 
-    const handleExampleClick = (exampleCode: string) => {
-        setCode(exampleCode);
-        setOutput("");
+    const handleGenerateExample = async () => {
+        if (!topic) {
+            toast({ title: "Topic is required", description: "Please enter a topic to generate an example.", variant: "destructive" });
+            return;
+        }
+        setIsGenerating(true);
+        setCode("// Generating example...");
+        setGeneratedTitle("");
+        setGeneratedDescription("");
         setSuggestion("");
-        setActiveTab("editor");
+        setOutput("");
+
+        try {
+            const result = await generateCodeExample({
+                language: selectedLanguage,
+                topic,
+                difficulty
+            });
+            setCode(result.code);
+            setGeneratedTitle(result.title);
+            setGeneratedDescription(result.description);
+            setActiveTab("editor");
+        } catch (error) {
+            console.error("Failed to generate code example:", error);
+            toast({ title: "Generation Failed", description: "Could not generate an example. Please try again.", variant: "destructive" });
+            setCode("// Failed to generate example. Please try again.");
+        } finally {
+            setIsGenerating(false);
+        }
     };
 
+
     const handleGetSuggestion = async () => {
-        if (!code.trim()) {
+        if (!code.trim() || code.startsWith('//')) {
             toast({ title: t('cannot_explain_empty_title'), description: t('cannot_explain_empty_desc'), variant: 'destructive' });
             return;
         }
@@ -273,24 +249,46 @@ const CodeExplainer = () => {
     return (
          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start mt-6">
             <div className="lg:col-span-1 space-y-4">
-                <h2 className="text-xl font-bold flex items-center gap-2"><FileCode className="h-5 w-5" /> {t('error_examples')}</h2>
-                {errorExamples.map((example, index) => (
-                    <Card key={index} className="cursor-pointer hover:border-primary" onClick={() => handleExampleClick(example.code)}>
+                 <Card>
+                    <CardHeader>
+                        <CardTitle>Generate Error Example</CardTitle>
+                        <CardDescription>Create a custom code challenge with a hidden error.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="topic">Topic</Label>
+                            <Input id="topic" value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="e.g., JavaScript closures" />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="difficulty">Difficulty</Label>
+                            <Select value={difficulty} onValueChange={(value) => setDifficulty(value)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select difficulty" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Easy">Easy</SelectItem>
+                                    <SelectItem value="Medium">Medium</SelectItem>
+                                    <SelectItem value="Hard">Hard</SelectItem>
+                                    <SelectItem value="Heavy Hard">Heavy Hard</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </CardContent>
+                    <CardFooter>
+                        <Button onClick={handleGenerateExample} disabled={isGenerating} className="w-full">
+                            {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <BrainCircuit className="mr-2 h-4 w-4" />}
+                            {isGenerating ? "Generating..." : "Generate Example"}
+                        </Button>
+                    </CardFooter>
+                </Card>
+                {generatedTitle && (
+                     <Card>
                         <CardHeader>
-                            <div className="flex justify-between items-center">
-                                <CardTitle className="text-base">{example.title}</CardTitle>
-                                <Badge variant={
-                                    example.difficulty === 'Easy' ? 'secondary' :
-                                    example.difficulty === 'Medium' ? 'outline' : 'default'
-                                }>{example.difficulty}</Badge>
-                            </div>
-                            <CardDescription>{example.description}</CardDescription>
+                            <CardTitle>{generatedTitle}</CardTitle>
+                            <CardDescription>{generatedDescription}</CardDescription>
                         </CardHeader>
-                        <CardContent>
-                            <Badge variant="outline">{example.language}</Badge>
-                        </CardContent>
                     </Card>
-                ))}
+                )}
             </div>
 
             <div className="lg:col-span-2">
@@ -351,7 +349,7 @@ const CodeExplainer = () => {
                                         </div>
                                     )}
                                     {suggestion && !isExplaining && (
-                                        <div className="prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: suggestion.replace(/\n/g, '<br />') }} />
+                                        <div className="prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: suggestion.replace(/\\n/g, '<br />') }} />
                                     )}
                                     {!suggestion && !isExplaining && (
                                         <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
