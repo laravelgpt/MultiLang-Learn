@@ -6,8 +6,15 @@ import { PageHeader } from "@/components/admin/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { PlusCircle } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PlusCircle, Loader2, BrainCircuit } from 'lucide-react';
 import { useLanguage } from "@/context/language-provider";
+import { useToast } from "@/hooks/use-toast";
+import { generateTasksForTopic } from "@/ai/flows/generate-tasks-for-topic";
 
 const initialTasks = {
     todo: [
@@ -62,18 +69,79 @@ const TaskCard = ({ task }: { task: Task }) => (
 
 export default function TasksPage() {
     const { t } = useLanguage();
+    const { toast } = useToast();
     const [tasks, setTasks] = useState(initialTasks);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+    // For manual task addition
+    const [newTaskTitle, setNewTaskTitle] = useState("");
+    const [newTaskDesc, setNewTaskDesc] = useState("");
+    const [newTaskTags, setNewTaskTags] = useState("");
+
+    // For AI task generation
+    const [aiTopic, setAiTopic] = useState("");
+    const [isGenerating, setIsGenerating] = useState(false);
     
     const columnTitles: Record<TaskStatus, string> = {
         todo: t('todo'),
         inProgress: t('in_progress'),
         done: t('done'),
     };
+    
+    const handleAddTask = () => {
+        if (!newTaskTitle) {
+            toast({ title: "Title is required", variant: "destructive" });
+            return;
+        }
+        const newTask: Task = {
+            id: `task-${Date.now()}`,
+            title: newTaskTitle,
+            description: newTaskDesc,
+            tags: newTaskTags.split(',').map(tag => tag.trim()).filter(tag => tag),
+        };
+        setTasks(prev => ({
+            ...prev,
+            todo: [newTask, ...prev.todo],
+        }));
+        setNewTaskTitle("");
+        setNewTaskDesc("");
+        setNewTaskTags("");
+        setIsDialogOpen(false);
+        toast({ title: "Task Added", description: `"${newTask.title}" has been added to your board.` });
+    };
+
+    const handleGenerateTasks = async () => {
+        if (!aiTopic) {
+            toast({ title: "Topic is required", variant: "destructive" });
+            return;
+        }
+        setIsGenerating(true);
+        try {
+            const result = await generateTasksForTopic({ topic: aiTopic });
+            const newTasks = result.tasks.map((task, index) => ({
+                ...task,
+                id: `task-${Date.now()}-${index}`
+            }));
+            setTasks(prev => ({
+                ...prev,
+                todo: [...newTasks, ...prev.todo],
+            }));
+            setAiTopic("");
+            setIsDialogOpen(false);
+            toast({ title: "Tasks Generated", description: `${newTasks.length} tasks for "${aiTopic}" have been added.` });
+        } catch (error) {
+            console.error(error);
+            toast({ title: "Generation Failed", description: "Could not generate tasks. Please try again.", variant: "destructive" });
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
 
     return (
         <>
             <PageHeader title={t('tasks_title')} description={t('tasks_description')}>
-                <Button>
+                <Button onClick={() => setIsDialogOpen(true)}>
                     <PlusCircle className="mr-2 h-4 w-4" />
                     {t('add_new_task')}
                 </Button>
@@ -95,6 +163,57 @@ export default function TasksPage() {
                     </Card>
                 ))}
             </div>
+
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogContent className="sm:max-w-xl">
+                    <DialogHeader>
+                        <DialogTitle>{t('add_new_task')}</DialogTitle>
+                    </DialogHeader>
+                    <Tabs defaultValue="manual">
+                        <TabsList className="grid w-full grid-cols-2">
+                            <TabsTrigger value="manual">Add Manually</TabsTrigger>
+                            <TabsTrigger value="ai">Generate with AI</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="manual" className="pt-4">
+                            <div className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="title">Task Title</Label>
+                                    <Input id="title" value={newTaskTitle} onChange={(e) => setNewTaskTitle(e.target.value)} placeholder="e.g., Learn about closures" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="description">Description</Label>
+                                    <Textarea id="description" value={newTaskDesc} onChange={(e) => setNewTaskDesc(e.target.value)} placeholder="e.g., Read documentation and build a small example" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="tags">Tags</Label>
+                                    <Input id="tags" value={newTaskTags} onChange={(e) => setNewTaskTags(e.target.value)} placeholder="e.g., JavaScript, Learning, Reading" />
+                                    <p className="text-xs text-muted-foreground">Separate tags with a comma.</p>
+                                </div>
+                            </div>
+                             <DialogFooter className="pt-6">
+                                <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
+                                <Button onClick={handleAddTask}>Add Task</Button>
+                            </DialogFooter>
+                        </TabsContent>
+                        <TabsContent value="ai" className="pt-4">
+                            <div className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="topic">Learning Topic</Label>
+                                    <Input id="topic" value={aiTopic} onChange={(e) => setAiTopic(e.target.value)} placeholder="e.g., JavaScript Promises" />
+                                    <p className="text-xs text-muted-foreground">Enter a topic and the AI will generate a learning plan for you.</p>
+                                </div>
+                            </div>
+                            <DialogFooter className="pt-6">
+                                <DialogClose asChild><Button variant="outline" disabled={isGenerating}>Cancel</Button></DialogClose>
+                                <Button onClick={handleGenerateTasks} disabled={isGenerating}>
+                                    {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <BrainCircuit className="mr-2 h-4 w-4" />}
+                                    {isGenerating ? "Generating..." : "Generate Tasks"}
+                                </Button>
+                            </DialogFooter>
+                        </TabsContent>
+                    </Tabs>
+                </DialogContent>
+            </Dialog>
         </>
     );
 }
