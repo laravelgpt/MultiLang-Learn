@@ -10,7 +10,7 @@ const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/languages", label: "Languages", icon: Code },
   { href: "#", label: "My Progress", icon: TrendingUp },
-  { href: "#", label: "Community", icon: Users },
+  { href: "/community", label: "Community", icon: Users },
   { href: "#", label: "AI Assistant", icon: Bot },
   { href: "#", label: "Settings", icon: Settings },
 ];
