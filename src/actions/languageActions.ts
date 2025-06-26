@@ -28,8 +28,10 @@ export async function addLanguageAction(formData: FormData) {
     });
 
     if (!validatedFields.success) {
+        const fieldErrors = validatedFields.error.flatten().fieldErrors;
+        const firstError = Object.values(fieldErrors)[0]?.[0] || "Invalid input. Please check the form.";
         return {
-            error: validatedFields.error.flatten().fieldErrors,
+            error: firstError,
         };
     }
 

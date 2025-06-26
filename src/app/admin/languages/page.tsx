@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/admin/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -17,15 +17,28 @@ import { MoreHorizontal, PlusCircle, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
 import { addLanguageAction, deleteLanguageAction } from "@/actions/languageActions";
+import { getLanguagesSummary } from "@/services/languageService";
 import type { LanguageSummary } from "@/lib/mock-data";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default function LanguagesPage({ languages: initialLanguages }: { languages: LanguageSummary[] }) {
+export default function LanguagesPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [languages, setLanguages] = useState<LanguageSummary[]>(initialLanguages);
+  const [languages, setLanguages] = useState<LanguageSummary[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
+  useEffect(() => {
+    const fetchLanguages = async () => {
+      setIsLoading(true);
+      const summary = await getLanguagesSummary();
+      setLanguages(summary);
+      setIsLoading(false);
+    };
+    fetchLanguages();
+  }, []);
+  
   const handleAddNew = () => {
     setIsDialogOpen(true);
   };
@@ -56,8 +69,8 @@ export default function LanguagesPage({ languages: initialLanguages }: { languag
     } else if (result?.success) {
         toast({ title: "Language Added", description: result.message });
         setIsDialogOpen(false);
-        // The page will be revalidated, but for a smoother UX on the client, we can manually refresh
-        router.refresh();
+        const summary = await getLanguagesSummary();
+        setLanguages(summary);
     }
     
     setIsSaving(false);
@@ -94,42 +107,55 @@ export default function LanguagesPage({ languages: initialLanguages }: { languag
               </TableRow>
             </TableHeader>
             <TableBody>
-              {languages.map((lang) => (
-                <TableRow key={lang.id}>
-                  <TableCell className="font-medium">
-                    <div className="flex items-center gap-3">
-                      <Image src={lang.icon} alt={lang.name} width={32} height={32} className="rounded-sm" data-ai-hint="language logo" />
-                      <span>{lang.name}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>{lang.topics}</TableCell>
-                  <TableCell>{lang.lessons}</TableCell>
-                  <TableCell>{lang.popularity.toLocaleString()}</TableCell>
-                  <TableCell>
-                    <Badge variant={
-                      lang.difficulty === 'Beginner' ? 'secondary' :
-                      lang.difficulty === 'Intermediate' ? 'outline' : 'default'
-                    }>{lang.difficulty}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button aria-haspopup="true" size="icon" variant="ghost">
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Toggle menu</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onSelect={() => router.push(`/admin/languages/${lang.id}`)}>Manage Topics & Lessons</DropdownMenuItem>
-                        <DropdownMenuItem disabled>Edit (Coming Soon)</DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-destructive" onSelect={() => handleDelete(lang.id, lang.name)}>Delete</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <TableRow key={i}>
+                    <TableCell><Skeleton className="h-8 w-32" /></TableCell>
+                    <TableCell><Skeleton className="h-8 w-12" /></TableCell>
+                    <TableCell><Skeleton className="h-8 w-12" /></TableCell>
+                    <TableCell><Skeleton className="h-8 w-20" /></TableCell>
+                    <TableCell><Skeleton className="h-8 w-24" /></TableCell>
+                    <TableCell><Skeleton className="h-8 w-8" /></TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                languages.map((lang) => (
+                  <TableRow key={lang.id}>
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-3">
+                        <Image src={lang.icon} alt={lang.name} width={32} height={32} className="rounded-sm" data-ai-hint="language logo" />
+                        <span>{lang.name}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>{lang.topics}</TableCell>
+                    <TableCell>{lang.lessons}</TableCell>
+                    <TableCell>{lang.popularity.toLocaleString()}</TableCell>
+                    <TableCell>
+                      <Badge variant={
+                        lang.difficulty === 'Beginner' ? 'secondary' :
+                        lang.difficulty === 'Intermediate' ? 'outline' : 'default'
+                      }>{lang.difficulty}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button aria-haspopup="true" size="icon" variant="ghost">
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">Toggle menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuItem onSelect={() => router.push(`/admin/languages/${lang.id}`)}>Manage Topics & Lessons</DropdownMenuItem>
+                          <DropdownMenuItem disabled>Edit (Coming Soon)</DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-destructive" onSelect={() => handleDelete(lang.id, lang.name)}>Delete</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>

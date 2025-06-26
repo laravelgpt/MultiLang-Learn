@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useMemo } from "react";
+import { useState, useEffect } from "react";
 import { PageHeader } from "@/components/admin/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,9 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { ArrowLeft, FileText, Youtube, Code, Link as LinkIcon, BookOpen } from "lucide-react";
 import Link from 'next/link';
 import { useLanguage } from "@/context/language-provider";
-import { languagesCurriculumData, type Topic, type Lesson, type Attachment } from "@/lib/mock-data";
+import { getLanguageCurriculum } from "@/services/languageService";
+import type { LanguageCurriculum, Attachment } from "@/lib/mock-data";
+import { Skeleton } from "@/components/ui/skeleton";
 
 
 const AttachmentIcon = ({ type }: { type: Attachment['type'] }) => {
@@ -24,8 +26,46 @@ const AttachmentIcon = ({ type }: { type: Attachment['type'] }) => {
 };
 
 export default function LanguageCurriculumPage({ params }: { params: { langId: string } }) {
-  const language = useMemo(() => languagesCurriculumData[params.langId] || { name: 'Unknown', topics: [] }, [params.langId]);
   const { t } = useLanguage();
+  const [language, setLanguage] = useState<LanguageCurriculum | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchLanguage() {
+      setIsLoading(true);
+      const curriculum = await getLanguageCurriculum(params.langId);
+      setLanguage(curriculum);
+      setIsLoading(false);
+    }
+    fetchLanguage();
+  }, [params.langId]);
+  
+  if (isLoading) {
+    return (
+      <>
+        <PageHeader title="Loading..." />
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-8 w-1/3" />
+            <Skeleton className="h-4 w-2/3" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-64 w-full" />
+          </CardContent>
+        </Card>
+      </>
+    )
+  }
+
+  if (!language) {
+    return (
+      <PageHeader title="Language Not Found">
+        <Button variant="outline" asChild>
+          <Link href="/languages"><ArrowLeft className="mr-2 h-4 w-4" /> {t('back_to_languages')}</Link>
+        </Button>
+      </PageHeader>
+    )
+  }
   
   return (
     <>
