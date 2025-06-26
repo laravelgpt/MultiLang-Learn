@@ -10,12 +10,12 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-export const DecomposeProblemInputSchema = z.object({
+const DecomposeProblemInputSchema = z.object({
   problemStatement: z.string().describe('The problem statement to be decomposed.'),
 });
 export type DecomposeProblemInput = z.infer<typeof DecomposeProblemInputSchema>;
 
-export const DecomposeProblemOutputSchema = z.object({
+const DecomposeProblemOutputSchema = z.object({
   inputs: z.string().describe('What are the expected inputs for the problem?'),
   outputs: z.string().describe('What is the expected output after solving the problem?'),
   constraints: z.string().describe('What are the constraints or edge cases to consider?'),

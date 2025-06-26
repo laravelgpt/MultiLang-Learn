@@ -10,13 +10,13 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-export const ChatbotInputSchema = z.object({
+const ChatbotInputSchema = z.object({
   query: z.string().describe("The user's question."),
   language: z.string().describe('The programming language context for the question.'),
 });
 export type ChatbotInput = z.infer<typeof ChatbotInputSchema>;
 
-export const ChatbotOutputSchema = z.object({
+const ChatbotOutputSchema = z.object({
   response: z.string().describe("The AI tutor's response, formatted in Markdown."),
 });
 export type ChatbotOutput = z.infer<typeof ChatbotOutputSchema>;
