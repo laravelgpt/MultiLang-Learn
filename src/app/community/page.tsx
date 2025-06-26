@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useState } from "react";
 import { PageHeader } from "@/components/admin/page-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -10,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { MessageSquare, Heart, Eye, Search, PlusCircle, User, Users, BarChart } from "lucide-react";
 import { useLanguage } from "@/context/language-provider";
 
-const posts = [
+const postsData = [
     {
         id: 1,
         author: { name: 'Alice', avatar: 'https://placehold.co/40x40.png', hint: 'profile avatar' },
@@ -112,8 +113,8 @@ const posts = [
     }
 ];
 
-const trendingTopics = ["JavaScript", "Python", "Data Structures", "Next.js", "AI/ML", "Go", "C++"];
-const featuredMembers = [
+const trendingTopicsData = ["JavaScript", "Python", "Data Structures", "Next.js", "AI/ML", "Go", "C++"];
+const featuredMembersData = [
     { name: "Diana", avatar: "https://placehold.co/40x40.png", hint: 'profile avatar' },
     { name: "Eve", avatar: "https://placehold.co/40x40.png", hint: 'profile avatar' },
     { name: "Frank", avatar: "https://placehold.co/40x40.png", hint: 'profile avatar' },
@@ -123,6 +124,9 @@ const featuredMembers = [
 
 export default function CommunityPage() {
     const { t } = useLanguage();
+    const [posts, setPosts] = useState(postsData);
+    const [trendingTopics, setTrendingTopics] = useState(trendingTopicsData);
+    const [featuredMembers, setFeaturedMembers] = useState(featuredMembersData);
 
     return (
         <>

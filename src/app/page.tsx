@@ -1,10 +1,14 @@
+
+"use client";
+
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, Code, Bot, BookOpenCheck, Zap } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-const features = [
+const featuresData = [
     {
         icon: <Code className="w-8 h-8 text-primary" />,
         title: "Diverse Language Support",
@@ -22,13 +26,16 @@ const features = [
     },
 ];
 
-const plansData = [
+const plansDataArr = [
   { name: "Free Tier", price: "$0", description: "Basic access for all users.", features: ["Access to 2 languages", "Community support"] },
   { name: "Premium Monthly", price: "$9.99/mo", description: "Full access on a monthly basis.", features: ["Unlimited languages", "AI Tutor access", "Priority support"] },
   { name: "Premium Yearly", price: "$99/yr", description: "Get 2 months free with yearly billing.", features: ["Unlimited languages", "AI Tutor access", "Priority support"] },
 ];
 
 export default function LandingPage() {
+    const [features, setFeatures] = useState(featuresData);
+    const [plansData, setPlansData] = useState(plansDataArr);
+
     return (
         <div className="flex flex-col min-h-screen bg-background">
             <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

@@ -15,7 +15,7 @@ import { explainCode } from '@/ai/flows/explain-code';
 import { useLanguage } from '@/context/language-provider';
 
 
-const codeExamples = [
+const codeExamplesData = [
     {
         title: "Variables and Data Types",
         description: "Learn about different variable declarations and data types",
@@ -86,6 +86,7 @@ export default function PracticePage() {
     const [isExplaining, setIsExplaining] = useState(false);
     const [activeTab, setActiveTab] = useState("editor");
     const workerRef = useRef<Worker | null>(null);
+    const [codeExamples, setCodeExamples] = useState(codeExamplesData);
 
     useEffect(() => {
         workerRef.current = new Worker('/code-runner.js');

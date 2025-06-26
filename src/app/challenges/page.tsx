@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Trophy, Star, CircleDot, Code, Bot, Save } from 'lucide-react';
 import { useLanguage } from "@/context/language-provider";
 
-const challenges = [
+const challengesData = [
     {
         id: 1,
         title: "Reverse a String",
@@ -151,6 +152,7 @@ const challenges = [
 
 export default function ChallengesPage() {
     const { t } = useLanguage();
+    const [challenges, setChallenges] = useState(challengesData);
 
     return (
         <div className="relative flex flex-col gap-6 min-h-[calc(100vh-150px)]">

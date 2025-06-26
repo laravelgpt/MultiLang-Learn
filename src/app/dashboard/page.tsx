@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,7 +19,7 @@ import { useLanguage } from "@/context/language-provider";
 import { useProgrammingLanguage, type LanguageId } from "@/context/programming-language-provider";
 
 
-const programmingLanguages = [
+const programmingLanguagesData = [
     {
         id: "js",
         name: "JavaScript",
@@ -45,7 +46,7 @@ const programmingLanguages = [
     },
 ];
 
-const progressData = [
+const progressDataData = [
   { month: 'Jan', points: 200 },
   { month: 'Feb', points: 350 },
   { month: 'Mar', points: 300 },
@@ -61,7 +62,7 @@ const chartConfig: ChartConfig = {
   },
 }
 
-const awards = [
+const awardsData = [
   { title: "First Step", description: "Complete your first lesson", icon: Star, date: "July 20, 2024" },
   { title: "Code Ninja", description: "Solve 10 challenges", icon: Code, date: "July 22, 2024" },
   { title: "Weekly Warrior", description: "Learn for 7 days in a row", icon: Shield, date: "July 27, 2024" },
@@ -80,6 +81,9 @@ const languageSpecificData: Record<string, any> = {
 export default function UserDashboardPage() {
   const { t } = useLanguage();
   const { selectedLanguage } = useProgrammingLanguage();
+  const [programmingLanguages, setProgrammingLanguages] = useState(programmingLanguagesData);
+  const [progressData, setProgressData] = useState(progressDataData);
+  const [awards, setAwards] = useState(awardsData);
 
   const statCards = [
     { title: t('topics_completed'), value: "25", change: t('from_last_week', {change: 2}), icon: BookOpen, iconBg: "bg-blue-100 dark:bg-blue-900/50", iconColor: "text-blue-500 dark:text-blue-400" },

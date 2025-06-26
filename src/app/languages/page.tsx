@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useState } from "react";
 import { PageHeader } from "@/components/admin/page-header";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useLanguage } from "@/context/language-provider";
 
-const languagesData = [
+const languagesDataArr = [
   { id: 'py', name: 'Python', icon: 'https://placehold.co/64x64.png', description: 'A versatile language for web development, data science, and more.' },
   { id: 'js', name: 'JavaScript', icon: 'https://placehold.co/64x64.png', description: 'The language of the web, for building interactive front-ends.' },
   { id: 'java', name: 'Java', icon: 'https://placehold.co/64x64.png', description: 'A robust language for large-scale enterprise applications.' },
@@ -19,6 +20,7 @@ const languagesData = [
 
 export default function UserLanguagesPage() {
   const { t } = useLanguage();
+  const [languagesData, setLanguagesData] = useState(languagesDataArr);
 
   return (
     <>
