@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, Star, CircleDot, Code, Bot, Save } from 'lucide-react';
+import { Trophy, Star, CircleDot } from 'lucide-react';
 import { useLanguage } from "@/context/language-provider";
 
 const challengesData = [
@@ -238,17 +238,6 @@ export default function ChallengesPage() {
                     </Card>
                 </TabsContent>
             </Tabs>
-            <div className="fixed right-8 bottom-8 flex flex-col gap-2">
-                <Button variant="secondary" size="icon" className="rounded-full shadow-lg h-12 w-12 bg-green-500 hover:bg-green-600 text-white">
-                <Code className="h-6 w-6" />
-                </Button>
-                <Button variant="secondary" size="icon" className="rounded-full shadow-lg h-12 w-12 bg-blue-500 hover:bg-blue-600 text-white">
-                <Bot className="h-6 w-6" />
-                </Button>
-                <Button variant="secondary" size="icon" className="rounded-full shadow-lg h-12 w-12 bg-purple-500 hover:bg-purple-600 text-white">
-                <Save className="h-6 w-6" />
-                </Button>
-            </div>
         </div>
     );
 }

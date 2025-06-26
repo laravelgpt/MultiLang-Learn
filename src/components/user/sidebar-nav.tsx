@@ -75,7 +75,7 @@ export function UserSidebarNav() {
     { href: "/problem-solving", label: t('problem_solving'), icon: Zap },
     { href: "/projects", label: t('mini_projects'), icon: FolderKanban },
     { href: "/ai-assistant", label: t('ai_assistant'), icon: Bot },
-    { href: "#", label: t('progress_tracker'), icon: TrendingUp },
+    { href: "/progress", label: t('progress_tracker'), icon: TrendingUp },
   ];
   
   const languagesForSelect = [

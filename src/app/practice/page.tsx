@@ -129,7 +129,7 @@ export default function PracticePage() {
 
     const handleCopy = () => {
         navigator.clipboard.writeText(code);
-        toast({ title: t('copied_to_clipboard_title'), description: t('copied_to_clipboard_desc') });
+        toast({ title: t('code_copied_title'), description: t('code_copied_desc') });
     };
 
     const handleExplainCode = async () => {
@@ -257,7 +257,7 @@ export default function PracticePage() {
                         <Button onClick={handleCopy} variant="secondary" size="icon" className="rounded-full shadow-lg h-10 w-10 bg-blue-500 hover:bg-blue-600 text-white">
                             <Copy className="h-5 w-5" />
                         </Button>
-                        <Button variant="secondary" size="icon" className="rounded-full shadow-lg h-10 w-10 bg-primary hover:bg-primary/90 text-white" onClick={() => toast({ title: t('feature_not_implemented_title'), description: t('feature_not_implemented_desc')})}>
+                        <Button variant="secondary" size="icon" className="rounded-full shadow-lg h-10 w-10 bg-primary hover:bg-primary/90 text-white" onClick={() => toast({ title: t('save_feature_soon_title'), description: t('save_feature_soon_desc')})}>
                             <Save className="h-5 w-5" />
                         </Button>
                     </div>
