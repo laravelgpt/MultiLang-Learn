@@ -1,5 +1,5 @@
 export type Attachment = { type: 'pdf' | 'youtube' | 'code' | 'link'; url: string };
-export type Lesson = { id: string; title: string; difficulty: 'Beginner' | 'Intermediate' | 'Advanced'; attachments: Attachment[] };
+export type Lesson = { id: string; title: string; difficulty: 'Beginner' | 'Intermediate' | 'Advanced'; attachments: Attachment[]; content?: string };
 export type Topic = { id: string; title: string; lessons: Lesson[] };
 export type LanguageCurriculum = { name: string; topics: Topic[] };
 export type LanguageSummary = { id: string; name: string; icon: string; topics: number; lessons: number; popularity: number; difficulty: 'Beginner' | 'Intermediate' | 'Advanced'; }
@@ -9,12 +9,24 @@ export const languagesCurriculumData: Record<string, LanguageCurriculum> = {
     name: 'Python',
     topics: [
       { id: 't1', title: 'Introduction to Python', lessons: [
-          { id: 'l1-1', title: 'History and Features of Python', difficulty: 'Beginner', attachments: [{ type: 'pdf', url: '#' }] },
-          { id: 'l1-2', title: 'Setting up Python Environment', difficulty: 'Beginner', attachments: [{ type: 'youtube', url: '#' }] },
-          { id: 'l1-3', title: 'Running Your First Python Script', difficulty: 'Beginner', attachments: [{ type: 'code', url: '#' }] },
+          { 
+            id: 'l1-1', 
+            title: 'History and Features of Python', 
+            difficulty: 'Beginner', 
+            attachments: [{ type: 'pdf', url: '#' }],
+            content: 'Python is a high-level, interpreted, general-purpose programming language. Its design philosophy emphasizes code readability with the use of significant indentation.\n\n### Key Features:\n*   **Simple and Easy to Learn:** Python has a simple syntax that allows developers to write programs with fewer lines than some other programming languages.\n*   **Free and Open-Source:** You can freely use and distribute Python, even for commercial use.\n*   **High-Level Language:** When you write programs in Python, you never need to worry about low-level details such as managing the memory used by your program.'
+          },
+          { 
+            id: 'l1-2', 
+            title: 'Setting up Python Environment', 
+            difficulty: 'Beginner', 
+            attachments: [{ type: 'youtube', url: '#' }],
+            content: 'To start programming in Python, you need to install the Python interpreter.\n\n1.  **Download Python:** Visit the official website [python.org](https://python.org) and download the latest version for your operating system.\n2.  **Installation:** Run the installer. On Windows, make sure to check the box that says "Add Python to PATH".\n3.  **Verify Installation:** Open your terminal or command prompt and type `python --version`. You should see the Python version you installed.\n4.  **Code Editor:** It\'s recommended to use a code editor like VS Code with the Python extension for a better development experience.'
+          },
+          { id: 'l1-3', title: 'Running Your First Python Script', difficulty: 'Beginner', attachments: [{ type: 'code', url: '#' }], content: "Let's write a simple \"Hello, World!\" program.\n\n1.  Open a text editor and create a new file named `hello.py`.\n2.  Add the following code:\n```python\nprint(\"Hello, World!\")\n```\n3. Save the file.\n4. Open a terminal, navigate to the directory where you saved the file, and run the script with the command:\n```bash\npython hello.py\n```\nYou should see `Hello, World!` printed to the console." },
       ]},
       { id: 't2', title: 'Python Basics', lessons: [
-          { id: 'l2-1', title: 'Variables and Data Types', difficulty: 'Beginner', attachments: [] },
+          { id: 'l2-1', title: 'Variables and Data Types', difficulty: 'Beginner', attachments: [], content: 'In Python, variables are created when you assign a value to it. Python has various standard data types that are used to define the operations possible on them and the storage method for each of them.\n\n**Example:**\n```python\nx = 5         # integer\ny = "Hello"   # string\nz = 20.5      # float\n```' },
           { id: 'l2-2', title: 'Operators in Python', difficulty: 'Beginner', attachments: [] },
           { id: 'l2-3', title: 'Type Casting in Python', difficulty: 'Beginner', attachments: [] },
       ]},
@@ -60,8 +72,8 @@ export const languagesCurriculumData: Record<string, LanguageCurriculum> = {
     name: 'JavaScript',
     topics: [
       { id: 't10', title: 'Introduction to JavaScript', lessons: [
-        { id: 'l10-1', title: 'What is JavaScript?', difficulty: 'Beginner', attachments: [] },
-        { id: 'l10-2', title: 'JavaScript in the Browser', difficulty: 'Beginner', attachments: [] },
+        { id: 'l10-1', title: 'What is JavaScript?', difficulty: 'Beginner', attachments: [], content: 'JavaScript, often abbreviated as JS, is a programming language that is one of the core technologies of the World Wide Web, alongside HTML and CSS. As of 2023, 98.7% of websites use JavaScript on the client side for webpage behavior, often incorporating third-party libraries.' },
+        { id: 'l10-2', title: 'JavaScript in the Browser', difficulty: 'Beginner', attachments: [], content: "You can add JavaScript to an HTML document in three ways:\n\n*   **Inline:** `onclick=\"alert('Hello')\"` (not recommended)\n*   **Internal:** Using `<script>` tags in the `<head>` or `<body>`.\n*   **External:** Linking to a `.js` file: `<script src=\"myscripts.js\"></script>`" },
         { id: 'l10-3', title: 'Setting up a Development Environment', difficulty: 'Beginner', attachments: [] },
       ]},
       { id: 't11', title: 'JavaScript Fundamentals', lessons: [

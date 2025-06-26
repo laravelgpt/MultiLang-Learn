@@ -118,7 +118,11 @@ export default function LanguageCurriculumPage({ params }: { params: { langId: s
                                 </div>
                               </div>
                             </div>
-                            <Button size="sm" variant="ghost">{t('start_lesson')}</Button>
+                            <Button size="sm" variant="ghost" asChild>
+                              <Link href={`/languages/${params.langId}/lessons/${lesson.id}`}>
+                                {t('start_lesson')}
+                              </Link>
+                            </Button>
                           </div>
                         ))}
                       </div>
