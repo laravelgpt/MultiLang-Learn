@@ -65,6 +65,26 @@ export default function SettingsPage() {
               </CardFooter>
             </Card>
 
+            <Card>
+              <CardHeader>
+                <CardTitle>Theme Customization</CardTitle>
+                <CardDescription>Customize the look and feel of your platform.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="primary-color">Primary Color (HSL)</Label>
+                  <Input id="primary-color" defaultValue="238 52% 37%" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="accent-color">Accent Color (HSL)</Label>
+                  <Input id="accent-color" defaultValue="262 73% 63%" />
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button onClick={() => handleSave("Theme settings have been updated. This is a demo; styles are not applied.")}>Save Theme</Button>
+              </CardFooter>
+            </Card>
+
              <Card>
               <CardHeader>
                 <CardTitle>Localization</CardTitle>
