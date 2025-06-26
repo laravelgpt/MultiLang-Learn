@@ -17,7 +17,7 @@ export default function DashboardLayout({
         <SidebarHeader>
           <div className="flex items-center gap-2 flex-1">
             <BookOpenCheck className="w-8 h-8 text-primary" />
-            <h1 className="font-headline text-xl font-semibold group-data-[collapsed=true]/sidebar:hidden">MultiLang Learn</h1>
+            <h1 className="font-headline text-xl font-semibold group-data-[collapsed=true]/sidebar:hidden">LearnCode</h1>
           </div>
           <SidebarToggle />
         </SidebarHeader>
