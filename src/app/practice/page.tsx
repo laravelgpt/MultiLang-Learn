@@ -29,34 +29,95 @@ const practiceTopics = [
     {
         title: "JavaScript: Hello World",
         description: "A simple 'Hello World' to get started.",
-        language: "javascript",
+        language: "js",
         code: `console.log("Hello, World!");`,
     },
     {
         title: "JavaScript: Variables",
         description: "Learn how to declare and use variables.",
-        language: "javascript",
+        language: "js",
         code: `let name = "Alice";\nconst score = 95;\n\nconsole.log(name + " scored " + score + " points.");`,
     },
     {
         title: "JavaScript: Functions",
         description: "Define and call a simple function.",
-        language: "javascript",
+        language: "js",
         code: `function add(a, b) {\n  return a + b;\n}\n\nconsole.log("The sum is:", add(5, 3));`,
     },
     {
         title: "Python: User Input",
         description: "A simple example of how to take input from a user.",
-        language: "python",
+        language: "py",
         code: `name = input("Enter your name: ")\nprint("Hello, " + name)`,
     },
     {
         title: "Python: List Iteration",
         description: "Learn how to loop through a list of items.",
-        language: "python",
+        language: "py",
         code: `fruits = ["apple", "banana", "cherry"]\nfor fruit in fruits:\n  print(fruit)`,
     },
+    {
+        title: "C#: Hello World",
+        description: "A simple 'Hello World' in C#.",
+        language: "csharp",
+        code: `using System;\n\nclass Program\n{\n    static void Main(string[] args)\n    {\n        Console.WriteLine("Hello, C#!");\n    }\n}`,
+    },
+    {
+        title: "TypeScript: Interfaces",
+        description: "Define a shape of an object with an interface.",
+        language: "typescript",
+        code: `interface User {\n  name: string;\n  id: number;\n}\n\nconst user: User = {\n  name: "Jane Doe",\n  id: 1,\n};\n\nconsole.log(user.name);`,
+    },
+    {
+        title: "Go: Goroutines",
+        description: "A simple example of concurrency using Goroutines.",
+        language: "go",
+        code: `package main\n\nimport (\n    "fmt"\n    "time"\n)\n\nfunc say(s string) {\n    for i := 0; i < 3; i++ {\n        time.Sleep(100 * time.Millisecond)\n        fmt.Println(s)\n    }\n}\n\nfunc main() {\n    go say("world")\n    say("hello")\n}`,
+    },
+    {
+        title: "Ruby: Iterators",
+        description: "A simple each iterator in Ruby.",
+        language: "ruby",
+        code: `(1..5).each do |i|\n  puts "Iteration number #{i}"\nend`,
+    },
+    {
+        title: "Rust: Ownership",
+        description: "A basic example demonstrating ownership.",
+        language: "rust",
+        code: `fn main() {\n    let s1 = String::from("hello");\n    let s2 = s1;\n\n    // The next line would cause a compile error because s1's ownership was moved to s2.\n    // println!("{}, world!", s1);\n    println!("{}, world!", s2);\n}`,
+    },
+    {
+        title: "Swift: Optionals",
+        description: "Understanding optional values in Swift.",
+        language: "swift",
+        code: `var optionalString: String? = "Hello"\nprint(optionalString == nil) // false\n\nvar greeting = "Hello!"\nif let name = optionalString {\n    greeting = "Hello, \\(name)"\n}\nprint(greeting)`,
+    },
+    {
+        title: "Kotlin: Null Safety",
+        description: "Kotlin's approach to null safety.",
+        language: "kotlin",
+        code: `fun main() {\n    var a: String = "abc"\n    // a = null // Compilation error\n\n    var b: String? = "def"\n    b = null // ok\n    println(b)\n}`,
+    },
+    {
+        title: "SQL: Basic Select",
+        description: "A basic SELECT statement to query data from a table.",
+        language: "sql",
+        code: `SELECT name, email FROM users WHERE country = 'USA';`,
+    },
 ];
+
+const availableLanguages = [
+    {id: "js", name: "JavaScript"},
+    {id: "py", name: "Python"},
+    {id: "csharp", name: "C#"},
+    {id: "typescript", name: "TypeScript"},
+    {id: "go", name: "Go"},
+    {id: "ruby", name: "Ruby"},
+    {id: "rust", name: "Rust"},
+    {id: "swift", name: "Swift"},
+    {id: "kotlin", name: "Kotlin"},
+    {id: "sql", name: "SQL"},
+]
 
 type SavedSnippet = {
     id: string;
@@ -77,7 +138,7 @@ export default function PracticePage() {
     const [isRunning, setIsRunning] = useState(false);
     const [isExplaining, setIsExplaining] = useState(false);
     const [activeTab, setActiveTab] = useState("editor");
-    const [selectedLanguage, setSelectedLanguage] = useState("javascript");
+    const [selectedLanguage, setSelectedLanguage] = useState("js");
     const [currentTopic, setCurrentTopic] = useState({
         title: "Interactive Code Editor",
         description: "Select an example from the left or write your own code."
@@ -180,7 +241,7 @@ export default function PracticePage() {
             title: "Interactive Code Editor",
             description: "Select an example from the left or write your own code."
         });
-        setSelectedLanguage("javascript");
+        setSelectedLanguage("js");
         setOutput("");
         setError(null);
         setExplanation("");
@@ -334,8 +395,9 @@ export default function PracticePage() {
                                             </div>
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="javascript">JavaScript</SelectItem>
-                                            <SelectItem value="python">Python</SelectItem>
+                                            {availableLanguages.map(lang => (
+                                                <SelectItem key={lang.id} value={lang.id}>{lang.name}</SelectItem>
+                                            ))}
                                         </SelectContent>
                                     </Select>
                                     <Button onClick={handleRunCode} disabled={isRunning} className="bg-green-600 hover:bg-green-700 text-white w-[90px]">

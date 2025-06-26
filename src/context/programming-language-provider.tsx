@@ -3,7 +3,7 @@
 
 import { createContext, useState, useContext, ReactNode, useMemo } from 'react';
 
-export type LanguageId = 'all' | 'js' | 'py' | 'go' | 'rust' | 'java' | 'cpp' | 'pascal';
+export type LanguageId = 'all' | 'js' | 'py' | 'go' | 'rust' | 'java' | 'cpp' | 'pascal' | 'csharp' | 'typescript' | 'swift' | 'kotlin' | 'php' | 'ruby' | 'sql' | 'dart' | 'r' | 'elixir' | 'haskell' | 'lua' | 'perl' | 'scala' | 'bash';
 
 type ProgrammingLanguageContextType = {
   selectedLanguage: LanguageId;

@@ -26,34 +26,15 @@ import { useLanguage } from "@/context/language-provider";
 import { useProgrammingLanguage, type LanguageId } from "@/context/programming-language-provider";
 
 const programmingLanguages = [
-    {
-        id: "js",
-        name: "JavaScript",
-        progress: 65,
-        icon: "https://placehold.co/24x24.png",
-        hint: "javascript logo"
-    },
-    {
-        id: "go",
-        name: "Go",
-        progress: 25,
-        icon: "https://placehold.co/24x24.png",
-        hint: "go logo"
-    },
-    {
-        id: "py",
-        name: "Python",
-        progress: 80,
-        icon: "https://placehold.co/24x24.png",
-        hint: "python logo"
-    },
-    {
-        id: "rust",
-        name: "Rust",
-        progress: 10,
-        icon: "https://placehold.co/24x24.png",
-        hint: "rust logo"
-    },
+    { id: "js", name: "JavaScript", icon: "https://placehold.co/24x24.png", hint: "javascript logo" },
+    { id: "py", name: "Python", icon: "https://placehold.co/24x24.png", hint: "python logo" },
+    { id: "go", name: "Go", icon: "https://placehold.co/24x24.png", hint: "go logo" },
+    { id: "rust", name: "Rust", icon: "https://placehold.co/24x24.png", hint: "rust logo" },
+    { id: "csharp", name: "C#", icon: "https://placehold.co/24x24.png", hint: "csharp logo" },
+    { id: "typescript", name: "TypeScript", icon: "https://placehold.co/24x24.png", hint: "typescript logo" },
+    { id: "java", name: "Java", icon: "https://placehold.co/24x24.png", hint: "java logo" },
+    { id: "cpp", name: "C++", icon: "https://placehold.co/24x24.png", hint: "c++ logo" },
+    { id: "ruby", name: "Ruby", icon: "https://placehold.co/24x24.png", hint: "ruby logo" },
 ];
 
 const recentBadges = [
