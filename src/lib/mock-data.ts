@@ -1,4 +1,5 @@
 
+
 export type Attachment = { type: 'pdf' | 'youtube' | 'code' | 'link'; url: string };
 export type Lesson = { id: string; title: string; difficulty: 'Beginner' | 'Intermediate' | 'Advanced'; attachments: Attachment[]; content?: string; codeSnippet?: string; };
 export type Topic = { id: string; title: string; lessons: Lesson[] };
@@ -14,6 +15,168 @@ export type LanguageSummary = {
     description: string;
     progress: number;
 }
+export type Challenge = {
+    id: number;
+    title: string;
+    description: string;
+    difficulty: "Easy" | "Medium" | "Hard";
+    points: number;
+    tests: number;
+    language: string;
+};
+export type Submission = {
+    id: number;
+    challengeTitle: string;
+    language: string;
+    status: "Accepted" | "Wrong Answer";
+    date: string;
+};
+
+export const challengesData: Challenge[] = [
+    {
+        id: 1,
+        title: "Reverse a String",
+        description: "Write a function that takes a string as input and returns the string reversed. For example, 'hello' should become 'olleh'.",
+        difficulty: "Easy",
+        points: 10,
+        tests: 5,
+        language: "js",
+    },
+    {
+        id: 2,
+        title: "Palindrome Checker",
+        description: "Create a function that checks if a given string is a palindrome. A palindrome is a word that reads the same forwards and backward.",
+        difficulty: "Easy",
+        points: 15,
+        tests: 8,
+        language: "js",
+    },
+    {
+        id: 3,
+        title: "FizzBuzz",
+        description: "Implement the classic FizzBuzz problem. Print numbers from 1 to 100, but for multiples of 3 print 'Fizz' and for multiples of 5 print 'Buzz'.",
+        difficulty: "Easy",
+        points: 10,
+        tests: 3,
+        language: "py",
+    },
+     {
+        id: 4,
+        title: "Find Maximum Subarray",
+        description: "Given an array of integers, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.",
+        difficulty: "Medium",
+        points: 25,
+        tests: 12,
+        language: "py",
+    },
+    {
+        id: 5,
+        title: "Two Sum",
+        description: "Given an array of integers `nums` and an integer `target`, return indices of the two numbers such that they add up to `target`.",
+        difficulty: "Medium",
+        points: 20,
+        tests: 7,
+        language: "js",
+    },
+    {
+        id: 6,
+        title: "Valid Anagram",
+        description: "Given two strings s and t, return true if t is an anagram of s, and false otherwise. An anagram is a word formed by rearranging the letters of another.",
+        difficulty: "Medium",
+        points: 30,
+        tests: 15,
+        language: "py",
+    },
+    {
+        id: 7,
+        title: "Binary Search",
+        description: "Given a sorted array of integers, write a function that searches for a target value. If the target exists, return its index; otherwise, return -1.",
+        difficulty: "Medium",
+        points: 25,
+        tests: 10,
+        language: "java",
+    },
+    {
+        id: 8,
+        title: "Longest Common Prefix",
+        description: "Write a function to find the longest common prefix string amongst an array of strings. If there is no common prefix, return an empty string.",
+        difficulty: "Easy",
+        points: 15,
+        tests: 9,
+        language: "go",
+    },
+    {
+        id: 9,
+        title: "Linked List Cycle",
+        description: "Given a linked list, determine if it has a cycle in it. To represent a cycle, we use an integer `pos` which denotes the position.",
+        difficulty: "Hard",
+        points: 40,
+        tests: 11,
+        language: "cpp",
+    },
+    {
+        id: 10,
+        title: "Implement Queue using Stacks",
+        description: "Implement a first in, first out (FIFO) queue using only two stacks. The implemented queue should support all the functions of a normal queue.",
+        difficulty: "Hard",
+        points: 45,
+        tests: 18,
+        language: "js",
+    },
+    {
+        id: 11,
+        title: "Fibonacci Number",
+        description: "Write a function to compute the nth Fibonacci number. The Fibonacci sequence is a series of numbers where each number is the sum of the two preceding ones.",
+        difficulty: "Easy",
+        points: 10,
+        tests: 6,
+        language: "py",
+    },
+    {
+        id: 12,
+        title: "Merge Two Sorted Lists",
+        description: "Merge two sorted linked lists and return it as a new sorted list. The new list should be made by splicing together the nodes of the first two lists.",
+        difficulty: "Medium",
+        points: 30,
+        tests: 14,
+        language: "java",
+    },
+    {
+        id: 13,
+        title: "Maximum Depth of Binary Tree",
+        description: "Given the root of a binary tree, return its maximum depth. A binary tree's maximum depth is the number of nodes along the longest path.",
+        difficulty: "Easy",
+        points: 15,
+        tests: 8,
+        language: "py",
+    },
+    {
+        id: 14,
+        title: "Container With Most Water",
+        description: "You are given an integer array height of length n. There are n vertical lines drawn such that the two endpoints of the ith line are (i, 0) and (i, height[i]).",
+        difficulty: "Medium",
+        points: 35,
+        tests: 10,
+        language: "js",
+    },
+    {
+        id: 15,
+        title: "Trapping Rain Water",
+        description: "Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.",
+        difficulty: "Hard",
+        points: 50,
+        tests: 20,
+        language: "go",
+    }
+];
+
+export const submissionsData: Submission[] = [
+    { id: 1, challengeTitle: "Reverse a String", language: "js", status: "Accepted", date: "2024-07-28" },
+    { id: 2, challengeTitle: "FizzBuzz", language: "py", status: "Accepted", date: "2024-07-27" },
+    { id: 3, challengeTitle: "Two Sum", language: "js", status: "Wrong Answer", date: "2024-07-26" },
+    { id: 4, challengeTitle: "Palindrome Checker", language: "js", status: "Accepted", date: "2024-07-25" },
+];
+
 
 export let quickQuestionsData: Record<string, string[]> = {
     js: [

@@ -5,10 +5,14 @@ import {
     languagesSummaryData, 
     languagesCurriculumData, 
     quickQuestionsData,
+    challengesData,
+    submissionsData,
     type LanguageSummary, 
     type LanguageCurriculum,
     type Topic,
-    type Lesson
+    type Lesson,
+    type Challenge,
+    type Submission
 } from "@/lib/mock-data";
 
 /**
@@ -158,4 +162,18 @@ export async function deleteLesson(langId: string, topicId: string, lessonId: st
         }
     }
     return Promise.resolve();
+}
+
+// ========== Challenge Services ==========
+
+export async function getChallenges(): Promise<Challenge[]> {
+    return Promise.resolve(challengesData);
+}
+
+export async function getChallengeById(id: number): Promise<Challenge | undefined> {
+    return Promise.resolve(challengesData.find(c => c.id === id));
+}
+
+export async function getSubmissions(): Promise<Submission[]> {
+    return Promise.resolve(submissionsData);
 }
