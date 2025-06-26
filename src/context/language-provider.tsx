@@ -1,7 +1,7 @@
 
 "use client";
 
-import { createContext, useState, useContext, ReactNode, useCallback } from 'react';
+import { createContext, useState, useContext, ReactNode, useCallback, useEffect } from 'react';
 import { translations, type Language } from '@/lib/translations';
 
 type LanguageContextType = {
@@ -13,13 +13,28 @@ type LanguageContextType = {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>('en');
+  const [language, setLanguageState] = useState<Language>('en');
+
+  useEffect(() => {
+    const storedLanguage = localStorage.getItem('language') as Language;
+    if (storedLanguage && translations[storedLanguage]) {
+      setLanguageState(storedLanguage);
+    }
+  }, []);
+
+  const setLanguage = (lang: Language) => {
+    localStorage.setItem('language', lang);
+    setLanguageState(lang);
+  };
 
   const t = useCallback((key: keyof typeof translations.en, replacements: Record<string, string | number> = {}) => {
-    let translation = translations[language][key] || translations['en'][key] || key;
+    // Fallback to English if a translation is missing in the current language
+    let translation = translations[language]?.[key] || translations['en'][key] || key;
     
     Object.keys(replacements).forEach(rKey => {
-        translation = translation.replace(`{${rKey}}`, String(replacements[rKey]));
+        const replacement = replacements[rKey];
+        // Use a regex with the 'g' flag to replace all occurrences
+        translation = translation.replace(new RegExp(`\\{${rKey}\\}`, 'g'), String(replacement));
     });
 
     return translation;
