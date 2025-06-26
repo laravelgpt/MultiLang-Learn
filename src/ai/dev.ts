@@ -7,3 +7,4 @@ import '@/ai/flows/explain-code.ts';
 import '@/ai/flows/generate-image.ts';
 import '@/ai/flows/chatbot.ts';
 import '@/ai/flows/decompose-problem.ts';
+import '@/ai/flows/generate-language-topics.ts';

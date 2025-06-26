@@ -13,58 +13,102 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MoreHorizontal, PlusCircle } from "lucide-react";
+import { MoreHorizontal, PlusCircle, Loader2 } from "lucide-react";
 import Image from "next/image";
-
-const initialLanguagesData = [
-  { id: 'py', name: 'Python', icon: 'https://placehold.co/32x32.png', topics: 9, lessons: 25, popularity: 5210, difficulty: 'Beginner' },
-  { id: 'js', name: 'JavaScript', icon: 'https://placehold.co/32x32.png', topics: 6, lessons: 15, popularity: 4890, difficulty: 'Beginner' },
-  { id: 'java', name: 'Java', icon: 'https://placehold.co/32x32.png', topics: 5, lessons: 12, popularity: 3120, difficulty: 'Intermediate' },
-  { id: 'cpp', name: 'C++', icon: 'https://placehold.co/32x32.png', topics: 4, lessons: 9, popularity: 2540, difficulty: 'Advanced' },
-  { id: 'go', name: 'Go', icon: 'https://placehold.co/32x32.png', topics: 4, lessons: 8, popularity: 1980, difficulty: 'Intermediate' },
-];
-
-type Language = typeof initialLanguagesData[0];
+import { useToast } from "@/hooks/use-toast";
+import { languagesSummaryData, languagesCurriculumData, type LanguageSummary } from "@/lib/mock-data";
+import { generateLanguageTopics } from "@/ai/flows/generate-language-topics";
 
 export default function LanguagesPage() {
   const router = useRouter();
-  const [languages, setLanguages] = useState(initialLanguagesData);
+  const { toast } = useToast();
+  const [languages, setLanguages] = useState<LanguageSummary[]>(languagesSummaryData);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingLanguage, setEditingLanguage] = useState<Partial<Language> | null>(null);
+  const [editingLanguage, setEditingLanguage] = useState<Partial<LanguageSummary> | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleAddNew = () => {
     setEditingLanguage({ name: '', icon: 'https://placehold.co/32x32.png', difficulty: 'Beginner' });
     setIsDialogOpen(true);
   };
 
-  const handleEdit = (lang: Language) => {
+  const handleEdit = (lang: LanguageSummary) => {
     setEditingLanguage({ ...lang });
     setIsDialogOpen(true);
   };
 
   const handleDelete = (langId: string) => {
-    setLanguages(languages.filter(l => l.id !== langId));
+    // Note: In a real app, this would be an API call.
+    // Here we are directly mutating the imported "database".
+    const index = languagesSummaryData.findIndex(l => l.id === langId);
+    if (index > -1) {
+        languagesSummaryData.splice(index, 1);
+    }
+    delete languagesCurriculumData[langId];
+    
+    setLanguages([...languagesSummaryData]);
+    toast({
+        title: "Language Deleted",
+        description: "The language has been removed.",
+    });
   }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!editingLanguage || !editingLanguage.name) return;
+    setIsSaving(true);
 
-    if ('id' in editingLanguage && editingLanguage.id) {
-      // Editing existing language
-      setLanguages(languages.map(l => l.id === editingLanguage.id ? editingLanguage as Language : l));
-    } else {
-      // Adding new language
-      const newLanguage: Language = {
-        id: editingLanguage.name.toLowerCase().replace(/\s/g, '-'),
-        topics: 0,
-        lessons: 0,
-        popularity: 0,
-        ...editingLanguage
-      } as Language;
-      setLanguages([...languages, newLanguage]);
+    try {
+        if ('id' in editingLanguage && editingLanguage.id) {
+          // Editing existing language
+          const index = languagesSummaryData.findIndex(l => l.id === editingLanguage.id);
+          if (index > -1) {
+            languagesSummaryData[index] = editingLanguage as LanguageSummary;
+          }
+          setLanguages([...languagesSummaryData]);
+          toast({ title: "Language Updated" });
+        } else {
+          // Adding new language
+          const languageId = editingLanguage.name.toLowerCase().replace(/\s/g, '-').replace(/[^\\w-]/g, '');
+          
+          // Call AI to generate topics
+          const aiResult = await generateLanguageTopics({ languageName: editingLanguage.name });
+
+          const newLanguageSummary: LanguageSummary = {
+            id: languageId,
+            topics: aiResult.topics.length,
+            lessons: 0, // No lessons initially
+            popularity: 0,
+            ...editingLanguage
+          } as LanguageSummary;
+          
+          const newLanguageCurriculum = {
+              name: newLanguageSummary.name,
+              topics: aiResult.topics.map((t, index) => ({
+                  id: `t${Date.now()}${index}`,
+                  title: t.title,
+                  lessons: []
+              }))
+          };
+
+          // Update our mock "database"
+          languagesSummaryData.push(newLanguageSummary);
+          languagesCurriculumData[languageId] = newLanguageCurriculum;
+
+          setLanguages([...languagesSummaryData]);
+          toast({ title: "Language Added", description: `${editingLanguage.name} was added with ${aiResult.topics.length} starter topics.` });
+        }
+    } catch (error) {
+        console.error("Failed to save language:", error);
+        toast({
+            title: "Error",
+            description: "Could not save the language. Please try again.",
+            variant: "destructive",
+        });
+    } finally {
+        setIsSaving(false);
+        setIsDialogOpen(false);
+        setEditingLanguage(null);
     }
-    setIsDialogOpen(false);
-    setEditingLanguage(null);
   };
   
   return (
@@ -144,7 +188,7 @@ export default function LanguagesPage() {
           <DialogHeader>
             <DialogTitle>{editingLanguage?.id ? 'Edit Language' : 'Add New Language'}</DialogTitle>
             <DialogDescription>
-              {editingLanguage?.id ? 'Update the details of this language.' : 'Add a new programming language to the platform.'}
+              {editingLanguage?.id ? 'Update the details of this language.' : 'Add a new language. Starter topics will be generated by AI.'}
             </DialogDescription>
           </DialogHeader>
           {editingLanguage && (
@@ -159,7 +203,7 @@ export default function LanguagesPage() {
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="difficulty" className="text-right">Difficulty</Label>
-                <Select value={editingLanguage.difficulty} onValueChange={(value) => setEditingLanguage({...editingLanguage, difficulty: value as Language['difficulty']})}>
+                <Select value={editingLanguage.difficulty} onValueChange={(value) => setEditingLanguage({...editingLanguage, difficulty: value as LanguageSummary['difficulty']})}>
                   <SelectTrigger className="col-span-3">
                     <SelectValue placeholder="Select difficulty" />
                   </SelectTrigger>
@@ -174,9 +218,12 @@ export default function LanguagesPage() {
           )}
           <DialogFooter>
             <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
+                <Button variant="outline" disabled={isSaving}>Cancel</Button>
             </DialogClose>
-            <Button onClick={handleSave}>Save changes</Button>
+            <Button onClick={handleSave} disabled={isSaving}>
+                {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isSaving ? "Saving..." : "Save changes"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
