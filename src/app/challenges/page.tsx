@@ -10,6 +10,7 @@ import { Trophy, Star, CircleDot, ArrowRight, Calendar } from 'lucide-react';
 import { useLanguage } from "@/context/language-provider";
 import { useProgrammingLanguage } from "@/context/programming-language-provider";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { format } from 'date-fns';
 
 const challengesData = [
     {
@@ -161,8 +162,10 @@ export default function ChallengesPage() {
     const { t } = useLanguage();
     const { selectedLanguage } = useProgrammingLanguage();
     const [dailyChallenge, setDailyChallenge] = useState<typeof challengesData[0] | null>(null);
+    const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
+        setIsClient(true);
         const dayOfYear = Math.floor((new Date().getTime() - new Date(new Date().getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
         const challengeIndex = dayOfYear % challengesData.length;
         setDailyChallenge(challengesData[challengeIndex]);
@@ -235,7 +238,7 @@ export default function ChallengesPage() {
                     </div>
                 </TabsContent>
                  <TabsContent value="daily-challenge" className="mt-6">
-                    {dailyChallenge ? (
+                    {isClient && dailyChallenge ? (
                          <Card className="bg-gradient-to-br from-primary/10 to-background">
                             <CardHeader>
                                 <div className="flex justify-between items-center">
@@ -243,7 +246,7 @@ export default function ChallengesPage() {
                                         <Calendar className="h-5 w-5" />
                                         <CardTitle className="text-2xl font-headline">{t('daily_challenge_title')}</CardTitle>
                                     </div>
-                                    <Badge variant="outline">{new Date().toLocaleDateString(undefined, { month: 'long', day: 'numeric' })}</Badge>
+                                    <Badge variant="outline">{format(new Date(), 'MMMM d')}</Badge>
                                 </div>
                                 <CardDescription>{t('daily_challenge_desc')}</CardDescription>
                             </CardHeader>
