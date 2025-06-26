@@ -224,10 +224,10 @@ export default function LanguagesPage() {
                   id="quick-questions-count"
                   name="quickQuestionsCount"
                   type="number"
-                  defaultValue={3}
+                  defaultValue={10}
                   className="col-span-3"
-                  min="3"
-                  max="5"
+                  min="10"
+                  max="100"
                   required
                 />
               </div>

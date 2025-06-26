@@ -19,42 +19,58 @@ export let quickQuestionsData: Record<string, string[]> = {
     js: [
         "What is the difference between `let`, `const`, and `var`?",
         "Explain closures in JavaScript.",
-        "Show an example of an async/await function."
+        "Show an example of an async/await function.",
+        "What is the event loop?",
+        "Explain prototypes in JS."
     ],
     py: [
         "What are decorators in Python?",
         "Explain list comprehensions with an example.",
-        "How does garbage collection work in Python?"
+        "How does garbage collection work in Python?",
+        "What are Python's data models?",
+        "Difference between a list and a tuple?"
     ],
     go: [
         "What is a goroutine?",
         "Explain the difference between a slice and an array.",
-        "How do channels work in Go?"
+        "How do channels work in Go?",
+        "What is the `defer` statement used for?",
+        "Explain interfaces in Go."
     ],
     java: [
         "What is the difference between an interface and an abstract class?",
         "Explain the Java Virtual Machine (JVM).",
-        "Show an example of exception handling."
+        "Show an example of exception handling.",
+        "What are Java Generics?",
+        "What is the difference between `==` and `.equals()`?"
     ],
     csharp: [
         "What is the purpose of LINQ?",
         "Explain the difference between `struct` and `class`.",
-        "Show an example of using `async` and `await` in C#."
+        "Show an example of using `async` and `await` in C#.",
+        "What is the .NET Common Language Runtime (CLR)?",
+        "How does garbage collection work in .NET?"
     ],
     typescript: [
         "What are generics in TypeScript?",
         "Explain the difference between an `interface` and a `type`.",
-        "What is a `never` type?"
+        "What is a `never` type?",
+        "How do you use utility types like `Partial` and `Pick`?",
+        "What are decorators in TypeScript?"
     ],
     cpp: [
         "Explain pointers vs. references in C++.",
         "What is RAII (Resource Acquisition Is Initialization)?",
-        "Show an example of a simple class with a constructor."
+        "Show an example of a simple class with a constructor.",
+        "What is the difference between `new`/`delete` and `malloc`/`free`?",
+        "Explain virtual functions and polymorphism."
     ],
     rust: [
         "What is the borrow checker?",
         "Explain ownership in Rust.",
-        "Show an example of using the `match` control flow operator."
+        "Show an example of using the `match` control flow operator.",
+        "What are traits in Rust?",
+        "Explain lifetimes in Rust."
     ]
 };
 
@@ -80,7 +96,7 @@ const generateLessonsForTopic = (langId: string, topicTitle: string, topicIndex:
             title: title,
             difficulty: difficulty,
             attachments: [],
-            content: `Content for ${title} is coming soon.`,
+            content: `Content for ${title} is coming soon. This lesson covers the essentials of ${topicTitle}, providing a foundational understanding. We will explore key concepts through clear explanations and practical examples. By the end of this lesson, you will be able to apply these principles in your own projects.`,
             codeSnippet: `// Code for ${title}\nconsole.log("Hello, ${topicTitle}!");`
         };
     });

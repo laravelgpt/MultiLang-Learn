@@ -22,7 +22,7 @@ const languageSchema = z.object({
     difficulty: z.enum(['Beginner', 'Intermediate', 'Advanced']),
     topicCount: z.coerce.number().min(10).max(20),
     lessonCount: z.coerce.number().min(10).max(100),
-    quickQuestionsCount: z.coerce.number().min(3).max(5),
+    quickQuestionsCount: z.coerce.number().min(10).max(100),
 });
 
 export async function addLanguageAction(formData: FormData) {
