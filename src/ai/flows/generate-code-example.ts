@@ -31,20 +31,21 @@ const prompt = ai.definePrompt({
   name: 'generateCodeExamplePrompt',
   input: {schema: GenerateCodeExampleInputSchema},
   output: {schema: GenerateCodeExampleOutputSchema},
-  prompt: `You are an expert programming instructor who creates educational code examples.
-Your task is to generate a code snippet in '{{language}}' that contains a common, non-obvious error corresponding to a '{{difficulty}}' difficulty level.
+  prompt: `You are an expert programming instructor who creates educational code examples with deliberate errors.
+Your task is to generate a code snippet in '{{language}}' that **absolutely must contain one single, common, non-obvious error** corresponding to a '{{difficulty}}' difficulty level.
 
-The code must be runnable but produce an incorrect result or a runtime error.
-Do not add comments explaining the error in the code itself. The purpose is for the user to find and fix it.
+It is critical that the code has an error. The code should look correct at a glance but produce an incorrect result or a runtime error when executed.
+Do not add any comments explaining the error in the code itself. The purpose is for the user to find and fix it.
+The error should be something a learner at the specified difficulty level could reasonably be expected to identify and fix.
 
 Difficulty Guide:
-- Easy: Simple syntax errors (e.g., missing parenthesis, typo in a variable name).
-- Medium: Common logical errors (e.g., off-by-one, incorrect loop condition, misunderstanding 'this' context).
-- Hard: More complex logical errors (e.g., uncontrolled recursion, mutation of state in functional contexts).
-- Heavy Hard: Subtle, advanced errors (e.g., race conditions, floating point imprecision, closure issues in loops).
+- Easy: Simple syntax errors (e.g., missing parenthesis, typo in a variable name, incorrect operator).
+- Medium: Common logical errors (e.g., off-by-one, incorrect loop condition, misunderstanding 'this' context, scope issues).
+- Hard: More complex logical errors (e.g., uncontrolled recursion, mutation of state in functional contexts, incorrect asynchronous logic).
+- Heavy Hard: Subtle, advanced errors (e.g., race conditions, floating point imprecision, closure issues in loops, memory leaks).
 
 Generate a code example for the language '{{language}}' with '{{difficulty}}' difficulty.
-Provide a title and a one-sentence description for the example.`,
+Provide a concise title and a one-sentence description for the example.`,
 });
 
 const generateCodeExampleFlow = ai.defineFlow(
