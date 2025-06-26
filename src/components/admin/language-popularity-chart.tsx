@@ -1,10 +1,11 @@
+
 "use client"
 
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "@/components/ui/chart"
 
-const chartData = [
+export const languagePopularityData = [
   { language: "Python", users: 5210 },
   { language: "JavaScript", users: 4890 },
   { language: "Java", users: 3120 },
@@ -29,7 +30,7 @@ export function LanguagePopularityChart() {
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
-          <BarChart accessibilityLayer data={chartData}>
+          <BarChart accessibilityLayer data={languagePopularityData}>
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="language"
