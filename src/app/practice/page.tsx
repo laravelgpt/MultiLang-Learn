@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -32,7 +33,7 @@ console.log("Is student?", isStudent);`
         tag: "javascript",
         code: `// Function Declaration
 function greet(name) {
-  return \`Hello, \${name}!\`;
+  return 'Hello, ' + name + '!';
 }
 
 // Function Expression
@@ -65,7 +66,7 @@ const initialCode = `// Welcome to the Practice Zone!
 // Try writing some code and run it to see the output
 
 function greetUser(name) {
-  return \`Hello, \${name}! Welcome to LearnCode.\`;
+  return 'Hello, ' + name + '! Welcome to LearnCode.';
 }
 
 // Test the function
