@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -73,6 +73,10 @@ export default function PracticePage() {
         description: "Select an example from the left or write your own code."
     });
     const workerRef = useRef<Worker | null>(null);
+
+    const filteredTopics = useMemo(() => {
+        return practiceTopics.filter(topic => topic.language === selectedLanguage);
+    }, [selectedLanguage]);
 
     const parseLineNumber = (stack: string): number | null => {
         const match = /<anonymous>:(\d+):/.exec(stack);
@@ -189,7 +193,7 @@ export default function PracticePage() {
                             <CardDescription>Select a topic to load it into the editor and try it yourself.</CardDescription>
                         </CardHeader>
                         <CardContent className="flex flex-col gap-3">
-                            {practiceTopics.map((example) => (
+                            {filteredTopics.map((example) => (
                                 <button
                                     key={example.title}
                                     onClick={() => handleLoadExample(example)}
@@ -199,6 +203,11 @@ export default function PracticePage() {
                                     <p className="text-sm text-muted-foreground">{example.description}</p>
                                 </button>
                             ))}
+                            {filteredTopics.length === 0 && (
+                                <p className="text-sm text-muted-foreground text-center py-4">
+                                    No practice topics available for this language yet.
+                                </p>
+                            )}
                         </CardContent>
                     </Card>
                 </div>
@@ -221,7 +230,7 @@ export default function PracticePage() {
                                     <Select value={selectedLanguage} onValueChange={(val) => setSelectedLanguage(val)}>
                                         <SelectTrigger className="w-[180px]">
                                             <div className='flex items-center gap-2'>
-                                                <Image src="https://placehold.co/16x16.png" width={16} height={16} alt="JS" data-ai-hint="javascript logo" />
+                                                <Image src={`https://placehold.co/16x16.png`} width={16} height={16} alt={selectedLanguage} data-ai-hint={`${selectedLanguage} logo`} />
                                                 <SelectValue placeholder={t('language')} />
                                             </div>
                                         </SelectTrigger>
@@ -313,3 +322,4 @@ export default function PracticePage() {
             </div>
         </>
     );
+}

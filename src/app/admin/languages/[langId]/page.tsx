@@ -12,11 +12,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { MoreVertical, PlusCircle, Edit, Trash2, FileText, Youtube, Code, Link as LinkIcon, ArrowLeft } from "lucide-react";
+import { MoreVertical, PlusCircle, Edit, Trash2, FileText, Youtube, Code, Link as LinkIcon, ArrowLeft, BrainCircuit, Loader2 } from "lucide-react";
 import Link from 'next/link';
 import { getLanguageCurriculum } from "@/services/languageService";
 import type { Topic, Lesson, Attachment, LanguageCurriculum } from "@/lib/mock-data";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
+import { generateTopicsAction } from "@/actions/languageActions";
 
 const AttachmentIcon = ({ type }: { type: Attachment['type'] }) => {
   switch (type) {
@@ -29,26 +31,12 @@ const AttachmentIcon = ({ type }: { type: Attachment['type'] }) => {
 };
 
 export default function LanguageTopicsPage({ params }: { params: { langId: string } }) {
+  const { toast } = useToast();
   const [language, setLanguage] = useState<LanguageCurriculum | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchLanguage() {
-      setIsLoading(true);
-      const curriculum = await getLanguageCurriculum(params.langId);
-      setLanguage(curriculum);
-      setIsLoading(false);
-    }
-    fetchLanguage();
-  }, [params.langId]);
-  
-  // MOCK handlers - in a real app, these would be server actions
   const [topics, setTopics] = useState<Topic[]>([]);
-  useEffect(() => {
-    if (language) setTopics(language.topics);
-  }, [language]);
-
-
+  
   const [isTopicDialogOpen, setTopicDialogOpen] = useState(false);
   const [editingTopic, setEditingTopic] = useState<Partial<Topic> | null>(null);
   
@@ -56,6 +44,23 @@ export default function LanguageTopicsPage({ params }: { params: { langId: strin
   const [editingLesson, setEditingLesson] = useState<Partial<Lesson> | null>(null);
   const [currentTopicId, setCurrentTopicId] = useState<string | null>(null);
 
+  const [isAiDialogOpen, setAiDialogOpen] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const fetchLanguage = async () => {
+    setIsLoading(true);
+    const curriculum = await getLanguageCurriculum(params.langId);
+    setLanguage(curriculum);
+    if (curriculum) {
+        setTopics(curriculum.topics);
+    }
+    setIsLoading(false);
+  }
+
+  useEffect(() => {
+    fetchLanguage();
+  }, [params.langId]);
+  
   // Topic Handlers
   const handleAddNewTopic = () => {
     setEditingTopic({ title: '' });
@@ -130,6 +135,24 @@ export default function LanguageTopicsPage({ params }: { params: { langId: strin
     setCurrentTopicId(null);
   };
   
+  const handleAiFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsGenerating(true);
+
+    const formData = new FormData(event.currentTarget);
+    const result = await generateTopicsAction(formData);
+
+    if (result?.error) {
+        toast({ title: "Error", description: result.error, variant: "destructive" });
+    } else if (result?.success) {
+        toast({ title: "Topics Generated", description: result.message });
+        await fetchLanguage(); // Re-fetch data
+        setAiDialogOpen(false);
+    }
+    
+    setIsGenerating(false);
+  };
+
   if (isLoading) {
     return (
       <>
@@ -157,17 +180,20 @@ export default function LanguageTopicsPage({ params }: { params: { langId: strin
      )
   }
 
-
   return (
     <>
       <PageHeader title={`Manage: ${language.name}`}>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           <Button variant="outline" asChild>
-            <Link href="/admin/languages"><ArrowLeft className="mr-2 h-4 w-4" /> Back to Languages</Link>
+            <Link href="/admin/languages"><ArrowLeft className="mr-2 h-4 w-4" /> Back</Link>
           </Button>
           <Button onClick={handleAddNewTopic}>
             <PlusCircle className="mr-2 h-4 w-4" />
-            Add New Topic
+            Add Topic
+          </Button>
+           <Button onClick={() => setAiDialogOpen(true)}>
+            <BrainCircuit className="mr-2 h-4 w-4" />
+            Generate with AI
           </Button>
         </div>
       </PageHeader>
@@ -302,6 +328,46 @@ export default function LanguageTopicsPage({ params }: { params: { langId: strin
             <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
             <Button onClick={handleSaveLesson}>Save Lesson</Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+       {/* AI Topic Generation Dialog */}
+      <Dialog open={isAiDialogOpen} onOpenChange={setAiDialogOpen}>
+        <DialogContent>
+          <form onSubmit={handleAiFormSubmit}>
+            <DialogHeader>
+              <DialogTitle>Generate Topics with AI</DialogTitle>
+              <DialogDescription>
+                Automatically generate a set of starter topics for {language.name}.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <input type="hidden" name="langId" value={params.langId} />
+              <input type="hidden" name="languageName" value={language.name} />
+              <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="topic-count" className="text-right">Topics</Label>
+                  <Input
+                    id="topic-count"
+                    name="topicCount"
+                    type="number"
+                    defaultValue={5}
+                    className="col-span-3"
+                    min="1"
+                    max="10"
+                    required
+                  />
+              </div>
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                  <Button type="button" variant="outline" disabled={isGenerating}>Cancel</Button>
+              </DialogClose>
+              <Button type="submit" disabled={isGenerating}>
+                  {isGenerating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {isGenerating ? "Generating..." : "Generate Topics"}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </>

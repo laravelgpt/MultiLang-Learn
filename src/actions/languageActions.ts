@@ -8,7 +8,8 @@ import {
     addLanguageSummary, 
     addLanguageCurriculum,
     deleteLanguageSummary,
-    deleteLanguageCurriculum
+    deleteLanguageCurriculum,
+    addTopic,
 } from '@/services/languageService';
 import type { LanguageSummary, LanguageCurriculum } from '@/lib/mock-data';
 
@@ -100,5 +101,53 @@ export async function deleteLanguageAction(langId: string) {
     } catch (error) {
         console.error("Failed to delete language:", error);
         return { error: "An unexpected error occurred." };
+    }
+}
+
+const generateTopicsSchema = z.object({
+    langId: z.string(),
+    languageName: z.string(),
+    topicCount: z.coerce.number().min(1).max(10),
+});
+
+export async function generateTopicsAction(formData: FormData) {
+    const validatedFields = generateTopicsSchema.safeParse({
+        langId: formData.get('langId'),
+        languageName: formData.get('languageName'),
+        topicCount: formData.get('topicCount'),
+    });
+
+    if (!validatedFields.success) {
+        return { error: "Invalid input." };
+    }
+
+    const { langId, languageName, topicCount } = validatedFields.data;
+
+    try {
+        const aiResult = await generateLanguageTopics({ 
+            languageName,
+            topicCount,
+        });
+
+        if (!aiResult || !aiResult.topics) {
+            throw new Error("AI topic generation failed.");
+        }
+
+        for (const topic of aiResult.topics) {
+            await addTopic(langId, { title: topic.title });
+        }
+
+        revalidatePath(`/admin/languages/${langId}`);
+        
+        return {
+            success: true,
+            message: `${aiResult.topics.length} topics were generated for ${languageName}.`,
+        }
+
+    } catch (error) {
+        console.error("Failed to generate topics:", error);
+        return {
+            error: "Could not generate topics for the language.",
+        };
     }
 }
