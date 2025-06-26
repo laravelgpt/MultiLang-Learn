@@ -26,132 +26,64 @@ const decomposerFormSchema = z.object({
   problemStatement: z.string().min(10, { message: "Problem statement must be at least 10 characters." }),
 });
 
-const buggyCodeExamples = [
-    // Easy
-    {
-        title: "Missing Parenthesis",
-        description: "A simple syntax error where a closing parenthesis is missing.",
-        tag: "javascript",
-        difficulty: "Easy",
-        code: `function greet(name) {
-  console.log("Hello, " + name;
-}
-greet("World");`
-    },
-    {
-        title: "Incorrect Loop Condition",
-        description: "A classic off-by-one error that attempts to access an index out of bounds.",
-        tag: "javascript",
-        difficulty: "Easy",
-        code: `const fruits = ["Apple", "Banana", "Cherry"];
-for (let i = 0; i <= fruits.length; i++) {
-  console.log(fruits[i]);
-}`
-    },
-    // Medium
-    {
-        title: "Misunderstanding 'this'",
-        description: "Incorrect usage of 'this' inside a callback function, leading to lost context.",
-        tag: "javascript",
-        difficulty: "Medium",
-        code: `const person = {
-  name: "John",
-  greet: function() {
-    console.log("Hi, I am " + this.name);
-    setTimeout(function() {
-      // 'this' here refers to the global object (or is undefined in strict mode), not 'person'.
-      console.log("After 1 second, my name is " + this.name);
-    }, 1000);
-  }
+const errorExamplesByDifficulty = {
+    Easy: [
+        {
+            title: "Missing Parenthesis",
+            description: "A simple syntax error where a closing parenthesis is missing.",
+            tag: "javascript",
+            code: `function greet(name) {\n  console.log("Hello, " + name;\n}\ngreet("World");`
+        },
+        {
+            title: "Incorrect Loop Condition",
+            description: "A classic off-by-one error that attempts to access an index out of bounds.",
+            tag: "javascript",
+            code: `const fruits = ["Apple", "Banana", "Cherry"];\nfor (let i = 0; i <= fruits.length; i++) {\n  console.log(fruits[i]);\n}`
+        },
+    ],
+    Medium: [
+        {
+            title: "Misunderstanding 'this'",
+            description: "Incorrect usage of 'this' inside a callback function, leading to lost context.",
+            tag: "javascript",
+            code: `const person = {\n  name: "John",\n  greet: function() {\n    console.log("Hi, I am " + this.name);\n    setTimeout(function() {\n      // 'this' here refers to the global object (or is undefined in strict mode), not 'person'.\n      console.log("After 1 second, my name is " + this.name);\n    }, 1000);\n  }\n};\nperson.greet();`
+        },
+        {
+            title: "Forgetting to Await",
+            description: "Calling an async function without 'await' can lead to race conditions or incorrect data.",
+            tag: "javascript",
+            code: `async function fetchData() {\n    return new Promise(resolve => setTimeout(() => resolve("Data fetched!"), 500));\n}\n\nasync function process() {\n    const data = fetchData(); // Forgot to await the promise\n    console.log(data); // This will log the Promise object, not the resolved value "Data fetched!"\n}\n\nprocess();`
+        },
+    ],
+    Hard: [
+        {
+            title: "Uncontrolled Recursion",
+            description: "A recursive function without a proper base case, leading to a stack overflow.",
+            tag: "javascript",
+            code: `function countDown(number) {\n  console.log(number);\n  // The base case is missing, so it will count down indefinitely.\n  countDown(number - 1);\n}\n\ncountDown(5);`
+        },
+        {
+            title: "State Mutation in React",
+            description: "Directly mutating state in React doesn't trigger re-renders and is an anti-pattern.",
+            tag: "react",
+            code: `import { useState } from 'react';\n\nfunction Counter() {\n  const [user, setUser] = useState({ name: 'Bob', age: 30 });\n\n  function handleAgeIncrease() {\n    // This is a direct mutation. React won't detect this change.\n    user.age += 1;\n    setUser(user); // The object reference is the same, so no re-render\n    console.log(user.age);\n  }\n\n  return (\n    <div>\n      <p>{user.name} is {user.age} years old.</p>\n      <button onClick={handleAgeIncrease}>Get Older</button>\n    </div>\n  );\n}`
+        },
+    ],
+    "Heavy Hard": [
+        {
+            title: "Race Condition with Closures",
+            description: "A subtle race condition where multiple async operations close over the same loop variable.",
+            tag: "javascript",
+            code: `// Goal: Log 0, 1, 2, 3, 4 each after a delay.\n// Problem: By the time setTimeout callbacks run, the loop has finished and 'i' is 5.\nfor (var i = 0; i < 5; i++) {\n  setTimeout(function() {\n    console.log(i); // Logs '5' five times.\n  }, i * 100);\n}\n\n// How would you fix this to log 0, 1, 2, 3, 4?`
+        },
+        {
+            title: "Floating Point Imprecision",
+            description: "A classic computer science problem where floating point math leads to unexpected results.",
+            tag: "javascript",
+            code: `const value1 = 0.1;\nconst value2 = 0.2;\nconst result = value1 + value2;\n\nconsole.log(result); // Outputs 0.30000000000000004\nconsole.log(result === 0.3); // Outputs false\n\n// Why does this happen and how can you reliably compare floating point numbers?`
+        }
+    ]
 };
-person.greet();`
-    },
-    {
-        title: "Forgetting to Await",
-        description: "Calling an async function without 'await' can lead to race conditions or incorrect data.",
-        tag: "javascript",
-        difficulty: "Medium",
-        code: `async function fetchData() {
-    return new Promise(resolve => setTimeout(() => resolve("Data fetched!"), 500));
-}
-
-async function process() {
-    const data = fetchData(); // Forgot to await the promise
-    console.log(data); // This will log the Promise object, not the resolved value "Data fetched!"
-}
-
-process();`
-    },
-    // Hard
-    {
-        title: "Uncontrolled Recursion",
-        description: "A recursive function without a proper base case, leading to a stack overflow.",
-        tag: "javascript",
-        difficulty: "Hard",
-        code: `function countDown(number) {
-  console.log(number);
-  // The base case is missing, so it will count down indefinitely.
-  countDown(number - 1);
-}
-
-countDown(5);`
-    },
-    {
-        title: "State Mutation in React",
-        description: "Directly mutating state in React doesn't trigger re-renders and is an anti-pattern.",
-        tag: "react",
-        difficulty: "Hard",
-        code: `import { useState } from 'react';
-
-function Counter() {
-  const [user, setUser] = useState({ name: 'Bob', age: 30 });
-
-  function handleAgeIncrease() {
-    // This is a direct mutation. React won't detect this change.
-    user.age += 1;
-    setUser(user); // The object reference is the same, so no re-render
-    console.log(user.age);
-  }
-
-  return (
-    <div>
-      <p>{user.name} is {user.age} years old.</p>
-      <button onClick={handleAgeIncrease}>Get Older</button>
-    </div>
-  );
-}`
-    },
-    // Heavy Hard
-    {
-        title: "Race Condition with Closures",
-        description: "A subtle race condition where multiple async operations close over the same loop variable.",
-        tag: "javascript",
-        difficulty: "Heavy Hard",
-        code: `// Goal: Log 0, 1, 2, 3, 4 each after a delay.
-// Problem: By the time setTimeout callbacks run, the loop has finished and 'i' is 5.
-for (var i = 0; i < 5; i++) {
-  setTimeout(function() {
-    console.log(i); // Logs '5' five times.
-  }, i * 100);
-}
-
-// How would you fix this to log 0, 1, 2, 3, 4?`
-    },
-    {
-        title: "Floating Point Imprecision",
-        description: "A classic computer science problem where floating point math leads to unexpected results.",
-        tag: "javascript",
-        difficulty: "Heavy Hard",
-        code: `const value1 = 0.1;
-const value2 = 0.2;
-const result = value1 + value2;
-
-console.log(result); // Outputs 0.30000000000000004
-console.log(result === 0.3); // Outputs false
-
-// Why does this happen and how can you reliably compare floating point numbers?`
-    }
-];
 
 
 const ProblemDecomposer = () => {
@@ -278,7 +210,7 @@ const ProblemDecomposer = () => {
 const CodeExplainer = () => {
     const { t } = useLanguage();
     const { toast } = useToast();
-    const [code, setCode] = useState('// Click an example on the left to load it here');
+    const [code, setCode] = useState('// Click a category on the left to load a random error example');
     const [output, setOutput] = useState("");
     const [suggestion, setSuggestion] = useState("");
     const [isRunning, setIsRunning] = useState(false);
@@ -314,11 +246,15 @@ const CodeExplainer = () => {
         workerRef.current.postMessage({ code });
     };
 
-    const handleExampleClick = (exampleCode: string) => {
-        setCode(exampleCode);
-        setOutput("");
-        setSuggestion("");
-        setActiveTab("editor");
+    const handleCategoryClick = (difficulty: keyof typeof errorExamplesByDifficulty) => {
+        const examples = errorExamplesByDifficulty[difficulty];
+        if (examples && examples.length > 0) {
+            const randomIndex = Math.floor(Math.random() * examples.length);
+            setCode(examples[randomIndex].code);
+            setOutput("");
+            setSuggestion("");
+            setActiveTab("editor");
+        }
     };
 
     const handleGetSuggestion = async () => {
@@ -345,22 +281,22 @@ const CodeExplainer = () => {
          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start mt-6">
             <div className="lg:col-span-1 space-y-4">
                 <h2 className="text-xl font-bold flex items-center gap-2"><FileCode className="h-5 w-5" /> {t('error_examples')}</h2>
-                {buggyCodeExamples.map((example, index) => (
-                    <Card key={index} className="cursor-pointer hover:border-primary" onClick={() => handleExampleClick(example.code)}>
+                {Object.entries(errorExamplesByDifficulty).map(([difficulty, examples]) => (
+                     <Card key={difficulty} className="cursor-pointer hover:border-primary" onClick={() => handleCategoryClick(difficulty as keyof typeof errorExamplesByDifficulty)}>
                         <CardHeader>
                             <div className="flex justify-between items-start gap-2">
-                                <CardTitle className="text-lg">{example.title}</CardTitle>
+                                <CardTitle className="text-lg">{difficulty}</CardTitle>
                                 <Badge variant={
-                                    example.difficulty === 'Easy' ? 'secondary' :
-                                    example.difficulty === 'Medium' ? 'outline' :
-                                    example.difficulty === 'Hard' ? 'default' :
+                                    difficulty === 'Easy' ? 'secondary' :
+                                    difficulty === 'Medium' ? 'outline' :
+                                    difficulty === 'Hard' ? 'default' :
                                     'destructive'
-                                }>{example.difficulty}</Badge>
+                                }>{difficulty}</Badge>
                             </div>
-                            <CardDescription>{example.description}</CardDescription>
+                            <CardDescription>Click to load a random '{difficulty}' example.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <Badge variant="outline">{example.tag}</Badge>
+                            <Badge variant="outline">{examples.length} examples available</Badge>
                         </CardContent>
                     </Card>
                 ))}
