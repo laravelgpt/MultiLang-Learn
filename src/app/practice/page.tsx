@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -98,7 +97,7 @@ export default function PracticePage() {
           eval(code);
           setOutput(capturedOutput || "Code executed successfully with no output.");
         } catch (error: any) {
-          setOutput(\`Error: \${error.message}\`);
+          setOutput(`Error: ${error.message}`);
         } finally {
           console.log = originalLog;
         }

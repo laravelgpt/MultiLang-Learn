@@ -1,9 +1,8 @@
-
 "use client";
 
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
@@ -12,26 +11,56 @@ import { Trophy, Star, CircleDot, Code, Bot, Save } from 'lucide-react';
 const challenges = [
     {
         id: 1,
-        description: "Dynamic programming language for web development",
-        difficulty: "beginner",
-        points: 0,
-        tests: 0,
+        title: "Reverse a String",
+        description: "Write a function that takes a string as input and returns the string reversed. For example, 'hello' should become 'olleh'.",
+        difficulty: "Easy",
+        points: 10,
+        tests: 5,
         language: "javascript",
     },
     {
         id: 2,
-        description: "Educational programming language",
-        difficulty: "beginner",
-        points: 0,
-        tests: 0,
+        title: "Palindrome Checker",
+        description: "Create a function that checks if a given string is a palindrome. A palindrome is a word that reads the same forwards and backward.",
+        difficulty: "Easy",
+        points: 15,
+        tests: 8,
         language: "javascript",
     },
     {
         id: 3,
-        description: "Versatile language for data science and web development",
-        difficulty: "beginner",
-        points: 0,
-        tests: 0,
+        title: "FizzBuzz",
+        description: "Implement the classic FizzBuzz problem. Print numbers from 1 to 100, but for multiples of 3 print 'Fizz' and for multiples of 5 print 'Buzz'.",
+        difficulty: "Easy",
+        points: 10,
+        tests: 3,
+        language: "python",
+    },
+     {
+        id: 4,
+        title: "Find Maximum Subarray",
+        description: "Given an array of integers, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.",
+        difficulty: "Medium",
+        points: 25,
+        tests: 12,
+        language: "python",
+    },
+    {
+        id: 5,
+        title: "Two Sum",
+        description: "Given an array of integers `nums` and an integer `target`, return indices of the two numbers such that they add up to `target`.",
+        difficulty: "Medium",
+        points: 20,
+        tests: 7,
+        language: "javascript",
+    },
+    {
+        id: 6,
+        title: "Valid Anagram",
+        description: "Given two strings s and t, return true if t is an anagram of s, and false otherwise. An anagram is a word formed by rearranging the letters of another.",
+        difficulty: "Hard",
+        points: 30,
+        tests: 15,
         language: "python",
     },
 ];
@@ -78,15 +107,19 @@ export default function ChallengesPage() {
                              <Card key={challenge.id} className="flex flex-col hover:shadow-lg transition-shadow cursor-pointer">
                                 <CardHeader className="pb-4">
                                     <div className="flex justify-between items-center">
-                                        <Badge variant={challenge.difficulty === 'beginner' ? 'secondary' : 'outline'}>{challenge.difficulty}</Badge>
+                                        <Badge variant={
+                                            challenge.difficulty === 'Easy' ? 'secondary' :
+                                            challenge.difficulty === 'Medium' ? 'outline' : 'default'
+                                        }>{challenge.difficulty}</Badge>
                                         <div className="flex items-center gap-1.5 text-yellow-500">
                                             <Star className="h-4 w-4 fill-current" />
-                                            <span className="font-semibold text-sm text-muted-foreground">pts</span>
+                                            <span className="font-semibold text-sm text-muted-foreground">{challenge.points} pts</span>
                                         </div>
                                     </div>
+                                    <CardTitle className="pt-4 text-lg">{challenge.title}</CardTitle>
                                 </CardHeader>
-                                <CardContent className="flex flex-col flex-grow p-6 pt-2">
-                                  <p className="flex-grow text-base">{challenge.description}</p>
+                                <CardContent className="flex flex-col flex-grow p-6 pt-0">
+                                  <p className="flex-grow text-sm text-muted-foreground">{challenge.description}</p>
                                   <div className="flex items-center gap-2 text-sm text-muted-foreground mt-4">
                                       <CircleDot className="h-4 w-4" />
                                       <span>{challenge.tests} tests</span>
