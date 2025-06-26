@@ -174,6 +174,13 @@ export default function ChallengesPage() {
         }
         return challengesData.filter(challenge => challenge.language === selectedLanguage);
     }, [selectedLanguage]);
+    
+    const filteredSubmissions = useMemo(() => {
+        if (selectedLanguage === 'all') {
+            return submissionsData;
+        }
+        return submissionsData.filter(sub => sub.language === selectedLanguage);
+    }, [selectedLanguage]);
 
     return (
         <div className="relative flex flex-col gap-6 min-h-[calc(100vh-150px)]">
@@ -287,7 +294,7 @@ export default function ChallengesPage() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {submissionsData.map((sub) => (
+                                    {filteredSubmissions.map((sub) => (
                                         <TableRow key={sub.id}>
                                             <TableCell className="font-medium">{sub.challengeTitle}</TableCell>
                                             <TableCell>{sub.language.toUpperCase()}</TableCell>
@@ -301,6 +308,11 @@ export default function ChallengesPage() {
                                     ))}
                                 </TableBody>
                             </Table>
+                            {filteredSubmissions.length === 0 && (
+                                <div className="text-center py-16 text-muted-foreground">
+                                    <p>{t('no_submissions_for_language')}</p>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
                 </TabsContent>

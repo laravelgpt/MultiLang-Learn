@@ -261,6 +261,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "try_it_yourself": "Try it Yourself",
     "try_it_yourself_desc": "Run, modify, and understand the code from this lesson.",
     "code_explanation_placeholder": "Click 'Explain Code' to get an AI-powered breakdown of this snippet.",
+    "no_submissions_for_language": "No submissions found for the selected language.",
   },
   bn: {
     welcome_back: "ফিরে আসার জন্য স্বাগতম, গিট ফ্রপ!",
@@ -521,6 +522,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "try_it_yourself": "নিজে চেষ্টা করুন",
     "try_it_yourself_desc": "এই পাঠ থেকে কোড চালান এবং সম্পাদনা করুন।",
     "code_explanation_placeholder": "এই স্নিপেটের এআই-চালিত ভাঙ্গন পেতে 'কোড ব্যাখ্যা করুন' ক্লিক করুন।",
+    "no_submissions_for_language": "নির্বাচিত ভাষার জন্য কোনো জমা পাওয়া যায়নি।",
   },
   hi: {
     welcome_back: "वापस स्वागत है, गिट फ्रप!",
@@ -781,6 +783,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "try_it_yourself": "स्वयं চেষ্টা করুন",
     "try_it_yourself_desc": "इस पाठ से कोड चलाएं और संपादित करें।",
     "code_explanation_placeholder": "इस स्निपेट का एआई-संचालित ब्रेकडाउन प्राप्त करने के लिए 'कोड समझाएं' पर क्लिक करें।",
+    "no_submissions_for_language": "चयनित भाषा के लिए कोई सबमिशन नहीं मिला।",
   },
   ur: {
     welcome_back: "واپس خوش آمدید، گٹ فرپ!",
@@ -1041,5 +1044,6 @@ export const translations: Record<Language, Record<string, string>> = {
     "try_it_yourself": "خود کوشش کریں",
     "try_it_yourself_desc": "اس سبق سے کوڈ چلائیں اور ترمیم کریں۔",
     "code_explanation_placeholder": "اس ٹکڑے کا اے آئی سے چلنے والا بریک ڈاؤن حاصل کرنے کے لیے 'کوڈ کی وضاحت کریں' پر کلک کریں۔",
+    "no_submissions_for_language": "منتخب زبان کے لیے کوئی گذارشات نہیں ملیں۔",
   },
 };
