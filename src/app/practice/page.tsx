@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -8,7 +9,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { Code, FileCode, Play, RefreshCw, Copy, Save, ChevronRight } from 'lucide-react';
+import { Code, FileCode, Play, RefreshCw, Copy, Save, BrainCircuit } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+
 
 const codeExamples = [
     {
@@ -74,6 +77,7 @@ console.log(greetUser("Programmer"));
 export default function PracticePage() {
     const [code, setCode] = useState(initialCode);
     const [output, setOutput] = useState("");
+    const { toast } = useToast();
 
     const handleRunCode = () => {
         let capturedOutput = '';
@@ -85,7 +89,7 @@ export default function PracticePage() {
                   return JSON.stringify(arg, null, 2);
               }
               return String(arg);
-          }).join(' ') + '\\n';
+          }).join(' ') + '\n';
         };
 
         try {
@@ -94,7 +98,7 @@ export default function PracticePage() {
           eval(code);
           setOutput(capturedOutput || "Code executed successfully with no output.");
         } catch (error: any) {
-          setOutput(\`Error: ${error.message}\`);
+          setOutput(\`Error: \${error.message}\`);
         } finally {
           console.log = originalLog;
         }
@@ -105,10 +109,15 @@ export default function PracticePage() {
         setOutput("");
     };
 
+    const handleCopy = () => {
+        navigator.clipboard.writeText(code);
+        toast({ title: 'Copied!', description: 'Code copied to clipboard.' });
+    };
+
     return (
         <>
             <div className="flex items-center gap-4 mb-8">
-                <Code size={40} className="text-primary shrink-0" />
+                <FileCode size={40} className="text-primary shrink-0" />
                 <div>
                     <h1 className="font-headline text-3xl font-bold text-primary">Practice & Examples</h1>
                     <p className="text-lg text-muted-foreground">Practice your coding skills with our interactive code editor and examples.</p>
@@ -137,12 +146,12 @@ export default function PracticePage() {
                     <Card>
                         <CardHeader>
                             <div className="flex flex-wrap items-center justify-between gap-4">
-                                <CardTitle className="text-xl flex items-center gap-2"><ChevronRight className="h-5 w-5" /> <Code className="h-5 w-5" /> Interactive Code Editor</CardTitle>
+                                <CardTitle className="text-xl flex items-center gap-2"><Code className="h-5 w-5" /> Interactive Code Editor</CardTitle>
                                 <div className="flex items-center gap-2">
                                     <Select defaultValue="javascript">
                                         <SelectTrigger className="w-auto">
                                             <div className='flex items-center gap-2'>
-                                                <Image src="https://placehold.co/16x16/facc15/facc15.png" width={16} height={16} alt="JS" data-ai-hint="javascript logo" />
+                                                <Image src="https://placehold.co/16x16.png" width={16} height={16} alt="JS" data-ai-hint="javascript logo" />
                                                 <SelectValue placeholder="Language" />
                                             </div>
                                         </SelectTrigger>
@@ -152,7 +161,7 @@ export default function PracticePage() {
                                             <SelectItem value="pascal" disabled>Pascal</SelectItem>
                                         </SelectContent>
                                     </Select>
-                                    <Button variant="outline" size="sm" onClick={() => setCode(initialCode)}><RefreshCw className="mr-2 h-4 w-4" />Reset</Button>
+                                    <Button variant="outline" size="icon" onClick={() => setCode(initialCode)}><RefreshCw className="h-4 w-4" /></Button>
                                     <Button onClick={handleRunCode} className="bg-green-600 hover:bg-green-700 text-white">
                                         <Play className="mr-2 h-4 w-4" /> Run
                                     </Button>
@@ -182,13 +191,13 @@ export default function PracticePage() {
                         </CardContent>
                     </Card>
                     <div className="absolute right-4 -bottom-4 flex flex-col gap-2">
-                        <Button variant="secondary" size="icon" className="rounded-full shadow-lg h-10 w-10 bg-green-500 hover:bg-green-600 text-white">
-                            <Code className="h-5 w-5" />
+                         <Button variant="secondary" size="icon" className="rounded-full shadow-lg h-10 w-10 bg-purple-500 hover:bg-purple-600 text-white">
+                            <BrainCircuit className="h-5 w-5" />
                         </Button>
-                        <Button variant="secondary" size="icon" className="rounded-full shadow-lg h-10 w-10 bg-blue-500 hover:bg-blue-600 text-white">
+                        <Button onClick={handleCopy} variant="secondary" size="icon" className="rounded-full shadow-lg h-10 w-10 bg-blue-500 hover:bg-blue-600 text-white">
                             <Copy className="h-5 w-5" />
                         </Button>
-                        <Button variant="secondary" size="icon" className="rounded-full shadow-lg h-10 w-10 bg-purple-500 hover:bg-purple-600 text-white">
+                        <Button variant="secondary" size="icon" className="rounded-full shadow-lg h-10 w-10 bg-primary hover:bg-primary/90 text-white">
                             <Save className="h-5 w-5" />
                         </Button>
                     </div>
