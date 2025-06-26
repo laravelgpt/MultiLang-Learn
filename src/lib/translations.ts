@@ -151,6 +151,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "ai_suggesting": "Getting suggestion...",
     "ai_suggestion": "AI Suggestion",
     "ai_suggestion_placeholder": "Click the 'Get AI Suggestion' button to receive an analysis and suggestions for your code.",
+    "click_to_generate_example": "Click to generate a random {difficulty} example.",
     // projects/page.tsx
     "apply_your_skills": "Apply your skills by building real-world projects.",
     "all_projects": "All Projects",
@@ -159,7 +160,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "games": "Games",
     "start_project": "Start Project",
     "no_projects_in_category": "No projects found in this category yet.",
-    // progress/page.tsx
+     // progress/page.tsx
     "progress_tracker_title": "Progress Tracker",
     "progress_tracker_desc": "Monitor your learning journey and achievements.",
     "total_xp": "Total XP",
@@ -320,6 +321,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "ai_suggesting": "পরামর্শ আনা হচ্ছে...",
     "ai_suggestion": "এআই পরামর্শ",
     "ai_suggestion_placeholder": "আপনার কোডের বিশ্লেষণ এবং পরামর্শ পেতে 'এআই পরামর্শ নিন' বোতামে ক্লিক করুন।",
+    "click_to_generate_example": "একটি এলোমেলো {difficulty} উদাহরণ তৈরি করতে ক্লিক করুন।",
     // projects/page.tsx
     "apply_your_skills": "বাস্তব-বিশ্বের প্রকল্প তৈরি করে আপনার দক্ষতা প্রয়োগ করুন।",
     "all_projects": "সমস্ত প্রকল্প",
@@ -489,6 +491,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "ai_suggesting": "सुझाव मिल रहा है...",
     "ai_suggestion": "एआई सुझाव",
     "ai_suggestion_placeholder": "अपने कोड का विश्लेषण और सुझाव प्राप्त करने के लिए 'एआई सुझाव प्राप्त करें' बटन पर क्लिक करें।",
+    "click_to_generate_example": "एक यादृच्छिक {difficulty} उदाहरण उत्पन्न करने के लिए क्लिक करें।",
     // projects/page.tsx
     "apply_your_skills": "वास्तविक-विश्व परियोजनाओं का निर्माण करके अपने कौशल को लागू करें।",
     "all_projects": "सभी परियोजनाएं",
@@ -658,6 +661,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "ai_suggesting": "مشورہ حاصل کیا جا رہا ہے...",
     "ai_suggestion": "اے آئی کا مشورہ",
     "ai_suggestion_placeholder": "اپنے کوڈ کا تجزیہ اور تجاویز حاصل کرنے کے لیے 'اے آئی سے مشورہ لیں' بٹن پر کلک کریں۔",
+    "click_to_generate_example": "ایک بے ترتیب {difficulty} مثال بنانے کے لیے کلک کریں۔",
     // projects/page.tsx
     "apply_your_skills": "حقیقی دنیا کے منصوبے بنا کر اپنی صلاحیتوں کا اطلاق کریں۔",
     "all_projects": "تمام پروجیکٹس",

@@ -8,13 +8,14 @@ import { z } from 'zod';
 import { useLanguage } from '@/context/language-provider';
 import { decomposeProblem, type DecomposeProblemOutput } from '@/ai/flows/decompose-problem';
 import { explainCode } from '@/ai/flows/explain-code';
+import { generateCodeExample, type GenerateCodeExampleOutput } from '@/ai/flows/generate-code-example';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Zap, BrainCircuit, Lightbulb, ListChecks, Goal, CheckCircle, Boxes, Loader2, FileCode, Code, Play, RefreshCw } from 'lucide-react';
+import { Zap, BrainCircuit, Lightbulb, ListChecks, Goal, CheckCircle, Boxes, Loader2, FileCode, Code, Play } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import Image from "next/image";
@@ -25,66 +26,6 @@ import { useToast } from '@/hooks/use-toast';
 const decomposerFormSchema = z.object({
   problemStatement: z.string().min(10, { message: "Problem statement must be at least 10 characters." }),
 });
-
-const errorExamplesByDifficulty = {
-    Easy: [
-        {
-            title: "Missing Parenthesis",
-            description: "A simple syntax error where a closing parenthesis is missing.",
-            tag: "javascript",
-            code: `function greet(name) {\n  console.log("Hello, " + name;\n}\ngreet("World");`
-        },
-        {
-            title: "Incorrect Loop Condition",
-            description: "A classic off-by-one error that attempts to access an index out of bounds.",
-            tag: "javascript",
-            code: `const fruits = ["Apple", "Banana", "Cherry"];\nfor (let i = 0; i <= fruits.length; i++) {\n  console.log(fruits[i]);\n}`
-        },
-    ],
-    Medium: [
-        {
-            title: "Misunderstanding 'this'",
-            description: "Incorrect usage of 'this' inside a callback function, leading to lost context.",
-            tag: "javascript",
-            code: `const person = {\n  name: "John",\n  greet: function() {\n    console.log("Hi, I am " + this.name);\n    setTimeout(function() {\n      // 'this' here refers to the global object (or is undefined in strict mode), not 'person'.\n      console.log("After 1 second, my name is " + this.name);\n    }, 1000);\n  }\n};\nperson.greet();`
-        },
-        {
-            title: "Forgetting to Await",
-            description: "Calling an async function without 'await' can lead to race conditions or incorrect data.",
-            tag: "javascript",
-            code: `async function fetchData() {\n    return new Promise(resolve => setTimeout(() => resolve("Data fetched!"), 500));\n}\n\nasync function process() {\n    const data = fetchData(); // Forgot to await the promise\n    console.log(data); // This will log the Promise object, not the resolved value "Data fetched!"\n}\n\nprocess();`
-        },
-    ],
-    Hard: [
-        {
-            title: "Uncontrolled Recursion",
-            description: "A recursive function without a proper base case, leading to a stack overflow.",
-            tag: "javascript",
-            code: `function countDown(number) {\n  console.log(number);\n  // The base case is missing, so it will count down indefinitely.\n  countDown(number - 1);\n}\n\ncountDown(5);`
-        },
-        {
-            title: "State Mutation in React",
-            description: "Directly mutating state in React doesn't trigger re-renders and is an anti-pattern.",
-            tag: "react",
-            code: `import { useState } from 'react';\n\nfunction Counter() {\n  const [user, setUser] = useState({ name: 'Bob', age: 30 });\n\n  function handleAgeIncrease() {\n    // This is a direct mutation. React won't detect this change.\n    user.age += 1;\n    setUser(user); // The object reference is the same, so no re-render\n    console.log(user.age);\n  }\n\n  return (\n    <div>\n      <p>{user.name} is {user.age} years old.</p>\n      <button onClick={handleAgeIncrease}>Get Older</button>\n    </div>\n  );\n}`
-        },
-    ],
-    "Heavy Hard": [
-        {
-            title: "Race Condition with Closures",
-            description: "A subtle race condition where multiple async operations close over the same loop variable.",
-            tag: "javascript",
-            code: `// Goal: Log 0, 1, 2, 3, 4 each after a delay.\n// Problem: By the time setTimeout callbacks run, the loop has finished and 'i' is 5.\nfor (var i = 0; i < 5; i++) {\n  setTimeout(function() {\n    console.log(i); // Logs '5' five times.\n  }, i * 100);\n}\n\n// How would you fix this to log 0, 1, 2, 3, 4?`
-        },
-        {
-            title: "Floating Point Imprecision",
-            description: "A classic computer science problem where floating point math leads to unexpected results.",
-            tag: "javascript",
-            code: `const value1 = 0.1;\nconst value2 = 0.2;\nconst result = value1 + value2;\n\nconsole.log(result); // Outputs 0.30000000000000004\nconsole.log(result === 0.3); // Outputs false\n\n// Why does this happen and how can you reliably compare floating point numbers?`
-        }
-    ]
-};
-
 
 const ProblemDecomposer = () => {
   const { t } = useLanguage();
@@ -210,14 +151,18 @@ const ProblemDecomposer = () => {
 const CodeExplainer = () => {
     const { t } = useLanguage();
     const { toast } = useToast();
-    const [code, setCode] = useState('// Click a category on the left to load a random error example');
+    const [code, setCode] = useState('// Click a category on the left to generate an error example');
     const [output, setOutput] = useState("");
     const [suggestion, setSuggestion] = useState("");
+    const [exampleDetails, setExampleDetails] = useState<GenerateCodeExampleOutput | null>(null);
     const [isRunning, setIsRunning] = useState(false);
     const [isExplaining, setIsExplaining] = useState(false);
+    const [isGenerating, setIsGenerating] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState("editor");
     const workerRef = useRef<Worker | null>(null);
     const [selectedLanguage, setSelectedLanguage] = useState("javascript");
+
+    const difficulties = ["Easy", "Medium", "Hard", "Heavy Hard"];
 
     useEffect(() => {
         workerRef.current = new Worker('/code-runner.js');
@@ -247,26 +192,28 @@ const CodeExplainer = () => {
         workerRef.current.postMessage({ code });
     };
 
-    const handleCategoryClick = (difficulty: keyof typeof errorExamplesByDifficulty) => {
-        const examplesForDifficulty = errorExamplesByDifficulty[difficulty];
-        const filteredExamples = examplesForDifficulty.filter(ex =>
-            ex.tag === selectedLanguage || (selectedLanguage === 'javascript' && ex.tag === 'react')
-        );
-
-        if (filteredExamples.length > 0) {
-            const randomIndex = Math.floor(Math.random() * filteredExamples.length);
-            setCode(filteredExamples[randomIndex].code);
-            setOutput("");
-            setSuggestion("");
-            setActiveTab("editor");
-        } else {
-            toast({
-                title: "No Examples Found",
-                description: `Could not find any '${difficulty}' examples for ${selectedLanguage}.`,
-                variant: 'destructive',
-            });
-            setCode(`// No '${difficulty}' examples found for ${selectedLanguage}. Try another category.`);
-        }
+    const handleGenerateExample = async (difficulty: string) => {
+      setIsGenerating(difficulty);
+      setExampleDetails(null);
+      setCode("");
+      setOutput("");
+      setSuggestion("");
+      setActiveTab("editor");
+      try {
+        const result = await generateCodeExample({ language: selectedLanguage, difficulty });
+        setExampleDetails(result);
+        setCode(result.code);
+      } catch (error) {
+        console.error("Failed to generate code example:", error);
+        toast({
+          title: "Generation Failed",
+          description: "Could not generate a new code example. Please try again.",
+          variant: "destructive",
+        });
+        setCode(`// Failed to generate example for ${difficulty} ${selectedLanguage}.`);
+      } finally {
+        setIsGenerating(null);
+      }
     };
 
     const handleGetSuggestion = async () => {
@@ -293,23 +240,24 @@ const CodeExplainer = () => {
          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start mt-6">
             <div className="lg:col-span-1 space-y-4">
                 <h2 className="text-xl font-bold flex items-center gap-2"><FileCode className="h-5 w-5" /> {t('error_examples')}</h2>
-                {Object.entries(errorExamplesByDifficulty).map(([difficulty, examples]) => (
-                     <Card key={difficulty} className="cursor-pointer hover:border-primary" onClick={() => handleCategoryClick(difficulty as keyof typeof errorExamplesByDifficulty)}>
+                {difficulties.map((difficulty) => (
+                     <Card key={difficulty} className="cursor-pointer hover:border-primary" onClick={() => handleGenerateExample(difficulty)}>
                         <CardHeader>
                             <div className="flex justify-between items-start gap-2">
                                 <CardTitle className="text-lg">{difficulty}</CardTitle>
-                                <Badge variant={
-                                    difficulty === 'Easy' ? 'secondary' :
-                                    difficulty === 'Medium' ? 'outline' :
-                                    difficulty === 'Hard' ? 'default' :
-                                    'destructive'
-                                }>{difficulty}</Badge>
+                                {isGenerating === difficulty ? (
+                                  <Loader2 className="h-5 w-5 animate-spin" />
+                                ) : (
+                                  <Badge variant={
+                                      difficulty === 'Easy' ? 'secondary' :
+                                      difficulty === 'Medium' ? 'outline' :
+                                      difficulty === 'Hard' ? 'default' :
+                                      'destructive'
+                                  }>{difficulty}</Badge>
+                                )}
                             </div>
-                            <CardDescription>Click to load a random '{difficulty}' example.</CardDescription>
+                            <CardDescription>{t('click_to_generate_example', {difficulty: difficulty.toLowerCase()})}</CardDescription>
                         </CardHeader>
-                        <CardContent>
-                            <Badge variant="outline">{examples.filter(ex => ex.tag === selectedLanguage || (selectedLanguage === 'javascript' && ex.tag === 'react')).length} examples available</Badge>
-                        </CardContent>
                     </Card>
                 ))}
             </div>
@@ -342,6 +290,12 @@ const CodeExplainer = () => {
                                 </Button>
                             </div>
                         </div>
+                        {exampleDetails && (
+                          <div className='pt-4'>
+                            <h3 className="font-bold">{exampleDetails.title}</h3>
+                            <p className="text-sm text-muted-foreground">{exampleDetails.description}</p>
+                          </div>
+                        )}
                     </CardHeader>
                     <CardContent>
                         <Tabs value={activeTab} onValueChange={setActiveTab}>
