@@ -4,9 +4,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
-import { Progress } from "@/components/ui/progress";
+import { SidebarMenu, SidebarMenuItem, SidebarMenuButton, useSidebar } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   LayoutDashboard, 
   BookOpen, 
@@ -18,9 +18,11 @@ import {
   TrendingUp,
   Award,
   Check,
-  Code
+  Code,
+  Globe
 } from "lucide-react";
 import { useLanguage } from "@/context/language-provider";
+import { useProgrammingLanguage, type LanguageId } from "@/context/programming-language-provider";
 
 const programmingLanguages = [
     {
@@ -62,6 +64,8 @@ const recentBadges = [
 export function UserSidebarNav() {
   const pathname = usePathname();
   const { t } = useLanguage();
+  const { isCollapsed } = useSidebar();
+  const { selectedLanguage, setSelectedLanguage } = useProgrammingLanguage();
 
   const navItems = [
     { href: "/dashboard", label: t('dashboard'), icon: LayoutDashboard },
@@ -73,6 +77,12 @@ export function UserSidebarNav() {
     { href: "/ai-assistant", label: t('ai_assistant'), icon: Bot },
     { href: "#", label: t('progress_tracker'), icon: TrendingUp },
   ];
+  
+  const languagesForSelect = [
+    { id: 'all', name: t('overall_dashboard') },
+    ...programmingLanguages
+  ];
+
 
   const isActive = (href: string) => {
     if (href === "/dashboard" || href === "/practice" || href === "/ai-assistant") return pathname === href;
@@ -82,23 +92,29 @@ export function UserSidebarNav() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="p-4 space-y-4 group-data-[collapsed=true]/sidebar:p-2 group-data-[collapsed=true]/sidebar:space-y-2">
-        <p className="text-xs font-semibold text-muted-foreground uppercase group-data-[collapsed=true]/sidebar:hidden">{t('sidebar_languages')}</p>
-        <div className="space-y-3">
-          {programmingLanguages.map(lang => (
-            <Link href={`/languages/${lang.id}`} key={lang.id} className="flex items-center gap-3 group-data-[collapsed=true]/sidebar:justify-center">
-              <Image src={lang.icon} alt={lang.name} width={24} height={24} data-ai-hint={lang.hint} className="rounded-sm"/>
-              <div className="flex-1 group-data-[collapsed=true]/sidebar:hidden">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="font-medium">{lang.name}</span>
-                  <span className="text-muted-foreground text-xs">{lang.progress > 0 ? `${lang.progress}% ${t('complete')}` : t('not_started')}</span>
-                </div>
-                <Progress value={lang.progress} className="h-1 mt-1" />
-              </div>
-            </Link>
-          ))}
+      {!isCollapsed && (
+        <div className="p-4 space-y-2">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('learning_context')}</p>
+            <Select value={selectedLanguage} onValueChange={(value) => setSelectedLanguage(value as LanguageId)}>
+                <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select context..." />
+                </SelectTrigger>
+                <SelectContent>
+                    {languagesForSelect.map(lang => (
+                        <SelectItem key={lang.id} value={lang.id}>
+                            <div className="flex items-center gap-3">
+                                {lang.id === 'all' 
+                                ? <Globe className="h-5 w-5 text-muted-foreground"/> 
+                                : <Image src={lang.icon!} alt={lang.name} width={20} height={20} data-ai-hint={lang.hint} className="rounded-sm"/>
+                                }
+                                <span>{lang.name}</span>
+                            </div>
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
         </div>
-      </div>
+      )}
       
       <Separator className="my-0" />
 

@@ -116,6 +116,14 @@ export const translations: Record<Language, Record<string, string>> = {
     "total_members": "Total Members",
     "active_discussions": "Active Discussions",
     "featured_members": "Featured Members",
+    // New keys for context-aware dashboard
+    "learning_context": "Learning Context",
+    "overall_dashboard": "Overall Dashboard",
+    "dashboard_for_language": "Dashboard for {language}",
+    "language_topics_completed": "{language} Topics Completed",
+    "language_challenges_solved": "{language} Challenges Solved",
+    "language_progress": "{language} Progress",
+    "continue_learning_language": "Continue Learning {language}",
   },
   bn: {
     welcome_back: "ফিরে আসার জন্য স্বাগতম, গিট ফ্রপ!",
@@ -231,6 +239,14 @@ export const translations: Record<Language, Record<string, string>> = {
     "total_members": "মোট সদস্য",
     "active_discussions": "সক্রিয় আলোচনা",
     "featured_members": "বিশিষ্ট সদস্য",
+    // New keys for context-aware dashboard
+    "learning_context": "শেখার প্রসঙ্গ",
+    "overall_dashboard": "সামগ্রিক ড্যাশবোর্ড",
+    "dashboard_for_language": "{language} এর জন্য ড্যাশবোর্ড",
+    "language_topics_completed": "{language} বিষয় সম্পন্ন",
+    "language_challenges_solved": "{language} চ্যালেঞ্জ সমাধান",
+    "language_progress": "{language} অগ্রগতি",
+    "continue_learning_language": "{language} শেখা চালিয়ে যান",
   },
   hi: {
     welcome_back: "वापस स्वागत है, गिट फ्रप!",
@@ -346,6 +362,14 @@ export const translations: Record<Language, Record<string, string>> = {
     "total_members": "कुल सदस्य",
     "active_discussions": "सक्रिय चर्चाएँ",
     "featured_members": "विशेष सदस्य",
+    // New keys for context-aware dashboard
+    "learning_context": "सीखने का संदर्भ",
+    "overall_dashboard": "कुल मिलाकर डैशबोर्ड",
+    "dashboard_for_language": "{language} के लिए डैशबोर्ड",
+    "language_topics_completed": "{language} विषय पूरे हुए",
+    "language_challenges_solved": "{language} चुनौतियाँ हल हुईं",
+    "language_progress": "{language} प्रगति",
+    "continue_learning_language": "{language} सीखना जारी रखें",
   },
   ur: {
     welcome_back: "واپس خوش آمدید، گٹ فرپ!",
@@ -461,5 +485,13 @@ export const translations: Record<Language, Record<string, string>> = {
     "total_members": "کل اراکین",
     "active_discussions": "فعال بحثیں",
     "featured_members": "نمایاں اراکین",
+    // New keys for context-aware dashboard
+    "learning_context": "سیکھنے کا سیاق و سباق",
+    "overall_dashboard": "مجموعی ڈیش بورڈ",
+    "dashboard_for_language": "{language} کے لیے ڈیش بورڈ",
+    "language_topics_completed": "{language} موضوعات مکمل",
+    "language_challenges_solved": "{language} چیلنجز حل ہوئے",
+    "language_progress": "{language} پیش رفت",
+    "continue_learning_language": "{language} سیکھنا جاری رکھیں",
   },
 };

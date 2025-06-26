@@ -15,6 +15,7 @@ import Link from "next/link";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "@/components/ui/chart"
 import { useLanguage } from "@/context/language-provider";
+import { useProgrammingLanguage, type LanguageId } from "@/context/programming-language-provider";
 
 
 const programmingLanguages = [
@@ -68,8 +69,17 @@ const awards = [
   { title: "AI Explorer", description: "Chat with the AI assistant for the first time", icon: BrainCircuit, date: "July 29, 2024" },
 ];
 
+// Mock data for language-specific dashboards
+const languageSpecificData: Record<string, any> = {
+    js: { name: "JavaScript", topicsCompleted: 15, challengesSolved: 5, progress: 65, chartData: [ { month: 'Apr', points: 50 }, { month: 'May', points: 120 }, { month: 'Jun', points: 200 } ] },
+    py: { name: "Python", topicsCompleted: 20, challengesSolved: 8, progress: 80, chartData: [ { month: 'Jan', points: 100 }, { month: 'Feb', points: 150 }, { month: 'Mar', points: 250 } ] },
+    go: { name: "Go", topicsCompleted: 5, challengesSolved: 1, progress: 25, chartData: [ { month: 'May', points: 30 }, { month: 'Jun', points: 60 } ] },
+    rust: { name: "Rust", topicsCompleted: 2, challengesSolved: 0, progress: 10, chartData: [ { month: 'Jun', points: 20 } ] },
+};
+
 export default function UserDashboardPage() {
   const { t } = useLanguage();
+  const { selectedLanguage } = useProgrammingLanguage();
 
   const statCards = [
     { title: t('topics_completed'), value: "25", change: t('from_last_week', {change: 2}), icon: BookOpen, iconBg: "bg-blue-100 dark:bg-blue-900/50", iconColor: "text-blue-500 dark:text-blue-400" },
@@ -84,6 +94,78 @@ export default function UserDashboardPage() {
       { title: t('ai_assistant'), icon: Bot, href: "/ai-assistant" },
   ];
 
+  if (selectedLanguage !== 'all' && languageSpecificData[selectedLanguage]) {
+    const langData = languageSpecificData[selectedLanguage];
+    
+    return (
+        <div className="flex flex-col gap-8">
+            <h1 className="text-3xl font-bold font-headline text-primary">
+                {t('dashboard_for_language', { language: langData.name })}
+            </h1>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                 <Card>
+                    <CardHeader>
+                        <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                                <CardTitle className="text-base font-medium text-muted-foreground">{t('language_topics_completed', { language: langData.name })}</CardTitle>
+                                <p className="text-3xl font-bold font-headline mt-2">{langData.topicsCompleted}</p>
+                            </div>
+                            <BookOpen className="h-6 w-6 text-blue-500" />
+                        </div>
+                    </CardHeader>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                                <CardTitle className="text-base font-medium text-muted-foreground">{t('language_challenges_solved', { language: langData.name })}</CardTitle>
+                                <p className="text-3xl font-bold font-headline mt-2">{langData.challengesSolved}</p>
+                            </div>
+                            <CheckCircle className="h-6 w-6 text-green-500" />
+                        </div>
+                    </CardHeader>
+                </Card>
+            </div>
+            <div className="grid gap-8 lg:grid-cols-2">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('language_progress', { language: langData.name })}</CardTitle>
+                        <CardDescription>{t('track_progress')}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="flex justify-between items-center text-sm text-muted-foreground">
+                            <span>{t('progress_bar')}</span>
+                            <span>{langData.progress}%</span>
+                        </div>
+                        <Progress value={langData.progress} />
+                         <Button asChild className="w-full mt-4">
+                            <Link href={`/languages/${selectedLanguage}`}>
+                                {t('continue_learning_language', { language: langData.name })} <ArrowRight className="ml-2 h-4 w-4" />
+                            </Link>
+                        </Button>
+                    </CardContent>
+                </Card>
+                 <Card>
+                    <CardHeader>
+                        <CardTitle>{t('your_progress')}</CardTitle>
+                        <CardDescription>{t('track_progress')}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+                            <LineChart data={langData.chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                                <CartesianGrid vertical={false} />
+                                <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
+                                <YAxis tickLine={false} axisLine={false} tickMargin={8} />
+                                <RechartsTooltip content={<ChartTooltipContent />} />
+                                <Line type="monotone" dataKey="points" stroke="var(--color-points)" strokeWidth={2} dot={false} />
+                            </LineChart>
+                        </ChartContainer>
+                    </CardContent>
+                </Card>
+            </div>
+        </div>
+    )
+  }
 
   return (
     <div className="flex flex-col gap-8">
