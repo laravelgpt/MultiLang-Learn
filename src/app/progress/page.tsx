@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { PageHeader } from "@/components/admin/page-header";
 import { useLanguage } from "@/context/language-provider";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -26,6 +26,11 @@ const userActivityHistory = [
 
 export default function ProgressTrackerPage() {
     const { t } = useLanguage();
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
     
     const processedData = useMemo(() => {
         const sortedActivities = [...userActivityHistory].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
@@ -172,7 +177,7 @@ export default function ProgressTrackerPage() {
                                             {t(translationKey)}: {activity.title}
                                         </p>
                                         <p className="text-sm text-muted-foreground">
-                                            {formatDistanceToNow(new Date(activity.timestamp), { addSuffix: true })}
+                                            {isClient ? formatDistanceToNow(new Date(activity.timestamp), { addSuffix: true }) : "..."}
                                         </p>
                                     </div>
                                 </li>
