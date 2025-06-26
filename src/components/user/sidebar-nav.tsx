@@ -52,7 +52,7 @@ export function UserSidebarNav() {
 
   const navItems = [
     { href: "/dashboard", label: t('dashboard'), icon: LayoutDashboard },
-    { href: "/languages", label: t('learn_guide'), icon: BookOpen },
+    { href: selectedLanguage === 'all' ? "/languages" : `/languages/${selectedLanguage}`, label: t('learn_guide'), icon: BookOpen },
     { href: "/practice", label: t('practice_examples'), icon: FileCode },
     { href: "/challenges", label: t('challenges'), icon: Trophy },
     { href: "/problem-solving", label: t('problem_solving'), icon: Zap },
@@ -70,6 +70,7 @@ export function UserSidebarNav() {
 
   const isActive = (href: string) => {
     if (href === "/dashboard" || href === "/practice" || href === "/ai-assistant") return pathname === href;
+    if (href.startsWith('/languages') && pathname.startsWith('/languages')) return true;
     if (href === "#") return false;
     return pathname.startsWith(href);
   }

@@ -14,8 +14,11 @@ import { explainCode } from '@/ai/flows/explain-code';
 import { useLanguage } from '@/context/language-provider';
 import { cn } from '@/lib/utils';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useProgrammingLanguage, type LanguageId } from '@/context/programming-language-provider';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 
 const initialCode = `// Welcome to the Practice Zone!
 // Select an example from the left or write your own code.
@@ -135,6 +138,12 @@ export default function PracticePage() {
 
     const [savedSnippets, setSavedSnippets] = useState<SavedSnippet[]>([]);
     const [snippetToDelete, setSnippetToDelete] = useState<SavedSnippet | null>(null);
+    const [editingSnippetId, setEditingSnippetId] = useState<string | null>(null);
+    
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+    const [snippetToEdit, setSnippetToEdit] = useState<SavedSnippet | null>(null);
+    const [editedTitle, setEditedTitle] = useState("");
+    const [editedDescription, setEditedDescription] = useState("");
 
     const filteredTopics = useMemo(() => {
         if (selectedLanguage === 'all') {
@@ -185,6 +194,7 @@ export default function PracticePage() {
         setError(null);
         setExplanation("");
         setActiveTab("editor");
+        setEditingSnippetId(null);
         toast({
             title: `Loaded: ${example.title}`,
             description: "The example code is ready in the editor.",
@@ -237,29 +247,43 @@ export default function PracticePage() {
         setError(null);
         setExplanation("");
         setActiveTab("editor");
+        setEditingSnippetId(null);
         toast({ title: "Editor Reset", description: "The editor has been reset to the default state." });
     };
 
     const handleSave = () => {
-        const newSnippet: SavedSnippet = {
-            id: `snippet-${Date.now()}`,
-            title: currentTopic.title || t('untitled_snippet'),
-            description: currentTopic.description || t('saved_on_date', { date: new Date().toLocaleDateString() }),
-            code: code,
-            language: selectedLanguage,
-        };
-
-        setSavedSnippets(prev => [newSnippet, ...prev]);
-        toast({
-            title: t('snippet_saved'),
-            description: t('snippet_saved_desc', { snippetTitle: newSnippet.title }),
-        });
+        if (editingSnippetId) {
+            setSavedSnippets(prev => prev.map(s => 
+                s.id === editingSnippetId ? { ...s, code } : s
+            ));
+            toast({
+                title: t('snippet_updated'),
+                description: t('snippet_updated_desc', { snippetTitle: currentTopic.title }),
+            });
+        } else {
+            const newSnippet: SavedSnippet = {
+                id: `snippet-${Date.now()}`,
+                title: t('untitled_snippet'),
+                description: t('saved_on_date', { date: new Date().toLocaleDateString() }),
+                code: code,
+                language: selectedLanguage,
+            };
+    
+            setSavedSnippets(prev => [newSnippet, ...prev]);
+            setEditingSnippetId(newSnippet.id);
+            setCurrentTopic({ title: newSnippet.title, description: newSnippet.description });
+            toast({
+                title: t('snippet_saved'),
+                description: t('snippet_saved_desc', { snippetTitle: newSnippet.title }),
+            });
+        }
     };
 
     const handleLoadSnippet = (snippet: SavedSnippet) => {
         setCode(snippet.code);
         setSelectedLanguage(snippet.language as LanguageId);
         setCurrentTopic({ title: snippet.title, description: snippet.description });
+        setEditingSnippetId(snippet.id);
         setOutput("");
         setError(null);
         setExplanation("");
@@ -277,11 +301,41 @@ export default function PracticePage() {
     const handleDeleteConfirm = () => {
         if (!snippetToDelete) return;
         setSavedSnippets(prev => prev.filter(s => s.id !== snippetToDelete.id));
+        
+        if (editingSnippetId === snippetToDelete.id) {
+            handleReset();
+        }
+
         toast({
             title: t('snippet_deleted'),
             description: t('snippet_deleted_desc', { snippetTitle: snippetToDelete.title }),
         });
         setSnippetToDelete(null);
+    };
+
+    const handleEditClick = (snippet: SavedSnippet) => {
+        setSnippetToEdit(snippet);
+        setEditedTitle(snippet.title);
+        setEditedDescription(snippet.description);
+        setIsEditDialogOpen(true);
+    };
+
+    const handleSaveEditedSnippet = () => {
+        if (!snippetToEdit) return;
+
+        setSavedSnippets(prev => prev.map(s => 
+            s.id === snippetToEdit.id
+                ? { ...s, title: editedTitle, description: editedDescription }
+                : s
+        ));
+
+        if (editingSnippetId === snippetToEdit.id) {
+            setCurrentTopic({ title: editedTitle, description: editedDescription });
+        }
+
+        toast({ title: t('snippet_updated') });
+        setIsEditDialogOpen(false);
+        setSnippetToEdit(null);
     };
 
 
@@ -337,7 +391,7 @@ export default function PracticePage() {
                                    {savedSnippets.length > 0 ? savedSnippets.map((snippet) => (
                                      <div key={snippet.id} className="p-3 rounded-md border text-left hover:bg-muted transition-colors group">
                                          <div className="flex justify-between items-start">
-                                            <div className="flex-1 pr-2">
+                                            <div className="flex-1 pr-2 cursor-pointer" onClick={() => handleLoadSnippet(snippet)}>
                                                 <p className="font-semibold">{snippet.title}</p>
                                                 <p className="text-sm text-muted-foreground">{snippet.description}</p>
                                             </div>
@@ -348,7 +402,7 @@ export default function PracticePage() {
                                                     </Button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end">
-                                                    <DropdownMenuItem onSelect={() => handleLoadSnippet(snippet)}><Edit className="mr-2 h-4 w-4" />{t('edit')}</DropdownMenuItem>
+                                                    <DropdownMenuItem onSelect={() => handleEditClick(snippet)}><Edit className="mr-2 h-4 w-4" />{t('edit_snippet_details')}</DropdownMenuItem>
                                                     <DropdownMenuItem onSelect={() => handleDeleteClick(snippet)} className="text-destructive"><Trash2 className="mr-2 h-4 w-4" />{t('delete')}</DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
@@ -375,7 +429,7 @@ export default function PracticePage() {
                                     </Button>
                                     <Button variant="ghost" size="sm" onClick={handleCopy}><Copy /> {t('copy_code')}</Button>
                                     <Button variant="ghost" size="sm" onClick={handleReset}><RefreshCw /> {t('reset_code')}</Button>
-                                    <Button variant="ghost" size="sm" onClick={handleSave}><Save /> {t('save_snippet')}</Button>
+                                    <Button variant="ghost" size="sm" onClick={handleSave}><Save /> {editingSnippetId ? t('update_snippet') : t('save_snippet')}</Button>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Button onClick={handleRunCode} disabled={isRunning} className="bg-green-600 hover:bg-green-700 text-white w-[90px]">
@@ -476,6 +530,29 @@ export default function PracticePage() {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
+            
+            <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>{t('edit_snippet_title')}</DialogTitle>
+                        <DialogDescription>{t('edit_snippet_desc')}</DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="edit-title">{t('title')}</Label>
+                            <Input id="edit-title" value={editedTitle} onChange={(e) => setEditedTitle(e.target.value)} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="edit-description">{t('description')}</Label>
+                            <Textarea id="edit-description" value={editedDescription} onChange={(e) => setEditedDescription(e.target.value)} />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <DialogClose asChild><Button variant="outline">{t('cancel')}</Button></DialogClose>
+                        <Button onClick={handleSaveEditedSnippet}>{t('save_changes')}</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
     );
 }
