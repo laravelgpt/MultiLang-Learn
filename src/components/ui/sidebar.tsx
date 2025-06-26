@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -25,11 +26,11 @@ export function useSidebar() {
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const isMobile = useIsMobile()
-  const [isCollapsed, setIsCollapsed] = React.useState(isMobile)
+  const [isCollapsed, setIsCollapsed] = React.useState(false);
 
   React.useEffect(() => {
-    if(isMobile) {
-        setIsCollapsed(true);
+    if (isMobile) {
+      setIsCollapsed(true)
     }
   }, [isMobile])
 
@@ -51,6 +52,11 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
 export const Sidebar = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, children, ...props }, ref) => {
     const { isCollapsed, isMobile, toggle } = useSidebar()
+    const [isClient, setIsClient] = React.useState(false)
+
+    React.useEffect(() => {
+      setIsClient(true)
+    }, [])
     
     return (
       <>
@@ -60,14 +66,14 @@ export const Sidebar = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTM
           className={cn(
             "fixed inset-y-0 left-0 z-50 flex h-full flex-col border-r bg-background transition-all duration-300 ease-in-out",
             "group-data-[collapsed=false]/sidebar:w-[280px] group-data-[collapsed=true]/sidebar:w-[64px]",
-            isMobile && "group-data-[collapsed=true]/sidebar:-translate-x-full",
+            isClient && isMobile && "group-data-[collapsed=true]/sidebar:-translate-x-full",
             className
           )}
           {...props}
         >
           {children}
         </div>
-        {isMobile && !isCollapsed && <div onClick={toggle} className="fixed inset-0 z-40 bg-black/50" />}
+        {isClient && isMobile && !isCollapsed && <div onClick={toggle} className="fixed inset-0 z-40 bg-black/50" />}
       </>
     )
   }
@@ -77,12 +83,18 @@ Sidebar.displayName = "Sidebar"
 export const SidebarInset = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, children, ...props }, ref) => {
     const { isCollapsed, isMobile } = useSidebar()
+    const [isClient, setIsClient] = React.useState(false)
+
+    React.useEffect(() => {
+      setIsClient(true)
+    }, [])
+
     return (
       <div
         ref={ref}
         data-collapsed={isCollapsed}
         className={cn("transition-all duration-300 ease-in-out", 
-          !isMobile && "group-data-[collapsed=false]/sidebar:pl-[280px] group-data-[collapsed=true]/sidebar:pl-[64px]",
+          isClient && !isMobile && "group-data-[collapsed=false]/sidebar:pl-[280px] group-data-[collapsed=true]/sidebar:pl-[64px]",
           className
         )}
         {...props}
@@ -141,8 +153,13 @@ SidebarFooter.displayName = "SidebarFooter"
 
 export function SidebarToggle({ className, ...props }: React.ComponentProps<typeof Button>) {
   const { isCollapsed, toggle, isMobile } = useSidebar()
+  const [isClient, setIsClient] = React.useState(false)
+
+  React.useEffect(() => {
+    setIsClient(true)
+  }, [])
   
-  if (isMobile) {
+  if (isClient && isMobile) {
       return (
            <Button
             variant="ghost"
