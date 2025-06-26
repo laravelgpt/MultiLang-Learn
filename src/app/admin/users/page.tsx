@@ -16,6 +16,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { MoreHorizontal, PlusCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
+import { LearningHistoryDialog } from "@/components/admin/learning-history-dialog";
 
 const usersData = [
     { id: 'usr_1', name: 'John Doe', email: 'john.doe@example.com', role: 'User', joined: '2023-10-25', status: 'Active', avatar: 'https://placehold.co/40x40.png' },
@@ -34,6 +35,9 @@ export default function UsersPage() {
     const [isAddUserDialogOpen, setAddUserDialogOpen] = useState(false);
     const [newUser, setNewUser] = useState({ name: '', email: '', role: 'User' });
     const { toast } = useToast();
+    
+    const [isHistoryDialogOpen, setHistoryDialogOpen] = useState(false);
+    const [historyUser, setHistoryUser] = useState<User | null>(null);
 
     const handleDeactivateClick = (user: User) => {
         setSelectedUser(user);
@@ -82,6 +86,11 @@ export default function UsersPage() {
             title: "User Added",
             description: `${newUser.name} has been added to the system.`
         });
+    };
+
+    const handleViewHistoryClick = (user: User) => {
+        setHistoryUser(user);
+        setHistoryDialogOpen(true);
     };
 
     return (
@@ -163,7 +172,7 @@ export default function UsersPage() {
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                <DropdownMenuItem>View Learning History</DropdownMenuItem>
+                                                <DropdownMenuItem onSelect={() => handleViewHistoryClick(user)}>View Learning History</DropdownMenuItem>
                                                 <DropdownMenuItem>Reset Password</DropdownMenuItem>
                                                 <DropdownMenuItem>Promote to Admin</DropdownMenuItem>
                                                 <DropdownMenuSeparator />
@@ -235,6 +244,12 @@ export default function UsersPage() {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
+
+            <LearningHistoryDialog 
+                user={historyUser} 
+                isOpen={isHistoryDialogOpen} 
+                onOpenChange={setHistoryDialogOpen} 
+            />
 
         </>
     );
