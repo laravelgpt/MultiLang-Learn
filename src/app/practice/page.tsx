@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { Code, FileCode, Play, RefreshCw, Copy, Save, BrainCircuit } from 'lucide-react';
+import { Code, FileCode, Play, RefreshCw, Copy, Save, BrainCircuit, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 
@@ -77,30 +78,38 @@ export default function PracticePage() {
     const [code, setCode] = useState(initialCode);
     const [output, setOutput] = useState("");
     const { toast } = useToast();
+    const [isRunning, setIsRunning] = useState(false);
+    const workerRef = useRef<Worker | null>(null);
 
-    const handleRunCode = () => {
-        let capturedOutput = '';
-        const originalLog = console.log;
+    useEffect(() => {
+        workerRef.current = new Worker('/code-runner.js');
+
+        workerRef.current.onmessage = (e) => {
+            const { output: workerOutput, error } = e.data;
+            if (error) {
+                setOutput(\`Error: \${error}\`);
+            } else {
+                setOutput(workerOutput || "Code executed successfully with no output.");
+            }
+            setIsRunning(false);
+        };
         
-        console.log = (...args) => {
-          capturedOutput += args.map(arg => {
-              if (typeof arg === 'object' && arg !== null) {
-                  return JSON.stringify(arg, null, 2);
-              }
-              return String(arg);
-          }).join(' ') + '\n';
+        workerRef.current.onerror = (e) => {
+            setOutput(\`An error occurred in the code runner: \${e.message}\`);
+            setIsRunning(false);
         };
 
-        try {
-          // IMPORTANT: Using eval in a real-world application is a security risk.
-          // This should be replaced with a sandboxed execution environment (e.g., Web Worker, iframe).
-          eval(code);
-          setOutput(capturedOutput || "Code executed successfully with no output.");
-        } catch (error: any) {
-          setOutput(`Error: ${error.message}`);
-        } finally {
-          console.log = originalLog;
-        }
+        return () => {
+            workerRef.current?.terminate();
+        };
+    }, []);
+
+    const handleRunCode = () => {
+        if (!workerRef.current) return;
+        
+        setIsRunning(true);
+        setOutput("Running code...");
+        workerRef.current.postMessage({ code });
     };
     
     const handleExampleClick = (exampleCode: string) => {
@@ -161,8 +170,9 @@ export default function PracticePage() {
                                         </SelectContent>
                                     </Select>
                                     <Button variant="outline" size="icon" onClick={() => setCode(initialCode)}><RefreshCw className="h-4 w-4" /></Button>
-                                    <Button onClick={handleRunCode} className="bg-green-600 hover:bg-green-700 text-white">
-                                        <Play className="mr-2 h-4 w-4" /> Run
+                                    <Button onClick={handleRunCode} disabled={isRunning} className="bg-green-600 hover:bg-green-700 text-white w-[90px]">
+                                        {isRunning ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Play className="mr-2 h-4 w-4" />}
+                                        {isRunning ? "Running" : "Run"}
                                     </Button>
                                 </div>
                             </div>
