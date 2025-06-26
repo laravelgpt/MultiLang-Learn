@@ -190,6 +190,8 @@ export async function generateTopicsAction(formData: FormData) {
         revalidatePath(`/admin/languages/${langId}`);
         revalidatePath('/admin/languages');
         revalidatePath('/dashboard');
+        revalidatePath('/languages');
+        revalidatePath(`/languages/${langId}`);
         
         return {
             success: true,
@@ -231,6 +233,9 @@ export async function saveTopicAction(formData: FormData) {
         }
         revalidatePath(`/admin/languages/${langId}`);
         revalidatePath('/admin/languages');
+        revalidatePath(`/languages/${langId}`);
+        revalidatePath('/languages');
+        revalidatePath('/dashboard');
         return { success: true, message: `Topic "${title}" saved.` };
     } catch (error) {
         return { error: "Failed to save topic." };
@@ -242,6 +247,9 @@ export async function deleteTopicAction(langId: string, topicId: string) {
         await deleteTopic(langId, topicId);
         revalidatePath(`/admin/languages/${langId}`);
         revalidatePath('/admin/languages');
+        revalidatePath(`/languages/${langId}`);
+        revalidatePath('/languages');
+        revalidatePath('/dashboard');
         return { success: true, message: "Topic deleted." };
     } catch (error) {
         return { error: "Failed to delete topic." };
@@ -282,6 +290,9 @@ export async function saveLessonAction(formData: FormData) {
             await addLesson(langId, topicId, lessonData);
         }
         revalidatePath(`/admin/languages/${langId}`);
+        revalidatePath(`/languages/${langId}`);
+        revalidatePath('/admin/languages');
+        revalidatePath('/dashboard');
         return { success: true, message: `Lesson "${lessonData.title}" saved.` };
     } catch (error) {
         return { error: "Failed to save lesson." };
@@ -292,6 +303,9 @@ export async function deleteLessonAction(langId: string, topicId: string, lesson
     try {
         await deleteLesson(langId, topicId, lessonId);
         revalidatePath(`/admin/languages/${langId}`);
+        revalidatePath(`/languages/${langId}`);
+        revalidatePath('/admin/languages');
+        revalidatePath('/dashboard');
         return { success: true, message: "Lesson deleted." };
     } catch (error) {
         return { error: "Failed to delete lesson." };
