@@ -148,6 +148,14 @@ export const translations: Record<Language, Record<string, string>> = {
     "ai_suggesting": "Getting suggestion...",
     "ai_suggestion": "AI Suggestion",
     "ai_suggestion_placeholder": "Click the 'Get AI Suggestion' button to receive an analysis and suggestions for your code.",
+    // projects/page.tsx
+    "apply_your_skills": "Apply your skills by building real-world projects.",
+    "all_projects": "All Projects",
+    "web": "Web",
+    "data_science": "Data Science",
+    "games": "Games",
+    "start_project": "Start Project",
+    "no_projects_in_category": "No projects found in this category yet.",
   },
   bn: {
     welcome_back: "ফিরে আসার জন্য স্বাগতম, গিট ফ্রপ!",
@@ -295,6 +303,14 @@ export const translations: Record<Language, Record<string, string>> = {
     "ai_suggesting": "পরামর্শ আনা হচ্ছে...",
     "ai_suggestion": "এআই পরামর্শ",
     "ai_suggestion_placeholder": "আপনার কোডের বিশ্লেষণ এবং পরামর্শ পেতে 'এআই পরামর্শ নিন' বোতামে ক্লিক করুন।",
+    // projects/page.tsx
+    "apply_your_skills": "বাস্তব-বিশ্বের প্রকল্প তৈরি করে আপনার দক্ষতা প্রয়োগ করুন।",
+    "all_projects": "সমস্ত প্রকল্প",
+    "web": "ওয়েব",
+    "data_science": "ডেটা সায়েন্স",
+    "games": "গেমস",
+    "start_project": "প্রকল্প শুরু করুন",
+    "no_projects_in_category": "এই বিভাগে এখনও কোনো প্রকল্প পাওয়া যায়নি।",
   },
   hi: {
     welcome_back: "वापस स्वागत है, गिट फ्रप!",
@@ -442,6 +458,14 @@ export const translations: Record<Language, Record<string, string>> = {
     "ai_suggesting": "सुझाव मिल रहा है...",
     "ai_suggestion": "एआई सुझाव",
     "ai_suggestion_placeholder": "अपने कोड का विश्लेषण और सुझाव प्राप्त करने के लिए 'एआई सुझाव प्राप्त करें' बटन पर क्लिक करें।",
+    // projects/page.tsx
+    "apply_your_skills": "वास्तविक-विश्व परियोजनाओं का निर्माण करके अपने कौशल को लागू करें।",
+    "all_projects": "सभी परियोजनाएं",
+    "web": "वेब",
+    "data_science": "डेटा साइंस",
+    "games": "गेम्स",
+    "start_project": "परियोजना शुरू करें",
+    "no_projects_in_category": "इस श्रेणी में अभी तक कोई परियोजना नहीं मिली है।",
   },
   ur: {
     welcome_back: "واپس خوش آمدید، گٹ فرپ!",
@@ -589,5 +613,13 @@ export const translations: Record<Language, Record<string, string>> = {
     "ai_suggesting": "مشورہ حاصل کیا جا رہا ہے...",
     "ai_suggestion": "اے آئی کا مشورہ",
     "ai_suggestion_placeholder": "اپنے کوڈ کا تجزیہ اور تجاویز حاصل کرنے کے لیے 'اے آئی سے مشورہ لیں' بٹن پر کلک کریں۔",
+    // projects/page.tsx
+    "apply_your_skills": "حقیقی دنیا کے منصوبے بنا کر اپنی صلاحیتوں کا اطلاق کریں۔",
+    "all_projects": "تمام پروجیکٹس",
+    "web": "ویب",
+    "data_science": "ڈیٹا سائنس",
+    "games": "گیمز",
+    "start_project": "پروجیکٹ شروع کریں",
+    "no_projects_in_category": "اس زمرے میں ابھی تک کوئی پروجیکٹ نہیں ملا۔",
   },
 };
