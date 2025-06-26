@@ -12,24 +12,63 @@ import Link from 'next/link';
 
 // Mock Data - should be the same as the admin page
 const languagesData: Record<string, { name: string; topics: Topic[] }> = {
-  py: { 
-    name: 'Python', 
+  py: {
+    name: 'Python',
     topics: [
-      { id: 't1', title: 'Variables and Data Types', lessons: [
-        { id: 'l1-1', title: 'Understanding Python Variables', difficulty: 'Beginner', attachments: [{ type: 'pdf', url: '#' }] },
-        { id: 'l1-2', title: 'Exploring Numeric, String, and Boolean Types', difficulty: 'Beginner', attachments: [{ type: 'youtube', url: '#' }] },
+      { id: 't1', title: 'Introduction to Python', lessons: [
+          { id: 'l1-1', title: 'History and Features of Python', difficulty: 'Beginner', attachments: [{ type: 'pdf', url: '#' }] },
+          { id: 'l1-2', title: 'Setting up Python Environment', difficulty: 'Beginner', attachments: [{ type: 'youtube', url: '#' }] },
+          { id: 'l1-3', title: 'Running Your First Python Script', difficulty: 'Beginner', attachments: [{ type: 'code', url: '#' }] },
       ]},
-      { id: 't2', title: 'Control Flow', lessons: [
-        { id: 'l2-1', title: 'Conditional Statements (if, elif, else)', difficulty: 'Beginner', attachments: [{ type: 'code', url: '#' }] },
-        { id: 'l2-2', title: 'Mastering Loops (for, while)', difficulty: 'Intermediate', attachments: [] },
+      { id: 't2', title: 'Python Basics', lessons: [
+          { id: 'l2-1', title: 'Variables and Data Types', difficulty: 'Beginner', attachments: [] },
+          { id: 'l2-2', title: 'Operators in Python', difficulty: 'Beginner', attachments: [] },
+          { id: 'l2-3', title: 'Type Casting in Python', difficulty: 'Beginner', attachments: [] },
       ]},
-      { id: 't3', title: 'Functions', lessons: []},
+      { id: 't3', title: 'Control Flow', lessons: [
+          { id: 'l3-1', title: 'Conditional Statements (if, elif, else)', difficulty: 'Beginner', attachments: [] },
+          { id: 'l3-2', title: 'for Loops', difficulty: 'Intermediate', attachments: [] },
+          { id: 'l3-3', title: 'while Loops', difficulty: 'Intermediate', attachments: [] },
+          { id: 'l3-4', title: 'break, continue, and pass statements', difficulty: 'Intermediate', attachments: [] },
+      ]},
+      { id: 't4', title: 'Functions and Modules', lessons: [
+          { id: 'l4-1', title: 'Defining and Calling Functions', difficulty: 'Intermediate', attachments: [] },
+          { id: 'l4-2', title: 'Function Arguments', difficulty: 'Intermediate', attachments: [] },
+          { id: 'l4-3', title: 'Lambda Functions', difficulty: 'Advanced', attachments: [] },
+          { id: 'l4-4', title: 'Importing Modules', difficulty: 'Intermediate', attachments: [] },
+      ]},
+      { id: 't5', title: 'Data Structures', lessons: [
+          { id: 'l5-1', title: 'Lists', difficulty: 'Beginner', attachments: [] },
+          { id: 'l5-2', title: 'Tuples', difficulty: 'Beginner', attachments: [] },
+          { id: 'l5-3', title: 'Sets', difficulty: 'Intermediate', attachments: [] },
+          { id: 'l5-4', title: 'Dictionaries', difficulty: 'Intermediate', attachments: [] },
+      ]},
+      { id: 't6', title: 'Object-Oriented Programming (OOP)', lessons: [
+          { id: 'l6-1', title: 'Classes and Objects', difficulty: 'Intermediate', attachments: [] },
+          { id: 'l6-2', title: 'Inheritance', difficulty: 'Advanced', attachments: [] },
+          { id: 'l6-3', title: 'Polymorphism', difficulty: 'Advanced', attachments: [] },
+          { id: 'l6-4', title: 'Encapsulation', difficulty: 'Advanced', attachments: [] },
+      ]},
+      { id: 't7', title: 'File I/O', lessons: [
+          { id: 'l7-1', title: 'Reading and Writing Files', difficulty: 'Intermediate', attachments: [] },
+          { id: 'l7-2', title: 'Working with Directories', difficulty: 'Intermediate', attachments: [] },
+      ]},
+      { id: 't8', title: 'Error and Exception Handling', lessons: [
+          { id: 'l8-1', title: 'try, except, finally blocks', difficulty: 'Intermediate', attachments: [] },
+          { id: 'l8-2', title: 'Raising Exceptions', difficulty: 'Advanced', attachments: [] },
+      ]},
+      { id: 't9', title: 'Advanced Python Concepts', lessons: [
+          { id: 'l9-1', title: 'Decorators', difficulty: 'Advanced', attachments: [] },
+          { id: 'l9-2', title: 'Generators and Iterators', difficulty: 'Advanced', attachments: [] },
+      ]},
     ]
   },
   js: { 
     name: 'JavaScript',
     topics: [
-      { id: 't4', title: 'Introduction to JavaScript', lessons: [] },
+      { id: 't10', title: 'Introduction to JavaScript', lessons: [
+         { id: 'l10-1', title: 'What is JavaScript?', difficulty: 'Beginner', attachments: [] },
+      ] },
     ]
   },
   java: { name: 'Java', topics: [] },
