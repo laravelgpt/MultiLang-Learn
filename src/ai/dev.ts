@@ -13,3 +13,4 @@ import '@/ai/flows/generate-code-example.ts';
 import '@/ai/flows/generate-tasks-for-topic.ts';
 import '@/ai/flows/generate-quick-questions.ts';
 import '@/ai/flows/generate-lessons-for-topic.ts';
+import '@/ai/flows/generate-challenge.ts';

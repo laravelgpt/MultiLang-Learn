@@ -174,6 +174,33 @@ export async function getChallengeById(id: number): Promise<Challenge | undefine
     return Promise.resolve(challengesData.find(c => c.id === id));
 }
 
+export async function addChallenge(challenge: Omit<Challenge, 'id'>): Promise<Challenge> {
+    const newChallenge: Challenge = {
+        ...challenge,
+        id: challengesData.length > 0 ? Math.max(...challengesData.map(c => c.id)) + 1 : 1,
+    };
+    challengesData.push(newChallenge);
+    return Promise.resolve(newChallenge);
+}
+
+export async function updateChallenge(id: number, challengeData: Partial<Omit<Challenge, 'id'>>): Promise<Challenge | null> {
+    const challenge = challengesData.find(c => c.id === id);
+    if (challenge) {
+        Object.assign(challenge, challengeData);
+        return Promise.resolve(challenge);
+    }
+    return Promise.resolve(null);
+}
+
+export async function deleteChallenge(id: number): Promise<void> {
+    const index = challengesData.findIndex(c => c.id === id);
+    if (index > -1) {
+        challengesData.splice(index, 1);
+    }
+    return Promise.resolve();
+}
+
+
 export async function getSubmissions(): Promise<Submission[]> {
     return Promise.resolve(submissionsData);
 }

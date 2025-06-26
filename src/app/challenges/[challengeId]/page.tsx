@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, BrainCircuit, CheckCircle, Code, Loader2, Play, Star, Trophy, XCircle } from "lucide-react";
+import { ArrowLeft, BrainCircuit, CheckCircle, Code, Loader2, Play, Star, Trophy, XCircle, Clock } from "lucide-react";
 
 
 const getBoilerplate = (lang: string) => {
@@ -166,6 +166,12 @@ export default function SolveChallengePage({ params }: { params: { challengeId: 
                                 <Star className="h-4 w-4 fill-current" />
                                 <span className="font-semibold text-sm text-muted-foreground">{challenge.points} pts</span>
                             </div>
+                            {challenge.timeLimitMinutes && (
+                                <div className="flex items-center gap-1.5 text-muted-foreground">
+                                    <Clock className="h-4 w-4" />
+                                    <span className="font-semibold text-sm">{challenge.timeLimitMinutes} min</span>
+                                </div>
+                            )}
                         </div>
                     </CardHeader>
                     <CardContent>

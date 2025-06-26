@@ -1,5 +1,6 @@
 
 
+
 export type Attachment = { type: 'pdf' | 'youtube' | 'code' | 'link'; url: string };
 export type Lesson = { id: string; title: string; difficulty: 'Beginner' | 'Intermediate' | 'Advanced'; attachments: Attachment[]; content?: string; codeSnippet?: string; };
 export type Topic = { id: string; title: string; lessons: Lesson[] };
@@ -23,6 +24,7 @@ export type Challenge = {
     points: number;
     tests: number;
     language: string;
+    timeLimitMinutes?: number;
 };
 export type Submission = {
     id: number;
@@ -32,7 +34,7 @@ export type Submission = {
     date: string;
 };
 
-export const challengesData: Challenge[] = [
+export let challengesData: Challenge[] = [
     {
         id: 1,
         title: "Reverse a String",
@@ -41,6 +43,7 @@ export const challengesData: Challenge[] = [
         points: 10,
         tests: 5,
         language: "js",
+        timeLimitMinutes: 5,
     },
     {
         id: 2,
@@ -68,6 +71,7 @@ export const challengesData: Challenge[] = [
         points: 25,
         tests: 12,
         language: "py",
+        timeLimitMinutes: 15,
     },
     {
         id: 5,
@@ -104,6 +108,7 @@ export const challengesData: Challenge[] = [
         points: 15,
         tests: 9,
         language: "go",
+        timeLimitMinutes: 10,
     },
     {
         id: 9,
@@ -122,6 +127,7 @@ export const challengesData: Challenge[] = [
         points: 45,
         tests: 18,
         language: "js",
+        timeLimitMinutes: 25,
     },
     {
         id: 11,
@@ -167,6 +173,7 @@ export const challengesData: Challenge[] = [
         points: 50,
         tests: 20,
         language: "go",
+        timeLimitMinutes: 30,
     }
 ];
 
