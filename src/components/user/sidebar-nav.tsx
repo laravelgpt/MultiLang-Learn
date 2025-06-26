@@ -26,28 +26,28 @@ const programmingLanguages = [
         id: "js",
         name: "JavaScript",
         progress: 65,
-        icon: "https://placehold.co/24x24/facc15/facc15.png",
+        icon: "https://placehold.co/24x24.png",
         hint: "javascript logo"
     },
     {
         id: "go",
         name: "Go",
         progress: 25,
-        icon: "https://placehold.co/24x24/22d3ee/22d3ee.png",
+        icon: "https://placehold.co/24x24.png",
         hint: "go logo"
     },
     {
         id: "py",
         name: "Python",
         progress: 80,
-        icon: "https://placehold.co/24x24/60a5fa/60a5fa.png",
+        icon: "https://placehold.co/24x24.png",
         hint: "python logo"
     },
     {
         id: "rust",
         name: "Rust",
         progress: 10,
-        icon: "https://placehold.co/24x24/fb923c/fb923c.png",
+        icon: "https://placehold.co/24x24.png",
         hint: "rust logo"
     },
 ];
@@ -59,7 +59,7 @@ const navItems = [
   { href: "/challenges", label: "Challenges", icon: Trophy },
   { href: "#", label: "Problem Solving", icon: Zap },
   { href: "#", label: "Mini Projects", icon: FolderKanban },
-  { href: "#", label: "AI Assistant", icon: Bot },
+  { href: "/ai-assistant", label: "AI Assistant", icon: Bot },
   { href: "#", label: "Progress Tracker", icon: TrendingUp },
 ];
 
@@ -73,7 +73,7 @@ export function UserSidebarNav() {
   const pathname = usePathname();
 
   const isActive = (href: string) => {
-    if (href === "/dashboard" || href === "/practice") return pathname === href;
+    if (href === "/dashboard" || href === "/practice" || href === "/ai-assistant") return pathname === href;
     if (href === "#") return false;
     return pathname.startsWith(href);
   }
@@ -134,3 +134,5 @@ export function UserSidebarNav() {
     </div>
   );
 }
+
+    
