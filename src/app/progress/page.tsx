@@ -1,42 +1,98 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { PageHeader } from "@/components/admin/page-header";
 import { useLanguage } from "@/context/language-provider";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
-import { Award, BookOpen, CheckCircle, Flame, FolderKanban, Trophy } from "lucide-react";
+import { Award, BookOpen, Flame, FolderKanban, Trophy } from "lucide-react";
 import Image from "next/image";
+import { formatDistanceToNow } from "date-fns";
 
-const statsData = [
-    { title: "total_xp", value: "12,850 XP", icon: Award },
-    { title: "day_streak_header", value: "14 Days", icon: Flame },
-    { title: "challenges_solved", value: "12", icon: Trophy },
-    { title: "projects_created", value: "3", icon: FolderKanban }
-];
-
-const languageProgressData = [
-    { name: "Python", icon: "https://placehold.co/24x24.png", hint: "python logo", progress: 80, topics: "20/25", challenges: "8/15" },
-    { name: "JavaScript", icon: "https://placehold.co/24x24.png", hint: "javascript logo", progress: 65, topics: "15/22", challenges: "5/10" },
-    { name: "Go", icon: "https://placehold.co/24x24.png", hint: "go logo", progress: 25, topics: "5/20", challenges: "1/5" },
-    { name: "Rust", icon: "https://placehold.co/24x24.png", hint: "rust logo", progress: 10, topics: "2/18", challenges: "0/5" },
-];
-
-const activityFeedData = [
-    { type: "lesson", title: "'Variables and Data Types' in Python", time: "2 hours ago", icon: BookOpen },
-    { type: "challenge", title: "'FizzBuzz'", time: "1 day ago", icon: Trophy },
-    { type: "lesson", title: "'Arrow Functions' in JavaScript", time: "2 days ago", icon: BookOpen },
-    { type: "project", title: "'Personal Portfolio Website'", time: "4 days ago", icon: FolderKanban },
+const userActivityHistory = [
+    { type: 'lesson', title: "'Arrow Functions' in JavaScript", timestamp: '2024-07-29T11:00:00Z', language: 'JavaScript', points: 10 },
+    { type: 'lesson', title: "'Variables and Data Types' in Python", timestamp: '2024-07-29T10:00:00Z', language: 'Python', points: 10 },
+    { type: 'challenge', title: "'FizzBuzz'", timestamp: '2024-07-28T15:00:00Z', language: 'Python', points: 25 },
+    { type: 'project', title: "'Personal Portfolio Website'", timestamp: '2024-07-27T18:00:00Z', language: 'JavaScript', points: 150 },
+    { type: 'lesson', title: "'Operators' in Python", timestamp: '2024-07-27T09:30:00Z', language: 'Python', points: 10 },
+    { type: 'challenge', title: "'Two Sum'", timestamp: '2024-07-26T12:00:00Z', language: 'JavaScript', points: 50 },
+    { type: 'lesson', title: "'Goroutines' in Go", timestamp: '2024-07-25T16:00:00Z', language: 'Go', points: 15 },
+    { type: 'challenge', title: "'Reverse a String'", timestamp: '2024-07-24T20:00:00Z', language: 'JavaScript', points: 25 },
+    { type: 'lesson', title: "'Data Structures Intro' in Python", timestamp: '2024-07-24T10:00:00Z', language: 'Python', points: 15 },
 ];
 
 
 export default function ProgressTrackerPage() {
     const { t } = useLanguage();
-    const [stats, setStats] = useState(statsData);
-    const [languageProgress, setLanguageProgress] = useState(languageProgressData);
-    const [activityFeed, setActivityFeed] = useState(activityFeedData);
+    
+    const processedData = useMemo(() => {
+        const sortedActivities = [...userActivityHistory].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+        const totalXp = sortedActivities.reduce((sum, activity) => sum + (activity.points || 0), 0);
+        const challengesSolved = sortedActivities.filter(a => a.type === 'challenge').length;
+        const projectsCompleted = sortedActivities.filter(a => a.type === 'project').length;
+
+        const progressByLang: Record<string, any> = sortedActivities.reduce((acc, activity) => {
+            if (!activity.language) return acc;
+            if (!acc[activity.language]) {
+                acc[activity.language] = {
+                    name: activity.language,
+                    icon: `https://placehold.co/24x24.png`,
+                    hint: `${activity.language.toLowerCase()} logo`,
+                    lessons: 0,
+                    challenges: 0,
+                };
+            }
+            if (activity.type === 'lesson') acc[activity.language].lessons++;
+            if (activity.type === 'challenge') acc[activity.language].challenges++;
+            return acc;
+        }, {} as Record<string, any>);
+        
+        const languageProgress = Object.values(progressByLang).map(lang => {
+            const mockTotals = {
+                Python: { topics: 25, challenges: 15 },
+                JavaScript: { topics: 22, challenges: 10 },
+                Go: { topics: 20, challenges: 5 },
+                Rust: { topics: 18, challenges: 5 },
+            }[lang.name] || { topics: 20, challenges: 10};
+
+            return {
+                ...lang,
+                topics: `${lang.lessons}/${mockTotals.topics}`,
+                challenges_solved: `${lang.challenges}/${mockTotals.challenges}`,
+                progress: Math.round(((lang.lessons + lang.challenges) / (mockTotals.topics + mockTotals.challenges)) * 100)
+            };
+        });
+
+        return {
+            stats: [
+                { title: "total_xp", value: `${totalXp.toLocaleString()} XP`, icon: Award },
+                { title: "day_streak_header", value: "14 Days", icon: Flame },
+                { title: "challenges_solved", value: challengesSolved.toString(), icon: Trophy },
+                { title: "projects_created", value: projectsCompleted.toString(), icon: FolderKanban }
+            ],
+            languageProgress,
+            activityFeed: sortedActivities,
+        };
+    }, []);
+
+    const [stats, setStats] = useState(processedData.stats);
+    const [languageProgress, setLanguageProgress] = useState(processedData.languageProgress);
+    const [activityFeed, setActivityFeed] = useState(processedData.activityFeed);
+
+    const activityTypeToIcon = {
+        lesson: BookOpen,
+        challenge: Trophy,
+        project: FolderKanban
+    };
+    
+    const activityTypeToTranslationKey = {
+        lesson: "completed_lesson",
+        challenge: "solved_challenge",
+        project: "started_project"
+    };
 
     return (
         <div className="flex flex-col gap-8">
@@ -82,10 +138,13 @@ export default function ProgressTrackerPage() {
                                             </div>
                                         </TableCell>
                                         <TableCell>
-                                            <Progress value={lang.progress} className="h-2" />
+                                            <div className="flex items-center gap-2">
+                                                <Progress value={lang.progress} className="h-2" />
+                                                <span className="text-xs text-muted-foreground">{lang.progress}%</span>
+                                            </div>
                                         </TableCell>
                                         <TableCell>{lang.topics}</TableCell>
-                                        <TableCell>{lang.challenges}</TableCell>
+                                        <TableCell>{lang.challenges_solved}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -100,20 +159,24 @@ export default function ProgressTrackerPage() {
                     </CardHeader>
                     <CardContent>
                         <ul className="space-y-4">
-                            {activityFeed.map((activity, index) => (
+                            {activityFeed.map((activity, index) => {
+                                const Icon = activityTypeToIcon[activity.type as keyof typeof activityTypeToIcon];
+                                const translationKey = activityTypeToTranslationKey[activity.type as keyof typeof activityTypeToTranslationKey];
+                                return (
                                 <li key={index} className="flex items-start gap-4">
                                     <div className="p-2 bg-muted rounded-full mt-1">
-                                        <activity.icon className="h-5 w-5 text-primary" />
+                                        <Icon className="h-5 w-5 text-primary" />
                                     </div>
                                     <div>
                                         <p className="font-medium">
-                                            {t(activity.type === "lesson" ? "completed_lesson" : activity.type === "challenge" ? "solved_challenge" : "started_project")}
-                                            : {activity.title}
+                                            {t(translationKey)}: {activity.title}
                                         </p>
-                                        <p className="text-sm text-muted-foreground">{activity.time}</p>
+                                        <p className="text-sm text-muted-foreground">
+                                            {formatDistanceToNow(new Date(activity.timestamp), { addSuffix: true })}
+                                        </p>
                                     </div>
                                 </li>
-                            ))}
+                            )})}
                         </ul>
                     </CardContent>
                 </Card>
