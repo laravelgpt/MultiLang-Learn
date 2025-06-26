@@ -1,9 +1,9 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, Code, Bot, BookOpenCheck, Zap } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { generateImage } from "@/ai/flows/generate-image";
 
 const features = [
     {
@@ -29,7 +29,9 @@ const plansData = [
   { name: "Premium Yearly", price: "$99/yr", description: "Get 2 months free with yearly billing.", features: ["Unlimited languages", "AI Tutor access", "Priority support"] },
 ];
 
-export default function LandingPage() {
+export default async function LandingPage() {
+    const { imageDataUri } = await generateImage({ prompt: "A dynamic and abstract hero image for a programming education platform. It should feature stylized representations of code snippets, neural network diagrams, and glowing data nodes connected by luminous lines. The color palette should be modern and vibrant, incorporating shades of electric blue, deep purple, and bright teal against a dark, clean background. The overall aesthetic should be sophisticated, tech-forward, and inspiring." });
+
     return (
         <div className="flex flex-col min-h-screen bg-background">
             <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -70,12 +72,11 @@ export default function LandingPage() {
                     </div>
                     <div className="mt-12">
                         <Image
-                            src="https://placehold.co/1200x600.png"
+                            src={imageDataUri}
                             width={1200}
                             height={600}
                             alt="MultiLang Learn Dashboard"
                             className="rounded-lg shadow-xl"
-                            data-ai-hint="dashboard computer"
                         />
                     </div>
                 </section>
