@@ -37,6 +37,7 @@ export default function SolveChallengePage({ params }: { params: { challengeId: 
     const { toast } = useToast();
     const [challenge, setChallenge] = useState<Challenge | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
     const [code, setCode] = useState("");
     const [output, setOutput] = useState("");
@@ -86,10 +87,43 @@ export default function SolveChallengePage({ params }: { params: { challengeId: 
             }
             setChallenge(data);
             setCode(getBoilerplate(data.language));
+            if (data.timeLimitMinutes) {
+                setTimeLeft(data.timeLimitMinutes * 60);
+            }
             setIsLoading(false);
         }
         fetchChallenge();
     }, [params.challengeId]);
+
+    useEffect(() => {
+        if (timeLeft === null || timeLeft <= 0) return;
+
+        const intervalId = setInterval(() => {
+            setTimeLeft(prevTime => {
+                if (prevTime !== null && prevTime <= 1) {
+                    clearInterval(intervalId);
+                    toast({
+                        title: t('times_up_title'),
+                        description: t('times_up_desc'),
+                        variant: "destructive"
+                    });
+                    return 0;
+                }
+                return prevTime !== null ? prevTime - 1 : 0;
+            });
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, [timeLeft, toast, t]);
+
+    const formatTime = (seconds: number | null) => {
+        if (seconds === null) return null;
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+    };
+
+    const formattedTime = formatTime(timeLeft);
     
     const handleRunCode = () => {
         if (!workerRef.current) return;
@@ -167,9 +201,12 @@ export default function SolveChallengePage({ params }: { params: { challengeId: 
                                 <span className="font-semibold text-sm text-muted-foreground">{challenge.points} pts</span>
                             </div>
                             {challenge.timeLimitMinutes && (
-                                <div className="flex items-center gap-1.5 text-muted-foreground">
+                                <div className={cn(
+                                    "flex items-center gap-1.5 font-semibold text-sm",
+                                    timeLeft !== null && timeLeft < 60 ? "text-destructive animate-pulse" : "text-muted-foreground"
+                                )}>
                                     <Clock className="h-4 w-4" />
-                                    <span className="font-semibold text-sm">{challenge.timeLimitMinutes} min</span>
+                                    <span>{formattedTime ? t('time_left', {time: formattedTime}) : `${challenge.timeLimitMinutes} min`}</span>
                                 </div>
                             )}
                         </div>
@@ -260,7 +297,7 @@ export default function SolveChallengePage({ params }: { params: { challengeId: 
                                 </div>
                             </TabsContent>
                         </Tabs>
-                        <Button className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white" onClick={handleSubmitCode} disabled={isSubmitting || isRunning}>
+                        <Button className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white" onClick={handleSubmitCode} disabled={isSubmitting || isRunning || timeLeft === 0}>
                            {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle className="mr-2 h-4 w-4" />}
                            {isSubmitting ? t('submitting') : t('submit')}
                         </Button>
