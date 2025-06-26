@@ -6,3 +6,4 @@ import '@/ai/flows/analyze-learning-struggle-points.ts';
 import '@/ai/flows/explain-code.ts';
 import '@/ai/flows/generate-image.ts';
 import '@/ai/flows/chatbot.ts';
+import '@/ai/flows/decompose-problem.ts';

@@ -72,7 +72,7 @@ export function UserSidebarNav() {
     { href: "/languages", label: t('learn_guide'), icon: BookOpen },
     { href: "/practice", label: t('practice_examples'), icon: FileCode },
     { href: "/challenges", label: t('challenges'), icon: Trophy },
-    { href: "#", label: t('problem_solving'), icon: Zap },
+    { href: "/problem-solving", label: t('problem_solving'), icon: Zap },
     { href: "#", label: t('mini_projects'), icon: FolderKanban },
     { href: "/ai-assistant", label: t('ai_assistant'), icon: Bot },
     { href: "#", label: t('progress_tracker'), icon: TrendingUp },
