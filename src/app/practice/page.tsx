@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Code, FileCode, Play, RefreshCw, Copy, Save, BrainCircuit, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { explainCode } from '@/ai/flows/explain-code';
@@ -79,6 +80,7 @@ console.log(greetUser("Programmer"));
 export default function PracticePage() {
     const [code, setCode] = useState(initialCode);
     const [output, setOutput] = useState("");
+    const [error, setError] = useState<{ message: string, lineNumber: number | null } | null>(null);
     const [explanation, setExplanation] = useState("");
     const { toast } = useToast();
     const { t } = useLanguage();
@@ -87,16 +89,27 @@ export default function PracticePage() {
     const [activeTab, setActiveTab] = useState("editor");
     const workerRef = useRef<Worker | null>(null);
     const [codeExamples, setCodeExamples] = useState(codeExamplesData);
+    
+    const parseLineNumber = (stack: string): number | null => {
+        const match = /<anonymous>:(\d+):/.exec(stack);
+        if (match && match[1]) {
+            return parseInt(match[1], 10);
+        }
+        return null;
+    }
 
     useEffect(() => {
         workerRef.current = new Worker('/code-runner.js');
 
         workerRef.current.onmessage = (e) => {
-            const { output: workerOutput, error } = e.data;
-            if (error) {
-                setOutput('Error: ' + String(error));
+            const { output: workerOutput, error: workerError } = e.data;
+            if (workerError) {
+                const lineNumber = parseLineNumber(workerError.stack);
+                setOutput('Error: ' + workerError.message);
+                setError({ message: workerError.message, lineNumber });
             } else {
                 setOutput(workerOutput || "Code executed successfully with no output.");
+                setError(null);
             }
             setIsRunning(false);
         };
@@ -116,6 +129,7 @@ export default function PracticePage() {
         
         setIsRunning(true);
         setOutput("Running code...");
+        setError(null);
         setActiveTab("output");
         workerRef.current.postMessage({ code });
     };
@@ -123,6 +137,7 @@ export default function PracticePage() {
     const handleExampleClick = (exampleCode: string) => {
         setCode(exampleCode);
         setOutput("");
+        setError(null);
         setExplanation("");
         setActiveTab("editor");
     };
@@ -225,7 +240,16 @@ export default function PracticePage() {
                                 </TabsContent>
                                 <TabsContent value="output">
                                     <div className="font-mono h-96 bg-muted rounded-md border p-4 overflow-auto">
-                                        <pre className="text-sm whitespace-pre-wrap">{output || t('run_to_see_output')}</pre>
+                                        {error ? (
+                                            <Alert variant="destructive">
+                                                <AlertTitle>Error on line {error.lineNumber || 'N/A'}</AlertTitle>
+                                                <AlertDescription>
+                                                    <pre className="font-mono text-sm whitespace-pre-wrap">{error.message}</pre>
+                                                </AlertDescription>
+                                            </Alert>
+                                        ) : (
+                                            <pre className="text-sm whitespace-pre-wrap">{output || t('run_to_see_output')}</pre>
+                                        )}
                                     </div>
                                 </TabsContent>
                                  <TabsContent value="explanation">
