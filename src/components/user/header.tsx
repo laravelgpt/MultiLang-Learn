@@ -3,6 +3,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Bell, Flame } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
@@ -11,8 +12,17 @@ export function UserHeader() {
   return (
     <header className="flex h-16 shrink-0 items-center justify-between border-b bg-background px-4 sm:px-6 lg:px-8">
       <div className="flex items-center gap-2">
-         <Button variant="outline" size="sm">English</Button>
-         <Button variant="ghost" size="sm">বাংলা</Button>
+        <Select defaultValue="en">
+          <SelectTrigger className="w-auto sm:w-[180px]">
+            <SelectValue placeholder="Language" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="en">English</SelectItem>
+            <SelectItem value="bn">বাংলা (Bengali)</SelectItem>
+            <SelectItem value="hi">हिन्दी (Hindi)</SelectItem>
+            <SelectItem value="ur">اردو (Urdu)</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <div className="flex items-center gap-4">
         <Button variant="outline" className="flex items-center gap-2">

@@ -17,23 +17,23 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "
 
 
 const statCards = [
-  { title: "বিষয় সম্পন্ন হয়েছে", value: "25", change: "গত সপ্তাহ থেকে +২", icon: BookOpen, iconBg: "bg-blue-100 dark:bg-blue-900/50", iconColor: "text-blue-500 dark:text-blue-400" },
-  { title: "চ্যালেঞ্জ সমাধান করা হয়েছে", value: "12", change: "গত সপ্তাহ থেকে +৫", icon: CheckCircle, iconBg: "bg-green-100 dark:bg-green-900/50", iconColor: "text-green-500 dark:text-green-400" },
-  { title: "প্রজেক্ট তৈরি করা হয়েছে", value: "3", change: "গত সপ্তাহ থেকে +১", icon: Code, iconBg: "bg-purple-100 dark:bg-purple-900/50", iconColor: "text-purple-500 dark:text-purple-400" },
-  { title: "বর্তমান চলমান", value: "14", change: "দিনের ধারা", icon: TrendingUp, iconBg: "bg-orange-100 dark:bg-orange-900/50", iconColor: "text-orange-500 dark:text-orange-400" },
+  { title: "Topics Completed", value: "25", change: "+2 from last week", icon: BookOpen, iconBg: "bg-blue-100 dark:bg-blue-900/50", iconColor: "text-blue-500 dark:text-blue-400" },
+  { title: "Challenges Solved", value: "12", change: "+5 from last week", icon: CheckCircle, iconBg: "bg-green-100 dark:bg-green-900/50", iconColor: "text-green-500 dark:text-green-400" },
+  { title: "Projects Created", value: "3", change: "+1 from last week", icon: Code, iconBg: "bg-purple-100 dark:bg-purple-900/50", iconColor: "text-purple-500 dark:text-purple-400" },
+  { title: "Current Streak", value: "14", change: "Day streak", icon: TrendingUp, iconBg: "bg-orange-100 dark:bg-orange-900/50", iconColor: "text-orange-500 dark:text-orange-400" },
 ];
 
 const quickActions = [
-    { title: "শেখা চালিয়ে যান", icon: BookOpen, href: "/languages" },
-    { title: "দৈনিক চ্যালেঞ্জ", icon: Target, href: "/challenges" },
-    { title: "এআই সহকারী", icon: Bot, href: "/ai-assistant" },
+    { title: "Continue Learning", icon: BookOpen, href: "/languages" },
+    { title: "Daily Challenge", icon: Target, href: "/challenges" },
+    { title: "AI Assistant", icon: Bot, href: "/ai-assistant" },
 ];
 
 const programmingLanguages = [
     {
         id: "js",
         name: "JavaScript",
-        description: "ওয়েব ডেভেলপমেন্টের জন্য ডাইনামিক প্রোগ্রামিং ল্যাঙ্গুয়েজ",
+        description: "Dynamic language for web development.",
         progress: 65,
         icon: "https://placehold.co/48x48.png",
         hint: "javascript logo"
@@ -41,7 +41,7 @@ const programmingLanguages = [
     {
         id: "pascal",
         name: "Pascal",
-        description: "শিক্ষামূলক প্রোগ্রামিং ল্যাঙ্গুয়েজ",
+        description: "Educational programming language.",
         progress: 0,
         icon: "https://placehold.co/48x48.png",
         hint: "pascal logo"
@@ -49,8 +49,8 @@ const programmingLanguages = [
     {
         id: "py",
         name: "Python",
-        description: "ডেটা সায়েন্স এবং ওয়েব ডেভেলপমেন্টের জন্য বহুমুখী ভাষা",
-        progress: 0,
+        description: "Versatile language for data science and web.",
+        progress: 80,
         icon: "https://placehold.co/48x48.png",
         hint: "python logo"
     },
@@ -73,11 +73,11 @@ const chartConfig: ChartConfig = {
 }
 
 const awards = [
-  { title: "প্রথম ধাপ", description: "আপনার প্রথম পাঠ সম্পন্ন করুন", icon: Star, date: "জুলাই ২০, ২০২৪" },
-  { title: "কোড নিনজা", description: "১০টি চ্যালেঞ্জ সমাধান করুন", icon: Code, date: "জুলাই ২২, ২০২৪" },
-  { title: "সัปতাহিক যোদ্ধা", description: "টানা ৭ দিন ধরে শিখুন", icon: Shield, date: "জুলাই ২৭, ২০২৪" },
-  { title: "পাইথন পাইওনিয়ার", description: "পাইথন কোর্সের ৫০% সম্পন্ন করুন", icon: Award, date: "জুলাই ২৮, ২০২৪" },
-  { title: "এআই এক্সপ্লোরার", description: "প্রথমবারের মতো এআই সহকারীর সাথে চ্যাট করুন", icon: BrainCircuit, date: "জুলাই ২৯, ২০২৪" },
+  { title: "First Step", description: "Complete your first lesson", icon: Star, date: "July 20, 2024" },
+  { title: "Code Ninja", description: "Solve 10 challenges", icon: Code, date: "July 22, 2024" },
+  { title: "Weekly Warrior", description: "Learn for 7 days in a row", icon: Shield, date: "July 27, 2024" },
+  { title: "Python Pioneer", description: "Complete 50% of the Python course", icon: Award, date: "July 28, 2024" },
+  { title: "AI Explorer", description: "Chat with the AI assistant for the first time", icon: BrainCircuit, date: "July 29, 2024" },
 ];
 
 export default function UserDashboardPage() {
@@ -92,11 +92,11 @@ export default function UserDashboardPage() {
                     <AvatarFallback className="text-3xl bg-primary-foreground text-primary">GF</AvatarFallback>
                 </Avatar>
                 <div>
-                    <h1 className="text-3xl font-bold font-headline">ফিরে আসার জন্য স্বাগতম, গিট ফ্রপ!</h1>
-                    <p className="text-lg text-primary-foreground/80 mt-1">আপনার প্রোগ্রামিং যাত্রা চালিয়ে যান</p>
+                    <h1 className="text-3xl font-bold font-headline">Welcome back, Git Frp!</h1>
+                    <p className="text-lg text-primary-foreground/80 mt-1">Continue your programming journey.</p>
                     <div className="flex items-center gap-2 mt-2">
-                        <span className="px-3 py-1 text-xs font-semibold bg-primary-foreground/20 rounded-full">শিক্ষানবিস</span>
-                        <span className="text-xs text-primary-foreground/80">সদস্য ২০২৫ থেকে</span>
+                        <span className="px-3 py-1 text-xs font-semibold bg-primary-foreground/20 rounded-full">Beginner</span>
+                        <span className="text-xs text-primary-foreground/80">Member since 2025</span>
                     </div>
                 </div>
             </div>
@@ -104,16 +104,16 @@ export default function UserDashboardPage() {
                 <div className="flex gap-8">
                     <div>
                         <p className="text-4xl font-bold font-headline">14</p>
-                        <p className="text-sm text-primary-foreground/80">দিনের ধারা</p>
+                        <p className="text-sm text-primary-foreground/80">Day Streak</p>
                     </div>
                     <div>
                         <p className="text-4xl font-bold font-headline">2,350</p>
-                        <p className="text-sm text-primary-foreground/80">মোট পয়েন্ট</p>
+                        <p className="text-sm text-primary-foreground/80">Total Points</p>
                     </div>
                 </div>
                  <Button variant="secondary" size="sm" className="mt-4 bg-white/20 hover:bg-white/30 text-white">
                     <Settings className="mr-2 h-4 w-4" />
-                    সেটিংস
+                    Settings
                 </Button>
             </div>
         </CardContent>
@@ -121,10 +121,10 @@ export default function UserDashboardPage() {
       
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="bg-transparent p-0 inline-flex border-b w-full mb-6">
-          <TabsTrigger value="overview" className="bg-transparent text-muted-foreground data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-primary">সংক্ষিপ্ত বিবরণ</TabsTrigger>
-          <TabsTrigger value="progress" className="bg-transparent text-muted-foreground data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-primary">অগ্রগতি</TabsTrigger>
-          <TabsTrigger value="awards" className="bg-transparent text-muted-foreground data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-primary">পুরস্কার</TabsTrigger>
-          <TabsTrigger value="settings" className="bg-transparent text-muted-foreground data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-primary">সেটিংস</TabsTrigger>
+          <TabsTrigger value="overview" className="bg-transparent text-muted-foreground data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-primary">Overview</TabsTrigger>
+          <TabsTrigger value="progress" className="bg-transparent text-muted-foreground data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-primary">Progress</TabsTrigger>
+          <TabsTrigger value="awards" className="bg-transparent text-muted-foreground data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-primary">Awards</TabsTrigger>
+          <TabsTrigger value="settings" className="bg-transparent text-muted-foreground data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-primary">Settings</TabsTrigger>
         </TabsList>
         <TabsContent value="overview">
             <div className="grid gap-8">
@@ -152,8 +152,8 @@ export default function UserDashboardPage() {
 
                 {/* Quick Actions */}
                 <div>
-                    <h2 className="text-2xl font-bold font-headline mb-1">দ্রুত পদক্ষেপ</h2>
-                    <p className="text-muted-foreground mb-4">আপনার শেখার যাত্রায় ঝাঁপিয়ে পড়ুন</p>
+                    <h2 className="text-2xl font-bold font-headline mb-1">Quick Actions</h2>
+                    <p className="text-muted-foreground mb-4">Jump back into your learning journey.</p>
                     <div className="grid gap-6 sm:grid-cols-3">
                         {quickActions.map((action) => (
                              <Card key={action.title} className="hover:border-primary hover:shadow-lg transition-all cursor-pointer">
@@ -172,8 +172,8 @@ export default function UserDashboardPage() {
 
                 {/* Your Programming Languages */}
                  <div>
-                    <h2 className="text-2xl font-bold font-headline mb-1">আপনার প্রোগ্রামিং ভাষা</h2>
-                    <p className="text-muted-foreground mb-4">একাধিক ভাষায় দক্ষতা অর্জন করুন এবং আপনার দক্ষতা প্রসারিত করুন</p>
+                    <h2 className="text-2xl font-bold font-headline mb-1">Your Programming Languages</h2>
+                    <p className="text-muted-foreground mb-4">Master multiple languages and expand your skills.</p>
                     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         {programmingLanguages.map((lang) => (
                             <Card key={lang.id} className="flex flex-col">
@@ -188,7 +188,7 @@ export default function UserDashboardPage() {
                                 </CardHeader>
                                 <CardContent className="flex-grow space-y-2">
                                      <div className="flex justify-between items-center text-sm text-muted-foreground">
-                                         <span>অগ্রগতি</span>
+                                         <span>Progress</span>
                                          <span>{lang.progress}%</span>
                                      </div>
                                      <Progress value={lang.progress} />
@@ -196,7 +196,7 @@ export default function UserDashboardPage() {
                                 <CardFooter>
                                     <Button asChild className="w-full" variant="outline">
                                         <Link href={`/languages/${lang.id}`}>
-                                            শেখা শুরু করুন <ArrowRight className="ml-2 h-4 w-4" />
+                                            Start Learning <ArrowRight className="ml-2 h-4 w-4" />
                                         </Link>
                                     </Button>
                                 </CardFooter>
@@ -209,8 +209,8 @@ export default function UserDashboardPage() {
         <TabsContent value="progress">
             <Card>
                 <CardHeader>
-                    <CardTitle>আপনার অগ্রগতি</CardTitle>
-                    <CardDescription>সময়ের সাথে সাথে আপনার শেখার কার্যকলাপ দেখুন।</CardDescription>
+                    <CardTitle>Your Progress</CardTitle>
+                    <CardDescription>Track your learning activity over time.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
@@ -228,8 +228,8 @@ export default function UserDashboardPage() {
         <TabsContent value="awards">
             <Card>
                 <CardHeader>
-                    <CardTitle>আপনার পুরস্কার</CardTitle>
-                    <CardDescription>আপনি যে সমস্ত ব্যাজ এবং পুরস্কার অর্জন করেছেন।</CardDescription>
+                    <CardTitle>Your Awards</CardTitle>
+                    <CardDescription>All the badges and awards you've earned.</CardDescription>
                 </CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {awards.map((award) => (
@@ -248,32 +248,32 @@ export default function UserDashboardPage() {
         <TabsContent value="settings">
             <Card>
                 <CardHeader>
-                    <CardTitle>প্রোফাইল সেটিংস</CardTitle>
-                    <CardDescription>আপনার প্রোফাইলের তথ্য এবং পছন্দসমূহ পরিচালনা করুন।</CardDescription>
+                    <CardTitle>Profile Settings</CardTitle>
+                    <CardDescription>Manage your profile information and preferences.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-2">
-                        <Label htmlFor="fullName">পুরো নাম</Label>
+                        <Label htmlFor="fullName">Full Name</Label>
                         <Input id="fullName" defaultValue="Git Frp" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="email">ইমেইল ঠিকানা</Label>
+                        <Label htmlFor="email">Email Address</Label>
                         <Input id="email" type="email" defaultValue="git.frp@example.com" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="password">নতুন পাসওয়ার্ড</Label>
-                        <Input id="password" type="password" placeholder="নতুন পাসওয়ার্ড লিখুন" />
+                        <Label htmlFor="password">New Password</Label>
+                        <Input id="password" type="password" placeholder="Enter new password" />
                     </div>
                      <div className="flex items-center justify-between rounded-lg border p-4">
                         <div>
-                            <Label htmlFor="notifications">ইমেইল নোটিফিকেশন</Label>
-                            <p className="text-sm text-muted-foreground">কোর্স আপডেট এবং ঘোষণা সম্পর্কে ইমেইল পান।</p>
+                            <Label htmlFor="notifications">Email Notifications</Label>
+                            <p className="text-sm text-muted-foreground">Receive emails about course updates and announcements.</p>
                         </div>
                         <Switch id="notifications" defaultChecked/>
                     </div>
                 </CardContent>
                 <CardFooter>
-                    <Button>সেটিংস সংরক্ষণ করুন</Button>
+                    <Button>Save Settings</Button>
                 </CardFooter>
             </Card>
         </TabsContent>

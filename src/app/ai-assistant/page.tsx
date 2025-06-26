@@ -17,7 +17,7 @@ type Message = {
 
 export default function AiAssistantPage() {
     const [messages, setMessages] = useState<Message[]>([
-        { sender: 'ai', text: 'হ্যালো! আমি আপনার এআই প্রোগ্রামিং সহকারী। আমি কীভাবে আপনাকে সাহায্য করতে পারি?' }
+        { sender: 'ai', text: "Hello! I'm your AI programming assistant. How can I help you today?" }
     ]);
     const [input, setInput] = useState('');
     const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -32,7 +32,7 @@ export default function AiAssistantPage() {
 
         // Mock AI response
         setTimeout(() => {
-            const aiResponse: Message = { sender: 'ai', text: 'এটি একটি দারুণ প্রশ্ন! আমি এই বিষয়ে আপনাকে সাহায্য করছি।' };
+            const aiResponse: Message = { sender: 'ai', text: "That's a great question! Let me help you with that." };
             setMessages(prev => [...prev, aiResponse]);
         }, 1000);
     }
@@ -51,14 +51,14 @@ export default function AiAssistantPage() {
             <div className="flex items-center gap-4 mb-8">
                 <Bot size={40} className="text-primary shrink-0" />
                 <div>
-                    <h1 className="font-headline text-3xl font-bold text-primary">এআই সহকারী</h1>
-                    <p className="text-lg text-muted-foreground">আপনার কোডিং প্রশ্ন জিজ্ঞাসা করুন এবং তাৎক্ষণিক সাহায্য পান।</p>
+                    <h1 className="font-headline text-3xl font-bold text-primary">AI Assistant</h1>
+                    <p className="text-lg text-muted-foreground">Ask your coding questions and get instant help.</p>
                 </div>
             </div>
 
             <Card className="flex-1 flex flex-col">
                 <CardHeader>
-                    <CardTitle>চ্যাট</CardTitle>
+                    <CardTitle>Chat</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-1 overflow-hidden">
                     <ScrollArea className="h-full pr-4" ref={scrollAreaRef}>
@@ -91,10 +91,10 @@ export default function AiAssistantPage() {
                         <Input
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
-                            placeholder="আপনার প্রশ্ন লিখুন..."
+                            placeholder="Type your question..."
                         />
                         <Button type="submit">
-                            <Send className="h-4 w-4 mr-2" /> পাঠাও
+                            <Send className="h-4 w-4 mr-2" /> Send
                         </Button>
                     </form>
                 </CardFooter>
