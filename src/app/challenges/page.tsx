@@ -14,6 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { format, getWeek } from 'date-fns';
 import { getChallenges, getSubmissions } from "@/services/languageService";
 import type { Challenge, Submission } from "@/lib/mock-data";
+import { Skeleton } from "@/components/ui/skeleton";
 
 
 export default function ChallengesPage() {
@@ -42,13 +43,12 @@ export default function ChallengesPage() {
         const weekOfYear = getWeek(new Date());
 
         const dailyIndex = dayOfYear % challenges.length;
-        const weeklyIndex = weekOfYear % challenges.filter(c => c.difficulty === 'Hard').length;
-        
         const hardChallenges = challenges.filter(c => c.difficulty === 'Hard');
-
+        const weeklyIndex = hardChallenges.length > 0 ? weekOfYear % hardChallenges.length : -1;
+        
         return {
             dailyChallenge: challenges[dailyIndex],
-            weeklyChallenge: hardChallenges.length > 0 ? hardChallenges[weeklyIndex] : challenges[ (weeklyIndex + 5) % challenges.length ] // fallback
+            weeklyChallenge: weeklyIndex !== -1 ? hardChallenges[weeklyIndex] : challenges[ (dayOfYear + 5) % challenges.length ] // fallback
         };
     }, [challenges]);
 
