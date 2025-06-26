@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -58,10 +59,64 @@ const challenges = [
         id: 6,
         title: "Valid Anagram",
         description: "Given two strings s and t, return true if t is an anagram of s, and false otherwise. An anagram is a word formed by rearranging the letters of another.",
-        difficulty: "Hard",
+        difficulty: "Medium",
         points: 30,
         tests: 15,
         language: "python",
+    },
+    {
+        id: 7,
+        title: "Binary Search",
+        description: "Given a sorted array of integers, write a function that searches for a target value. If the target exists, return its index; otherwise, return -1.",
+        difficulty: "Medium",
+        points: 25,
+        tests: 10,
+        language: "java",
+    },
+    {
+        id: 8,
+        title: "Longest Common Prefix",
+        description: "Write a function to find the longest common prefix string amongst an array of strings. If there is no common prefix, return an empty string.",
+        difficulty: "Easy",
+        points: 15,
+        tests: 9,
+        language: "go",
+    },
+    {
+        id: 9,
+        title: "Linked List Cycle",
+        description: "Given a linked list, determine if it has a cycle in it. To represent a cycle, we use an integer `pos` which denotes the position.",
+        difficulty: "Hard",
+        points: 40,
+        tests: 11,
+        language: "cpp",
+    },
+    {
+        id: 10,
+        title: "Implement Queue using Stacks",
+        description: "Implement a first in, first out (FIFO) queue using only two stacks. The implemented queue should support all the functions of a normal queue.",
+        difficulty: "Hard",
+        points: 45,
+        tests: 18,
+        language: "javascript",
+    },
+    {
+        id: 11,
+        title: "Fibonacci Number",
+        description: "Write a function to compute the nth Fibonacci number. The Fibonacci sequence is a series of numbers where each number is the sum of the two preceding ones.",
+        difficulty: "Easy",
+        points: 10,
+        tests: 6,
+        language: "python",
+    },
+    {
+        id: 12,
+        title: "Merge Two Sorted Lists",
+        description: "Merge two sorted linked lists and return it as a new sorted list. The new list should be made by splicing together the nodes of the first two lists.",
+        difficulty: "Medium",
+        points: 30,
+        tests: 14,
+        language: "java",
     },
 ];
 

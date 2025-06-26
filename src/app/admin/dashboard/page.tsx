@@ -21,6 +21,11 @@ const recentSubscribers = [
   { name: "Sam Wilson", email: "sam.w@example.com", plan: "Premium Yearly", amount: "$99.00" },
   { name: "Alice Brown", email: "alice.b@example.com", plan: "Free", amount: "$0.00" },
   { name: "Bob Johnson", email: "bob.j@example.com", plan: "Premium Monthly", amount: "$9.99" },
+  { name: "Emily White", email: "emily.w@example.com", plan: "Premium Yearly", amount: "$99.00" },
+  { name: "Michael Green", email: "michael.g@example.com", plan: "Premium Monthly", amount: "$9.99" },
+  { name: "Sarah Black", email: "sarah.b@example.com", plan: "Free", amount: "$0.00" },
+  { name: "David King", email: "david.k@example.com", plan: "Premium Yearly", amount: "$99.00" },
+  { name: "Laura Hill", email: "laura.h@example.com", plan: "Premium Monthly", amount: "$9.99" },
 ];
 
 export default function DashboardPage() {

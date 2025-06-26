@@ -67,13 +67,108 @@ const languagesData: Record<string, { name: string; topics: Topic[] }> = {
     name: 'JavaScript',
     topics: [
       { id: 't10', title: 'Introduction to JavaScript', lessons: [
-         { id: 'l10-1', title: 'What is JavaScript?', difficulty: 'Beginner', attachments: [] },
-      ] },
+        { id: 'l10-1', title: 'What is JavaScript?', difficulty: 'Beginner', attachments: [] },
+        { id: 'l10-2', title: 'JavaScript in the Browser', difficulty: 'Beginner', attachments: [] },
+        { id: 'l10-3', title: 'Setting up a Development Environment', difficulty: 'Beginner', attachments: [] },
+      ]},
+      { id: 't11', title: 'JavaScript Fundamentals', lessons: [
+          { id: 'l11-1', title: 'Variables, Constants, and Data Types', difficulty: 'Beginner', attachments: [] },
+          { id: 'l11-2', title: 'Operators', difficulty: 'Beginner', attachments: [] },
+          { id: 'l11-3', title: 'Control Flow: Conditionals and Loops', difficulty: 'Intermediate', attachments: [] },
+      ]},
+      { id: 't12', title: 'Functions', lessons: [
+          { id: 'l12-1', title: 'Function Declarations vs. Expressions', difficulty: 'Intermediate', attachments: [] },
+          { id: 'l12-2', title: 'Arrow Functions', difficulty: 'Intermediate', attachments: [] },
+          { id: 'l12-3', title: 'Scope and Closures', difficulty: 'Advanced', attachments: [] },
+      ]},
+      { id: 't13', title: 'DOM Manipulation', lessons: [
+          { id: 'l13-1', title: 'Selecting Elements', difficulty: 'Intermediate', attachments: [] },
+          { id: 'l13-2', title: 'Modifying the DOM', difficulty: 'Intermediate', attachments: [] },
+          { id: 'l13-3', title: 'Handling Events', difficulty: 'Intermediate', attachments: [] },
+      ]},
+      { id: 't14', title: 'Asynchronous JavaScript', lessons: [
+          { id: 'l14-1', title: 'Callbacks', difficulty: 'Intermediate', attachments: [] },
+          { id: 'l14-2', title: 'Promises', difficulty: 'Advanced', attachments: [] },
+          { id: 'l14-3', title: 'Async/Await', difficulty: 'Advanced', attachments: [] },
+      ]},
+      { id: 't15', title: 'ES6+ Features', lessons: [
+          { id: 'l15-1', title: 'Template Literals', difficulty: 'Beginner', attachments: [] },
+          { id: 'l15-2', title: 'Destructuring', difficulty: 'Intermediate', attachments: [] },
+          { id: 'l15-3', title: 'Modules', difficulty: 'Advanced', attachments: [] },
+      ]},
     ]
   },
-  java: { name: 'Java', topics: [] },
-  cpp: { name: 'C++', topics: [] },
-  go: { name: 'Go', topics: [] },
+  java: { 
+    name: 'Java', 
+    topics: [
+      { id: 't20', title: 'Introduction to Java', lessons: [
+        { id: 'l20-1', title: 'What is Java?', difficulty: 'Beginner', attachments: [] },
+        { id: 'l20-2', title: 'JDK, JRE, and JVM', difficulty: 'Beginner', attachments: [] },
+        { id: 'l20-3', title: 'Your First Java Program', difficulty: 'Beginner', attachments: [] },
+      ]},
+      { id: 't21', title: 'Core Java Concepts', lessons: [
+        { id: 'l21-1', title: 'Variables and Data Types', difficulty: 'Beginner', attachments: [] },
+        { id: 'l21-2', title: 'Operators', difficulty: 'Beginner', attachments: [] },
+        { id: 'l21-3', title: 'Control Flow Statements', difficulty: 'Intermediate', attachments: [] },
+      ]},
+      { id: 't22', title: 'Object-Oriented Programming', lessons: [
+        { id: 'l22-1', title: 'Classes and Objects', difficulty: 'Intermediate', attachments: [] },
+        { id: 'l22-2', title: 'Inheritance, Polymorphism, Abstraction, Encapsulation', difficulty: 'Advanced', attachments: [] },
+        { id: 'l22-3', title: 'Interfaces and Abstract Classes', difficulty: 'Advanced', attachments: [] },
+      ]},
+      { id: 't23', title: 'Java Collections Framework', lessons: [
+        { id: 'l23-1', title: 'List, Set, Map', difficulty: 'Intermediate', attachments: [] },
+        { id: 'l23-2', title: 'ArrayList, LinkedList, HashSet, HashMap', difficulty: 'Intermediate', attachments: [] },
+      ]},
+      { id: 't24', title: 'Exception Handling', lessons: [
+        { id: 'l24-1', title: 'try-catch-finally', difficulty: 'Intermediate', attachments: [] },
+        { id: 'l24-2', title: 'Checked vs. Unchecked Exceptions', difficulty: 'Advanced', attachments: [] },
+      ]},
+    ]
+  },
+  cpp: { 
+    name: 'C++', 
+    topics: [
+      { id: 't30', title: 'C++ Basics', lessons: [
+        { id: 'l30-1', title: 'Introduction to C++', difficulty: 'Beginner', attachments: [] },
+        { id: 'l30-2', title: 'Basic Syntax and Structure', difficulty: 'Beginner', attachments: [] },
+      ]},
+      { id: 't31', title: 'Variables and Data Types', lessons: [
+        { id: 'l31-1', title: 'Primitive Data Types', difficulty: 'Beginner', attachments: [] },
+        { id: 'l31-2', title: 'Pointers', difficulty: 'Advanced', attachments: [] },
+      ]},
+      { id: 't32', title: 'Object-Oriented Programming in C++', lessons: [
+        { id: 'l32-1', title: 'Classes and Objects', difficulty: 'Intermediate', attachments: [] },
+        { id: 'l32-2', title: 'Constructors and Destructors', difficulty: 'Intermediate', attachments: [] },
+        { id: 'l32-3', title: 'Inheritance and Polymorphism', difficulty: 'Advanced', attachments: [] },
+      ]},
+      { id: 't33', title: 'Standard Template Library (STL)', lessons: [
+        { id: 'l33-1', title: 'Containers (vector, map, set)', difficulty: 'Intermediate', attachments: [] },
+        { id: 'l33-2', title: 'Iterators and Algorithms', difficulty: 'Advanced', attachments: [] },
+      ]},
+    ]
+  },
+  go: { 
+    name: 'Go', 
+    topics: [
+       { id: 't40', title: 'Getting Started with Go', lessons: [
+        { id: 'l40-1', title: 'Why Go?', difficulty: 'Beginner', attachments: [] },
+        { id: 'l40-2', title: 'Setting up Go environment', difficulty: 'Beginner', attachments: [] },
+      ]},
+      { id: 't41', title: 'Go Fundamentals', lessons: [
+        { id: 'l41-1', title: 'Packages, Variables, and Functions', difficulty: 'Beginner', attachments: [] },
+        { id: 'l41-2', title: 'Flow Control and Data Structures', difficulty: 'Intermediate', attachments: [] },
+      ]},
+      { id: 't42', title: 'Concurrency in Go', lessons: [
+        { id: 'l42-1', title: 'Goroutines', difficulty: 'Advanced', attachments: [] },
+        { id: 'l42-2', title: 'Channels', difficulty: 'Advanced', attachments: [] },
+      ]},
+      { id: 't43', title: 'Packages and Testing', lessons: [
+        { id: 'l43-1', title: 'Creating and using packages', difficulty: 'Intermediate', attachments: [] },
+        { id: 'l43-2', title: 'Writing tests in Go', difficulty: 'Intermediate', attachments: [] },
+      ]},
+    ]
+  },
 };
 
 type Attachment = { type: 'pdf' | 'youtube' | 'code' | 'link'; url: string };

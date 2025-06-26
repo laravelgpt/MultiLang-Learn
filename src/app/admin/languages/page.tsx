@@ -17,11 +17,11 @@ import { MoreHorizontal, PlusCircle } from "lucide-react";
 import Image from "next/image";
 
 const languagesData = [
-  { id: 'py', name: 'Python', icon: 'https://placehold.co/32x32.png', topics: 115, lessons: 1120, popularity: 5210, difficulty: 'Beginner' },
-  { id: 'js', name: 'JavaScript', icon: 'https://placehold.co/32x32.png', topics: 128, lessons: 1350, popularity: 4890, difficulty: 'Beginner' },
-  { id: 'java', name: 'Java', icon: 'https://placehold.co/32x32.png', topics: 130, lessons: 1480, popularity: 3120, difficulty: 'Intermediate' },
-  { id: 'cpp', name: 'C++', icon: 'https://placehold.co/32x32.png', topics: 142, lessons: 1550, popularity: 2540, difficulty: 'Advanced' },
-  { id: 'go', name: 'Go', icon: 'https://placehold.co/32x32.png', topics: 112, lessons: 990, popularity: 1980, difficulty: 'Intermediate' },
+  { id: 'py', name: 'Python', icon: 'https://placehold.co/32x32.png', topics: 9, lessons: 25, popularity: 5210, difficulty: 'Beginner' },
+  { id: 'js', name: 'JavaScript', icon: 'https://placehold.co/32x32.png', topics: 6, lessons: 15, popularity: 4890, difficulty: 'Beginner' },
+  { id: 'java', name: 'Java', icon: 'https://placehold.co/32x32.png', topics: 5, lessons: 12, popularity: 3120, difficulty: 'Intermediate' },
+  { id: 'cpp', name: 'C++', icon: 'https://placehold.co/32x32.png', topics: 4, lessons: 9, popularity: 2540, difficulty: 'Advanced' },
+  { id: 'go', name: 'Go', icon: 'https://placehold.co/32x32.png', topics: 4, lessons: 8, popularity: 1980, difficulty: 'Intermediate' },
 ];
 
 type Language = typeof languagesData[0];

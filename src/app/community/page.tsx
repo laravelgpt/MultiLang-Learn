@@ -43,14 +43,59 @@ const posts = [
         comments: 7,
         views: 310,
     },
+    {
+        id: 4,
+        author: { name: 'Diana', avatar: 'https://placehold.co/40x40.png', hint: 'profile avatar' },
+        time: '2 days ago',
+        title: 'Understanding pointers in C++',
+        content: 'Pointers in C++ are confusing me. What\'s the difference between a pointer and a reference? When should I use one over the other?',
+        tags: ['c++', 'pointers', 'memory'],
+        likes: 35,
+        comments: 9,
+        views: 550,
+    },
+    {
+        id: 5,
+        author: { name: 'Eve', avatar: 'https://placehold.co/40x40.png', hint: 'profile avatar' },
+        time: '3 days ago',
+        title: 'Java Threads vs. Executors',
+        content: 'What are the pros and cons of using raw Threads versus the Executor framework in Java for concurrency?',
+        tags: ['java', 'concurrency', 'threads'],
+        likes: 51,
+        comments: 15,
+        views: 820,
+    },
+    {
+        id: 6,
+        author: { name: 'Frank', avatar: 'https://placehold.co/40x40.png', hint: 'profile avatar' },
+        time: '4 days ago',
+        title: 'Showcase: I built a weather app with React',
+        content: 'Just finished my first major React project, a weather application using the OpenWeatherMap API. Check it out and let me know what you think!',
+        tags: ['react', 'javascript', 'showcase', 'api'],
+        likes: 78,
+        comments: 22,
+        views: 1100,
+    },
+    {
+        id: 7,
+        author: { name: 'Grace', avatar: 'https://placehold.co/40x40.png', hint: 'profile avatar' },
+        time: '5 days ago',
+        title: 'How to handle state in large Go applications?',
+        content: 'What are some common patterns for managing application state in larger Go projects? I\'m trying to avoid global state.',
+        tags: ['go', 'architecture', 'state-management'],
+        likes: 22,
+        comments: 6,
+        views: 280,
+    },
 ];
 
-const trendingTopics = ["JavaScript", "Python", "Data Structures", "Next.js", "AI/ML"];
+const trendingTopics = ["JavaScript", "Python", "Data Structures", "Next.js", "AI/ML", "Go", "C++"];
 const featuredMembers = [
     { name: "Diana", avatar: "https://placehold.co/40x40.png", hint: 'profile avatar' },
     { name: "Eve", avatar: "https://placehold.co/40x40.png", hint: 'profile avatar' },
     { name: "Frank", avatar: "https://placehold.co/40x40.png", hint: 'profile avatar' },
     { name: "Grace", avatar: "https://placehold.co/40x40.png", hint: 'profile avatar' },
+    { name: "Heidi", avatar: "https://placehold.co/40x40.png", hint: 'profile avatar' },
 ];
 
 export default function CommunityPage() {

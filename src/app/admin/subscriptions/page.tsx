@@ -31,11 +31,17 @@ const paymentMethods = [
 const manualPayments = [
     { id: 'TXN7348', user: 'user1@example.com', amount: '৳1000', method: 'bKash', date: '2024-07-20' },
     { id: 'TXN9210', user: 'user2@example.com', amount: '৳1000', method: 'bKash', date: '2024-07-19' },
+    { id: 'TXN8371', user: 'user8@example.com', amount: '৳1000', method: 'bKash', date: '2024-07-18' },
+    { id: 'TXN4612', user: 'user12@example.com', amount: '৳1000', method: 'bKash', date: '2024-07-17' },
+    { id: 'TXN5501', user: 'user15@example.com', amount: '৳1000', method: 'bKash', date: '2024-07-16' },
 ];
 
 const failedTransactions = [
     { id: 'FTXN101', user: 'user3@example.com', amount: '$9.99', reason: 'Insufficient funds', date: '2024-07-20' },
     { id: 'FTXN102', user: 'user4@example.com', amount: '$99.00', reason: 'Card declined', date: '2024-07-18' },
+    { id: 'FTXN103', user: 'user7@example.com', amount: '$9.99', reason: 'Do not honor', date: '2024-07-15' },
+    { id: 'FTXN104', user: 'user11@example.com', amount: '$99.00', reason: 'Card declined', date: '2024-07-14' },
+    { id: 'FTXN105', user: 'user13@example.com', amount: '$9.99', reason: 'Expired card', date: '2024-07-12' },
 ];
 
 type Plan = typeof plansData[0];
