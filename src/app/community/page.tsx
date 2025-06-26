@@ -87,6 +87,28 @@ const posts = [
         comments: 6,
         views: 280,
     },
+    {
+        id: 8,
+        author: { name: 'Heidi', avatar: 'https://placehold.co/40x40.png', hint: 'profile avatar' },
+        time: '6 days ago',
+        title: 'Is Rust the future of systems programming?',
+        content: 'I\'ve been hearing a lot about Rust\'s safety features and performance. For those who have made the switch from C++, was it worth it?',
+        tags: ['rust', 'c++', 'systems'],
+        likes: 150,
+        comments: 45,
+        views: 2500,
+    },
+    {
+        id: 9,
+        author: { name: 'Ivan', avatar: 'https://placehold.co/40x40.png', hint: 'profile avatar' },
+        time: '1 week ago',
+        title: 'Learning data structures in Python',
+        content: 'I\'m starting to learn about data structures. I\'ve covered lists and dictionaries, what should I learn next? Stacks, queues, trees?',
+        tags: ['python', 'dsa', 'beginner'],
+        likes: 40,
+        comments: 18,
+        views: 900,
+    }
 ];
 
 const trendingTopics = ["JavaScript", "Python", "Data Structures", "Next.js", "AI/ML", "Go", "C++"];

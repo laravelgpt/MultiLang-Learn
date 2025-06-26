@@ -34,6 +34,11 @@ const usersData = [
     { id: 'usr_13', name: 'Daniel Taylor', email: 'daniel.taylor@example.com', role: 'User', joined: '2024-01-05', status: 'Active', avatar: 'https://placehold.co/40x40.png' },
     { id: 'usr_14', name: 'Sophia Rodriguez', email: 'sophia.rodriguez@example.com', role: 'User', joined: '2024-06-28', status: 'Inactive', avatar: 'https://placehold.co/40x40.png' },
     { id: 'usr_15', name: 'James Lee', email: 'james.lee@example.com', role: 'User', joined: '2024-02-01', status: 'Active', avatar: 'https://placehold.co/40x40.png' },
+    { id: 'usr_16', name: 'Liam Garcia', email: 'liam.g@example.com', role: 'User', joined: '2024-07-02', status: 'Active', avatar: 'https://placehold.co/40x40.png' },
+    { id: 'usr_17', name: 'Emma Martinez', email: 'emma.m@example.com', role: 'User', joined: '2024-07-03', status: 'Inactive', avatar: 'https://placehold.co/40x40.png' },
+    { id: 'usr_18', name: 'Noah Rodriguez', email: 'noah.r@example.com', role: 'User', joined: '2024-07-04', status: 'Active', avatar: 'https://placehold.co/40x40.png' },
+    { id: 'usr_19', name: 'Isabella Hernandez', email: 'isabella.h@example.com', role: 'Admin', joined: '2024-07-05', status: 'Active', avatar: 'https://placehold.co/40x40.png' },
+    { id: 'usr_20', name: 'William Lopez', email: 'william.l@example.com', role: 'User', joined: '2024-07-06', status: 'Active', avatar: 'https://placehold.co/40x40.png' }
 ];
 
 type User = typeof usersData[0];

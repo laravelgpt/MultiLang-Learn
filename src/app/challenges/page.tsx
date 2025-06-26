@@ -118,6 +118,33 @@ const challenges = [
         tests: 14,
         language: "java",
     },
+    {
+        id: 13,
+        title: "Maximum Depth of Binary Tree",
+        description: "Given the root of a binary tree, return its maximum depth. A binary tree's maximum depth is the number of nodes along the longest path.",
+        difficulty: "Easy",
+        points: 15,
+        tests: 8,
+        language: "python",
+    },
+    {
+        id: 14,
+        title: "Container With Most Water",
+        description: "You are given an integer array height of length n. There are n vertical lines drawn such that the two endpoints of the ith line are (i, 0) and (i, height[i]).",
+        difficulty: "Medium",
+        points: 35,
+        tests: 10,
+        language: "javascript",
+    },
+    {
+        id: 15,
+        title: "Trapping Rain Water",
+        description: "Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.",
+        difficulty: "Hard",
+        points: 50,
+        tests: 20,
+        language: "go",
+    }
 ];
 
 
