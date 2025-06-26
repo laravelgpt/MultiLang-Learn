@@ -35,7 +35,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="mt-8">
-        <Card>
+        <Card className="hover:shadow-lg transition-shadow">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>

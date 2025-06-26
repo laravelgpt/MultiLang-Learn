@@ -17,7 +17,7 @@ export function UserHeader() {
       <div className="flex items-center gap-4">
         <Button variant="outline" className="flex items-center gap-2">
           <Flame className="h-4 w-4 text-orange-500" />
-          <span>0 Day Streak</span>
+          <span className="hidden sm:inline">0 Day Streak</span>
         </Button>
         <ThemeToggle />
         <div className="relative">
