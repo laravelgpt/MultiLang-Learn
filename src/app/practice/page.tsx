@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -87,7 +86,7 @@ export default function PracticePage() {
         workerRef.current.onmessage = (e) => {
             const { output: workerOutput, error } = e.data;
             if (error) {
-                setOutput(\`Error: \${error}\`);
+                setOutput('Error: ' + error);
             } else {
                 setOutput(workerOutput || "Code executed successfully with no output.");
             }
@@ -95,7 +94,7 @@ export default function PracticePage() {
         };
         
         workerRef.current.onerror = (e) => {
-            setOutput(\`An error occurred in the code runner: \${e.message}\`);
+            setOutput('An error occurred in the code runner: ' + e.message);
             setIsRunning(false);
         };
 
