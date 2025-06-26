@@ -12,6 +12,7 @@ import {z} from 'genkit';
 
 const GenerateLanguageTopicsInputSchema = z.object({
   languageName: z.string().describe('The name of the programming language.'),
+  topicCount: z.number().optional().describe('The number of topics to generate.'),
 });
 export type GenerateLanguageTopicsInput = z.infer<typeof GenerateLanguageTopicsInputSchema>;
 
@@ -20,7 +21,7 @@ const TopicSchema = z.object({
 });
 
 const GenerateLanguageTopicsOutputSchema = z.object({
-    topics: z.array(TopicSchema).describe("An array of 5 to 7 introductory topic titles for the language."),
+    topics: z.array(TopicSchema).describe("An array of introductory topic titles for the language."),
 });
 export type GenerateLanguageTopicsOutput = z.infer<typeof GenerateLanguageTopicsOutputSchema>;
 
@@ -35,7 +36,7 @@ const prompt = ai.definePrompt({
   prompt: `You are an expert curriculum designer for software engineering.
 A user wants to add a new programming language to the platform: "{{languageName}}".
 
-Your task is to generate a list of 5 to 7 essential, introductory topic titles for a beginner's curriculum in this language.
+Your task is to generate a list of {{#if topicCount}}{{topicCount}}{{else}}5 to 7{{/if}} essential, introductory topic titles for a beginner's curriculum in this language.
 Focus on fundamental concepts that a new learner would need to get started.
 
 For example, for Python, you might suggest:

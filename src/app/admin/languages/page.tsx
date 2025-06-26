@@ -24,11 +24,11 @@ export default function LanguagesPage() {
   const { toast } = useToast();
   const [languages, setLanguages] = useState<LanguageSummary[]>(languagesSummaryData);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingLanguage, setEditingLanguage] = useState<Partial<LanguageSummary> | null>(null);
+  const [editingLanguage, setEditingLanguage] = useState<(Partial<LanguageSummary> & { topicCount?: number }) | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
   const handleAddNew = () => {
-    setEditingLanguage({ name: '', icon: 'https://placehold.co/32x32.png', difficulty: 'Beginner' });
+    setEditingLanguage({ name: '', icon: 'https://placehold.co/32x32.png', difficulty: 'Beginner', topicCount: 5 });
     setIsDialogOpen(true);
   };
 
@@ -71,7 +71,10 @@ export default function LanguagesPage() {
           const languageId = editingLanguage.name.toLowerCase().replace(/\s/g, '-').replace(/[^\\w-]/g, '');
           
           // Call AI to generate topics
-          const aiResult = await generateLanguageTopics({ languageName: editingLanguage.name });
+          const aiResult = await generateLanguageTopics({ 
+            languageName: editingLanguage.name,
+            topicCount: editingLanguage.topicCount || 5,
+          });
 
           const newLanguageSummary: LanguageSummary = {
             id: languageId,
@@ -214,6 +217,20 @@ export default function LanguagesPage() {
                   </SelectContent>
                 </Select>
               </div>
+              { !editingLanguage.id && (
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="topic-count" className="text-right">Topics</Label>
+                    <Input
+                      id="topic-count"
+                      type="number"
+                      value={editingLanguage.topicCount || 5}
+                      onChange={(e) => setEditingLanguage({...editingLanguage, topicCount: parseInt(e.target.value, 10) || 5 })}
+                      className="col-span-3"
+                      min="3"
+                      max="10"
+                    />
+                  </div>
+              )}
             </div>
           )}
           <DialogFooter>
