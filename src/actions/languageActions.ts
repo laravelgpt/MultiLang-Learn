@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { generateLanguageTopics } from '@/ai/flows/generate-language-topics';
 import { generateQuickQuestions } from '@/ai/flows/generate-quick-questions';
+import { generateLessonsForTopic } from '@/ai/flows/generate-lessons-for-topic';
 import { 
     addLanguageSummary, 
     addLanguageCurriculum,
@@ -13,13 +14,14 @@ import {
     addTopic,
     addQuickQuestions,
 } from '@/services/languageService';
-import type { LanguageSummary, LanguageCurriculum } from '@/lib/mock-data';
+import type { LanguageSummary, LanguageCurriculum, Lesson } from '@/lib/mock-data';
 
 const languageSchema = z.object({
     name: z.string().min(1, "Name is required."),
     icon: z.string().url("Must be a valid URL."),
     difficulty: z.enum(['Beginner', 'Intermediate', 'Advanced']),
     topicCount: z.coerce.number().min(3).max(10),
+    lessonCount: z.coerce.number().min(1).max(5),
     quickQuestionsCount: z.coerce.number().min(3).max(5),
 });
 
@@ -29,6 +31,7 @@ export async function addLanguageAction(formData: FormData) {
         icon: formData.get('icon'),
         difficulty: formData.get('difficulty'),
         topicCount: formData.get('topicCount'),
+        lessonCount: formData.get('lessonCount'),
         quickQuestionsCount: formData.get('quickQuestionsCount'),
     });
 
@@ -40,7 +43,7 @@ export async function addLanguageAction(formData: FormData) {
         };
     }
 
-    const { name, icon, difficulty, topicCount, quickQuestionsCount } = validatedFields.data;
+    const { name, icon, difficulty, topicCount, lessonCount, quickQuestionsCount } = validatedFields.data;
     const languageId = name.toLowerCase().replace(/\s/g, '-').replace(/[^a-z0-9-]/g, '');
 
     try {
@@ -56,14 +59,41 @@ export async function addLanguageAction(formData: FormData) {
         if (!quickQuestionResults || !quickQuestionResults.questions) {
             throw new Error("AI quick question generation failed.");
         }
+        
+        const topicsWithLessons = await Promise.all(
+            topicResults.topics.map(async (topic, topicIndex) => {
+                const lessonResults = await generateLessonsForTopic({
+                    languageName: name,
+                    topicTitle: topic.title,
+                    lessonCount: lessonCount,
+                });
+
+                const lessons: Lesson[] = lessonResults.lessons.map((l, lessonIndex) => ({
+                    id: `l-${languageId}-${topicIndex}-${lessonIndex}`,
+                    title: l.title,
+                    difficulty: l.difficulty,
+                    content: l.content,
+                    codeSnippet: l.codeSnippet,
+                    attachments: [],
+                }));
+
+                return {
+                    id: `t-${languageId}-${topicIndex}`,
+                    title: topic.title,
+                    lessons: lessons,
+                };
+            })
+        );
+        
+        const totalLessons = topicsWithLessons.reduce((sum, topic) => sum + topic.lessons.length, 0);
 
         const newLanguageSummary: LanguageSummary = {
             id: languageId,
             name,
             icon,
             difficulty,
-            topics: topicResults.topics.length,
-            lessons: 0,
+            topics: topicsWithLessons.length,
+            lessons: totalLessons,
             popularity: 0,
             description: `A ${difficulty}-level programming language.`,
             progress: 0,
@@ -71,11 +101,7 @@ export async function addLanguageAction(formData: FormData) {
         
         const newLanguageCurriculum: LanguageCurriculum = {
             name: newLanguageSummary.name,
-            topics: topicResults.topics.map((t, index) => ({
-                id: `t-${languageId}-${index}`,
-                title: t.title,
-                lessons: []
-            }))
+            topics: topicsWithLessons
         };
         
         await addLanguageSummary(newLanguageSummary);
@@ -89,7 +115,7 @@ export async function addLanguageAction(formData: FormData) {
         
         return {
             success: true,
-            message: `${name} was added with ${topicResults.topics.length} starter topics and ${quickQuestionResults.questions.length} quick questions.`,
+            message: `${name} was added with ${topicsWithLessons.length} topics, ${totalLessons} lessons, and ${quickQuestionResults.questions.length} quick questions.`,
         }
 
     } catch (error) {
