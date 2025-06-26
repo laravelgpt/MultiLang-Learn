@@ -12,9 +12,14 @@ import {
     deleteLanguageSummary,
     deleteLanguageCurriculum,
     addTopic,
+    updateTopic,
+    deleteTopic,
+    addLesson,
+    updateLesson,
+    deleteLesson,
     addQuickQuestions,
 } from '@/services/languageService';
-import type { LanguageSummary, LanguageCurriculum, Lesson } from '@/lib/mock-data';
+import type { LanguageSummary, LanguageCurriculum, Lesson, Topic } from '@/lib/mock-data';
 
 const languageSchema = z.object({
     name: z.string().min(1, "Name is required."),
@@ -196,5 +201,127 @@ export async function generateTopicsAction(formData: FormData) {
         return {
             error: "Could not generate topics for the language.",
         };
+    }
+}
+
+// Topic Actions
+const topicSchema = z.object({
+    id: z.string().optional(),
+    title: z.string().min(1, "Title is required."),
+    langId: z.string(),
+});
+export async function saveTopicAction(formData: FormData) {
+    const validatedFields = topicSchema.safeParse({
+        id: formData.get('id'),
+        title: formData.get('title'),
+        langId: formData.get('langId'),
+    });
+
+    if (!validatedFields.success) {
+        return { error: "Invalid input." };
+    }
+
+    const { id, title, langId } = validatedFields.data;
+
+    try {
+        if (id) {
+            await updateTopic(langId, id, { title });
+        } else {
+            await addTopic(langId, { title });
+        }
+        revalidatePath(`/admin/languages/${langId}`);
+        revalidatePath('/admin/languages');
+        return { success: true, message: `Topic "${title}" saved.` };
+    } catch (error) {
+        return { error: "Failed to save topic." };
+    }
+}
+
+export async function deleteTopicAction(langId: string, topicId: string) {
+    try {
+        await deleteTopic(langId, topicId);
+        revalidatePath(`/admin/languages/${langId}`);
+        revalidatePath('/admin/languages');
+        return { success: true, message: "Topic deleted." };
+    } catch (error) {
+        return { error: "Failed to delete topic." };
+    }
+}
+
+// Lesson Actions
+const lessonSchema = z.object({
+    id: z.string().optional(),
+    title: z.string().min(1, "Title is required."),
+    difficulty: z.enum(['Beginner', 'Intermediate', 'Advanced']),
+    langId: z.string(),
+    topicId: z.string(),
+    content: z.string().optional(),
+    codeSnippet: z.string().optional(),
+});
+export async function saveLessonAction(formData: FormData) {
+    const validatedFields = lessonSchema.safeParse({
+        id: formData.get('id'),
+        title: formData.get('title'),
+        difficulty: formData.get('difficulty'),
+        langId: formData.get('langId'),
+        topicId: formData.get('topicId'),
+        content: formData.get('content'),
+        codeSnippet: formData.get('codeSnippet'),
+    });
+
+    if (!validatedFields.success) {
+        return { error: "Invalid input." };
+    }
+
+    const { id, langId, topicId, ...lessonData } = validatedFields.data;
+
+    try {
+        if (id) {
+            await updateLesson(langId, topicId, id, lessonData);
+        } else {
+            await addLesson(langId, topicId, lessonData);
+        }
+        revalidatePath(`/admin/languages/${langId}`);
+        return { success: true, message: `Lesson "${lessonData.title}" saved.` };
+    } catch (error) {
+        return { error: "Failed to save lesson." };
+    }
+}
+
+export async function deleteLessonAction(langId: string, topicId: string, lessonId: string) {
+    try {
+        await deleteLesson(langId, topicId, lessonId);
+        revalidatePath(`/admin/languages/${langId}`);
+        return { success: true, message: "Lesson deleted." };
+    } catch (error) {
+        return { error: "Failed to delete lesson." };
+    }
+}
+
+// Quick Questions Actions
+const quickQuestionsSchema = z.object({
+  langId: z.string(),
+  questions: z.string(),
+});
+export async function saveQuickQuestionsAction(formData: FormData) {
+    const validatedFields = quickQuestionsSchema.safeParse({
+        langId: formData.get('langId'),
+        questions: formData.get('questions'),
+    });
+
+    if (!validatedFields.success) {
+        return { error: "Invalid input." };
+    }
+
+    const { langId, questions } = validatedFields.data;
+    const questionsArray = questions.split('\n').filter(q => q.trim() !== '');
+
+    try {
+        await addQuickQuestions(langId, questionsArray);
+        revalidatePath(`/admin/languages/${langId}`);
+        revalidatePath(`/ai-assistant`);
+        return { success: true, message: 'Quick questions have been updated.' };
+    } catch (error) {
+        return { error: "Failed to save quick questions." };
     }
 }

@@ -63,14 +63,14 @@ export async function addQuickQuestions(langId: string, questions: string[]): Pr
     return Promise.resolve();
 }
 
-// ========== Topic Services (Example) ==========
+// ========== Topic Services ==========
 
 export async function addTopic(langId: string, topic: Omit<Topic, 'id' | 'lessons'>): Promise<Topic | null> {
     const curriculum = languagesCurriculumData[langId];
     if (curriculum) {
         const newTopic: Topic = {
             ...topic,
-            id: `t-${Date.now()}`,
+            id: `t-${langId}-${Date.now()}`,
             lessons: [],
         };
         curriculum.topics.push(newTopic);
@@ -85,14 +85,40 @@ export async function addTopic(langId: string, topic: Omit<Topic, 'id' | 'lesson
     return Promise.resolve(null);
 }
 
-// ========== Lesson Services (Example) ==========
+export async function updateTopic(langId: string, topicId: string, topicData: Partial<Topic>): Promise<Topic | null> {
+    const topic = languagesCurriculumData[langId]?.topics.find(t => t.id === topicId);
+    if (topic) {
+        Object.assign(topic, topicData);
+        return Promise.resolve(topic);
+    }
+    return Promise.resolve(null);
+}
 
-export async function addLesson(langId: string, topicId: string, lesson: Omit<Lesson, 'id'>): Promise<Lesson | null> {
+export async function deleteTopic(langId: string, topicId: string): Promise<void> {
+    const curriculum = languagesCurriculumData[langId];
+    if (curriculum) {
+        const topicIndex = curriculum.topics.findIndex(t => t.id === topicId);
+        if (topicIndex > -1) {
+            curriculum.topics.splice(topicIndex, 1);
+            
+            const summary = languagesSummaryData.find(s => s.id === langId);
+            if (summary) {
+                summary.topics = curriculum.topics.length;
+            }
+        }
+    }
+    return Promise.resolve();
+}
+
+// ========== Lesson Services ==========
+
+export async function addLesson(langId: string, topicId: string, lessonData: Omit<Lesson, 'id' | 'attachments'>): Promise<Lesson | null> {
     const topic = languagesCurriculumData[langId]?.topics.find(t => t.id === topicId);
     if (topic) {
         const newLesson: Lesson = {
-            ...lesson,
-            id: `l-${Date.now()}`,
+            ...lessonData,
+            id: `l-${langId}-${topicId}-${Date.now()}`,
+            attachments: [],
         };
         topic.lessons.push(newLesson);
 
@@ -104,4 +130,32 @@ export async function addLesson(langId: string, topicId: string, lesson: Omit<Le
         return Promise.resolve(newLesson);
     }
     return Promise.resolve(null);
+}
+
+export async function updateLesson(langId: string, topicId: string, lessonId: string, lessonData: Partial<Lesson>): Promise<Lesson | null> {
+    const topic = languagesCurriculumData[langId]?.topics.find(t => t.id === topicId);
+    if (topic) {
+        const lesson = topic.lessons.find(l => l.id === lessonId);
+        if (lesson) {
+            Object.assign(lesson, lessonData);
+            return Promise.resolve(lesson);
+        }
+    }
+    return Promise.resolve(null);
+}
+
+export async function deleteLesson(langId: string, topicId: string, lessonId: string): Promise<void> {
+    const topic = languagesCurriculumData[langId]?.topics.find(t => t.id === topicId);
+    if (topic) {
+        const lessonIndex = topic.lessons.findIndex(l => l.id === lessonId);
+        if (lessonIndex > -1) {
+            topic.lessons.splice(lessonIndex, 1);
+
+            const summary = languagesSummaryData.find(s => s.id === langId);
+            if (summary) {
+                summary.lessons = (summary.lessons || 0) - 1;
+            }
+        }
+    }
+    return Promise.resolve();
 }
