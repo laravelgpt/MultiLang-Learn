@@ -31,8 +31,8 @@ export function UserHeader() {
             <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500"></span>
         </div>
         <Avatar>
-          <AvatarImage src="https://placehold.co/40x40.png" alt="Git" data-ai-hint="profile avatar" />
-          <AvatarFallback>G</AvatarFallback>
+          <AvatarImage src="https://placehold.co/40x40.png" alt="Git Frp" data-ai-hint="profile avatar" />
+          <AvatarFallback>GF</AvatarFallback>
         </Avatar>
       </div>
     </header>

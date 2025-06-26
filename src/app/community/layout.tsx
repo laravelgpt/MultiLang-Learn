@@ -28,12 +28,12 @@ export default function DashboardLayout({
         <SidebarFooter>
           <div className="flex items-center gap-3 p-2 rounded-lg bg-muted group-data-[collapsed=true]/sidebar:justify-center">
             <Avatar>
-              <AvatarImage src="https://placehold.co/40x40.png" alt="User" data-ai-hint="profile avatar" />
-              <AvatarFallback>U</AvatarFallback>
+              <AvatarImage src="https://placehold.co/40x40.png" alt="Git Frp" data-ai-hint="profile avatar" />
+              <AvatarFallback>GF</AvatarFallback>
             </Avatar>
             <div className="flex-1 group-data-[collapsed=true]/sidebar:hidden">
-              <p className="text-sm font-semibold">User</p>
-              <p className="text-xs text-muted-foreground">user@multilang.com</p>
+              <p className="text-sm font-semibold">Git Frp</p>
+              <p className="text-xs text-muted-foreground">git.frp@example.com</p>
             </div>
             <Button variant="ghost" size="icon" className="group-data-[collapsed=true]/sidebar:hidden" asChild>
               <Link href="/login">

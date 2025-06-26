@@ -30,18 +30,25 @@ const programmingLanguages = [
         hint: "javascript logo"
     },
     {
-        id: "pascal",
-        name: "Pascal",
-        progress: 0,
-        icon: "https://placehold.co/24x24/4ade80/4ade80.png",
-        hint: "pascal logo"
+        id: "go",
+        name: "Go",
+        progress: 25,
+        icon: "https://placehold.co/24x24/22d3ee/22d3ee.png",
+        hint: "go logo"
     },
     {
         id: "py",
         name: "Python",
-        progress: 0,
+        progress: 80,
         icon: "https://placehold.co/24x24/60a5fa/60a5fa.png",
         hint: "python logo"
+    },
+    {
+        id: "rust",
+        name: "Rust",
+        progress: 10,
+        icon: "https://placehold.co/24x24/fb923c/fb923c.png",
+        hint: "rust logo"
     },
 ];
 
