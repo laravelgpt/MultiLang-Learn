@@ -283,7 +283,7 @@ const CodeExplainer = () => {
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="javascript">JavaScript</SelectItem>
-                                        <SelectItem value="python" disabled>Python</SelectItem>
+                                        <SelectItem value="python">Python</SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <Button onClick={handleRunCode} disabled={isRunning} className="bg-green-600 hover:bg-green-700 text-white w-[90px]">

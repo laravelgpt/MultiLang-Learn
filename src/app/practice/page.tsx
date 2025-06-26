@@ -196,7 +196,7 @@ export default function PracticePage() {
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="javascript">JavaScript</SelectItem>
-                                            <SelectItem value="python" disabled>Python</SelectItem>
+                                            <SelectItem value="python">Python</SelectItem>
                                             <SelectItem value="pascal" disabled>Pascal</SelectItem>
                                         </SelectContent>
                                     </Select>
