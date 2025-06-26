@@ -16,8 +16,24 @@ const formSchema = z.object({
   lessonContentData: z.string().min(1, "Lesson content data is required."),
 });
 
-const defaultCompletionData = `lessonId,completionRate\n1,0.95\n2,0.92\n3,0.88\n4,0.82\n5,0.75\n6,0.70\n7,0.60\n8,0.45`;
-const defaultContentData = `lessonId,content\n1,"Introduction to Variables"\n2,"Understanding Data Types"\n3,"Working with Operators"\n4,"Conditional Statements: if-else"\n5,"Mastering Loops: for, while"\n6,"Creating and using Functions"\n7,"Basics of Object-Oriented Programming"\n8,"Introduction to Data Structures and Algorithms"`;
+const defaultCompletionData = `lessonId,completionRate
+1,0.95
+2,0.92
+3,0.88
+4,0.82
+5,0.75
+6,0.70
+7,0.60
+8,0.45`;
+const defaultContentData = `lessonId,content
+1,"Introduction to Variables"
+2,"Understanding Data Types"
+3,"Working with Operators"
+4,"Conditional Statements: if-else"
+5,"Mastering Loops: for, while"
+6,"Creating and using Functions"
+7,"Basics of Object-Oriented Programming"
+8,"Introduction to Data Structures and Algorithms"`;
 
 export function StrugglePointsAnalyzer() {
   const [loading, setLoading] = useState(false);
