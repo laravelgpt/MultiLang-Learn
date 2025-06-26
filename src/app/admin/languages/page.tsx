@@ -16,102 +16,51 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MoreHorizontal, PlusCircle, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
-import { languagesSummaryData, languagesCurriculumData, type LanguageSummary } from "@/lib/mock-data";
-import { generateLanguageTopics } from "@/ai/flows/generate-language-topics";
+import { addLanguageAction, deleteLanguageAction } from "@/actions/languageActions";
+import type { LanguageSummary } from "@/lib/mock-data";
 
-export default function LanguagesPage() {
+export default function LanguagesPage({ languages: initialLanguages }: { languages: LanguageSummary[] }) {
   const router = useRouter();
   const { toast } = useToast();
-  const [languages, setLanguages] = useState<LanguageSummary[]>(languagesSummaryData);
+  const [languages, setLanguages] = useState<LanguageSummary[]>(initialLanguages);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingLanguage, setEditingLanguage] = useState<(Partial<LanguageSummary> & { topicCount?: number }) | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
   const handleAddNew = () => {
-    setEditingLanguage({ name: '', icon: 'https://placehold.co/32x32.png', difficulty: 'Beginner', topicCount: 5 });
     setIsDialogOpen(true);
   };
 
-  const handleEdit = (lang: LanguageSummary) => {
-    setEditingLanguage({ ...lang });
-    setIsDialogOpen(true);
-  };
-
-  const handleDelete = (langId: string) => {
-    // Note: In a real app, this would be an API call.
-    // Here we are directly mutating the imported "database".
-    const index = languagesSummaryData.findIndex(l => l.id === langId);
-    if (index > -1) {
-        languagesSummaryData.splice(index, 1);
+  const handleDelete = async (langId: string, langName: string) => {
+    const result = await deleteLanguageAction(langId);
+    if (result?.error) {
+      toast({ title: "Error", description: result.error, variant: "destructive" });
+    } else {
+      setLanguages(languages.filter(l => l.id !== langId));
+      toast({ title: "Language Deleted", description: `${langName} has been removed.` });
     }
-    delete languagesCurriculumData[langId];
-    
-    setLanguages([...languagesSummaryData]);
-    toast({
-        title: "Language Deleted",
-        description: "The language has been removed.",
-    });
-  }
+  };
 
-  const handleSave = async () => {
-    if (!editingLanguage || !editingLanguage.name) return;
+  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     setIsSaving(true);
 
-    try {
-        if ('id' in editingLanguage && editingLanguage.id) {
-          // Editing existing language
-          const index = languagesSummaryData.findIndex(l => l.id === editingLanguage.id);
-          if (index > -1) {
-            languagesSummaryData[index] = editingLanguage as LanguageSummary;
-          }
-          setLanguages([...languagesSummaryData]);
-          toast({ title: "Language Updated" });
-        } else {
-          // Adding new language
-          const languageId = editingLanguage.name.toLowerCase().replace(/\s/g, '-').replace(/[^\\w-]/g, '');
-          
-          // Call AI to generate topics
-          const aiResult = await generateLanguageTopics({ 
-            languageName: editingLanguage.name,
-            topicCount: editingLanguage.topicCount || 5,
-          });
+    const formData = new FormData(event.currentTarget);
+    const result = await addLanguageAction(formData);
 
-          const newLanguageSummary: LanguageSummary = {
-            id: languageId,
-            topics: aiResult.topics.length,
-            lessons: 0, // No lessons initially
-            popularity: 0,
-            ...editingLanguage
-          } as LanguageSummary;
-          
-          const newLanguageCurriculum = {
-              name: newLanguageSummary.name,
-              topics: aiResult.topics.map((t, index) => ({
-                  id: `t${Date.now()}${index}`,
-                  title: t.title,
-                  lessons: []
-              }))
-          };
-
-          // Update our mock "database"
-          languagesSummaryData.push(newLanguageSummary);
-          languagesCurriculumData[languageId] = newLanguageCurriculum;
-
-          setLanguages([...languagesSummaryData]);
-          toast({ title: "Language Added", description: `${editingLanguage.name} was added with ${aiResult.topics.length} starter topics.` });
-        }
-    } catch (error) {
-        console.error("Failed to save language:", error);
+    if (result?.error) {
         toast({
             title: "Error",
-            description: "Could not save the language. Please try again.",
+            description: result.error,
             variant: "destructive",
         });
-    } finally {
-        setIsSaving(false);
+    } else if (result?.success) {
+        toast({ title: "Language Added", description: result.message });
         setIsDialogOpen(false);
-        setEditingLanguage(null);
+        // The page will be revalidated, but for a smoother UX on the client, we can manually refresh
+        router.refresh();
     }
+    
+    setIsSaving(false);
   };
   
   return (
@@ -173,9 +122,9 @@ export default function LanguagesPage() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem onSelect={() => router.push(`/admin/languages/${lang.id}`)}>Manage Topics & Lessons</DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => handleEdit(lang)}>Edit</DropdownMenuItem>
+                        <DropdownMenuItem disabled>Edit (Coming Soon)</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-destructive" onSelect={() => handleDelete(lang.id)}>Delete</DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive" onSelect={() => handleDelete(lang.id, lang.name)}>Delete</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -188,25 +137,25 @@ export default function LanguagesPage() {
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>{editingLanguage?.id ? 'Edit Language' : 'Add New Language'}</DialogTitle>
-            <DialogDescription>
-              {editingLanguage?.id ? 'Update the details of this language.' : 'Add a new language. Starter topics will be generated by AI.'}
-            </DialogDescription>
-          </DialogHeader>
-          {editingLanguage && (
+          <form onSubmit={handleFormSubmit}>
+            <DialogHeader>
+              <DialogTitle>Add New Language</DialogTitle>
+              <DialogDescription>
+                Add a new language. Starter topics will be generated by AI.
+              </DialogDescription>
+            </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="name" className="text-right">Name</Label>
-                <Input id="name" value={editingLanguage.name} onChange={(e) => setEditingLanguage({...editingLanguage, name: e.target.value})} className="col-span-3" />
+                <Input id="name" name="name" defaultValue="" className="col-span-3" required />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="icon" className="text-right">Icon URL</Label>
-                <Input id="icon" value={editingLanguage.icon} onChange={(e) => setEditingLanguage({...editingLanguage, icon: e.target.value})} className="col-span-3" />
+                <Input id="icon" name="icon" defaultValue="https://placehold.co/32x32.png" className="col-span-3" required />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="difficulty" className="text-right">Difficulty</Label>
-                <Select value={editingLanguage.difficulty} onValueChange={(value) => setEditingLanguage({...editingLanguage, difficulty: value as LanguageSummary['difficulty']})}>
+                <Select name="difficulty" defaultValue="Beginner">
                   <SelectTrigger className="col-span-3">
                     <SelectValue placeholder="Select difficulty" />
                   </SelectTrigger>
@@ -217,31 +166,30 @@ export default function LanguagesPage() {
                   </SelectContent>
                 </Select>
               </div>
-              { !editingLanguage.id && (
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="topic-count" className="text-right">Topics</Label>
-                    <Input
-                      id="topic-count"
-                      type="number"
-                      value={editingLanguage.topicCount || 5}
-                      onChange={(e) => setEditingLanguage({...editingLanguage, topicCount: parseInt(e.target.value, 10) || 5 })}
-                      className="col-span-3"
-                      min="3"
-                      max="10"
-                    />
-                  </div>
-              )}
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="topic-count" className="text-right">Topics</Label>
+                <Input
+                  id="topic-count"
+                  name="topicCount"
+                  type="number"
+                  defaultValue={5}
+                  className="col-span-3"
+                  min="3"
+                  max="10"
+                  required
+                />
+              </div>
             </div>
-          )}
-          <DialogFooter>
-            <DialogClose asChild>
-                <Button variant="outline" disabled={isSaving}>Cancel</Button>
-            </DialogClose>
-            <Button onClick={handleSave} disabled={isSaving}>
-                {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isSaving ? "Saving..." : "Save changes"}
-            </Button>
-          </DialogFooter>
+            <DialogFooter>
+              <DialogClose asChild>
+                  <Button type="button" variant="outline" disabled={isSaving}>Cancel</Button>
+              </DialogClose>
+              <Button type="submit" disabled={isSaving}>
+                  {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {isSaving ? "Saving..." : "Save changes"}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </>

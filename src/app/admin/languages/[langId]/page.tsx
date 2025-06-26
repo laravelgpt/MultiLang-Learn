@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { PageHeader } from "@/components/admin/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { MoreVertical, PlusCircle, Edit, Trash2, FileText, Youtube, Code, Link as LinkIcon, ArrowLeft } from "lucide-react";
 import Link from 'next/link';
-import { languagesCurriculumData, type Topic, type Lesson, type Attachment } from "@/lib/mock-data";
+import { getLanguageCurriculum } from "@/services/languageService";
+import type { Topic, Lesson, Attachment, LanguageCurriculum } from "@/lib/mock-data";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const AttachmentIcon = ({ type }: { type: Attachment['type'] }) => {
   switch (type) {
@@ -27,8 +29,25 @@ const AttachmentIcon = ({ type }: { type: Attachment['type'] }) => {
 };
 
 export default function LanguageTopicsPage({ params }: { params: { langId: string } }) {
-  const language = useMemo(() => languagesCurriculumData[params.langId] || { name: 'Unknown', topics: [] }, [params.langId]);
-  const [topics, setTopics] = useState<Topic[]>(language.topics);
+  const [language, setLanguage] = useState<LanguageCurriculum | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchLanguage() {
+      setIsLoading(true);
+      const curriculum = await getLanguageCurriculum(params.langId);
+      setLanguage(curriculum);
+      setIsLoading(false);
+    }
+    fetchLanguage();
+  }, [params.langId]);
+  
+  // MOCK handlers - in a real app, these would be server actions
+  const [topics, setTopics] = useState<Topic[]>([]);
+  useEffect(() => {
+    if (language) setTopics(language.topics);
+  }, [language]);
+
 
   const [isTopicDialogOpen, setTopicDialogOpen] = useState(false);
   const [editingTopic, setEditingTopic] = useState<Partial<Topic> | null>(null);
@@ -49,9 +68,8 @@ export default function LanguageTopicsPage({ params }: { params: { langId: strin
   };
 
   const handleDeleteTopic = (topicId: string) => {
-    const newTopics = topics.filter(t => t.id !== topicId);
-    setTopics(newTopics);
-    languagesCurriculumData[params.langId].topics = newTopics;
+    // In a real app, this would call a server action
+    setTopics(prev => prev.filter(t => t.id !== topicId));
   };
 
   const handleSaveTopic = () => {
@@ -64,7 +82,6 @@ export default function LanguageTopicsPage({ params }: { params: { langId: strin
       newTopics = [...topics, newTopic];
     }
     setTopics(newTopics);
-    languagesCurriculumData[params.langId].topics = newTopics;
     setTopicDialogOpen(false);
     setEditingTopic(null);
   };
@@ -83,13 +100,11 @@ export default function LanguageTopicsPage({ params }: { params: { langId: strin
   };
 
   const handleDeleteLesson = (lessonId: string, topicId: string) => {
-    const newTopics = topics.map(t => 
+    setTopics(prev => prev.map(t => 
       t.id === topicId 
         ? { ...t, lessons: t.lessons.filter(l => l.id !== lessonId) } 
         : t
-    );
-    setTopics(newTopics);
-    languagesCurriculumData[params.langId].topics = newTopics;
+    ));
   };
 
   const handleSaveLesson = () => {
@@ -99,7 +114,7 @@ export default function LanguageTopicsPage({ params }: { params: { langId: strin
       ? editingLesson as Lesson
       : { id: `l${Date.now()}`, attachments: [], difficulty: 'Beginner', ...editingLesson } as Lesson;
 
-    const newTopics = topics.map(t => {
+    setTopics(prev => prev.map(t => {
       if (t.id === currentTopicId) {
         const lessonExists = t.lessons.some(l => l.id === lessonToSave.id);
         const newLessons = lessonExists
@@ -108,15 +123,40 @@ export default function LanguageTopicsPage({ params }: { params: { langId: strin
         return { ...t, lessons: newLessons };
       }
       return t;
-    });
-
-    setTopics(newTopics);
-    languagesCurriculumData[params.langId].topics = newTopics;
+    }));
 
     setLessonDialogOpen(false);
     setEditingLesson(null);
     setCurrentTopicId(null);
   };
+  
+  if (isLoading) {
+    return (
+      <>
+        <PageHeader title="Loading..." />
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-8 w-1/3" />
+            <Skeleton className="h-4 w-2/3" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-40 w-full" />
+          </CardContent>
+        </Card>
+      </>
+    )
+  }
+  
+  if (!language) {
+     return (
+        <PageHeader title="Language not found">
+             <Button variant="outline" asChild>
+                <Link href="/admin/languages"><ArrowLeft className="mr-2 h-4 w-4" /> Back to Languages</Link>
+            </Button>
+        </PageHeader>
+     )
+  }
+
 
   return (
     <>
