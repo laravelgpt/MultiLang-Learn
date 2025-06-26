@@ -1,3 +1,4 @@
+
 import { config } from 'dotenv';
 config();
 
@@ -10,3 +11,4 @@ import '@/ai/flows/decompose-problem.ts';
 import '@/ai/flows/generate-language-topics.ts';
 import '@/ai/flows/generate-code-example.ts';
 import '@/ai/flows/generate-tasks-for-topic.ts';
+import '@/ai/flows/generate-quick-questions.ts';

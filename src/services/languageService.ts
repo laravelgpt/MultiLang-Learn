@@ -4,6 +4,7 @@
 import { 
     languagesSummaryData, 
     languagesCurriculumData, 
+    quickQuestionsData,
     type LanguageSummary, 
     type LanguageCurriculum,
     type Topic,
@@ -48,6 +49,17 @@ export async function addLanguageCurriculum(langId: string, curriculum: Language
 
 export async function deleteLanguageCurriculum(langId: string): Promise<void> {
     delete languagesCurriculumData[langId];
+    return Promise.resolve();
+}
+
+// ========== Quick Question Services ==========
+
+export async function getQuickQuestions(langId: string): Promise<string[] | undefined> {
+    return Promise.resolve(quickQuestionsData[langId]);
+}
+
+export async function addQuickQuestions(langId: string, questions: string[]): Promise<void> {
+    quickQuestionsData[langId] = questions;
     return Promise.resolve();
 }
 

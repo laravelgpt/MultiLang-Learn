@@ -4,12 +4,14 @@
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { generateLanguageTopics } from '@/ai/flows/generate-language-topics';
+import { generateQuickQuestions } from '@/ai/flows/generate-quick-questions';
 import { 
     addLanguageSummary, 
     addLanguageCurriculum,
     deleteLanguageSummary,
     deleteLanguageCurriculum,
     addTopic,
+    addQuickQuestions,
 } from '@/services/languageService';
 import type { LanguageSummary, LanguageCurriculum } from '@/lib/mock-data';
 
@@ -18,6 +20,7 @@ const languageSchema = z.object({
     icon: z.string().url("Must be a valid URL."),
     difficulty: z.enum(['Beginner', 'Intermediate', 'Advanced']),
     topicCount: z.coerce.number().min(3).max(10),
+    quickQuestionsCount: z.coerce.number().min(3).max(5),
 });
 
 export async function addLanguageAction(formData: FormData) {
@@ -26,6 +29,7 @@ export async function addLanguageAction(formData: FormData) {
         icon: formData.get('icon'),
         difficulty: formData.get('difficulty'),
         topicCount: formData.get('topicCount'),
+        quickQuestionsCount: formData.get('quickQuestionsCount'),
     });
 
     if (!validatedFields.success) {
@@ -36,17 +40,21 @@ export async function addLanguageAction(formData: FormData) {
         };
     }
 
-    const { name, icon, difficulty, topicCount } = validatedFields.data;
+    const { name, icon, difficulty, topicCount, quickQuestionsCount } = validatedFields.data;
     const languageId = name.toLowerCase().replace(/\s/g, '-').replace(/[^a-z0-9-]/g, '');
 
     try {
-        const aiResult = await generateLanguageTopics({ 
-            languageName: name,
-            topicCount: topicCount,
-        });
+        const [topicResults, quickQuestionResults] = await Promise.all([
+            generateLanguageTopics({ languageName: name, topicCount }),
+            generateQuickQuestions({ languageName: name, count: quickQuestionsCount })
+        ]);
 
-        if (!aiResult || !aiResult.topics) {
+        if (!topicResults || !topicResults.topics) {
             throw new Error("AI topic generation failed.");
+        }
+
+        if (!quickQuestionResults || !quickQuestionResults.questions) {
+            throw new Error("AI quick question generation failed.");
         }
 
         const newLanguageSummary: LanguageSummary = {
@@ -54,7 +62,7 @@ export async function addLanguageAction(formData: FormData) {
             name,
             icon,
             difficulty,
-            topics: aiResult.topics.length,
+            topics: topicResults.topics.length,
             lessons: 0,
             popularity: 0,
             description: `A ${difficulty}-level programming language.`,
@@ -63,7 +71,7 @@ export async function addLanguageAction(formData: FormData) {
         
         const newLanguageCurriculum: LanguageCurriculum = {
             name: newLanguageSummary.name,
-            topics: aiResult.topics.map((t, index) => ({
+            topics: topicResults.topics.map((t, index) => ({
                 id: `t-${languageId}-${index}`,
                 title: t.title,
                 lessons: []
@@ -72,20 +80,22 @@ export async function addLanguageAction(formData: FormData) {
         
         await addLanguageSummary(newLanguageSummary);
         await addLanguageCurriculum(languageId, newLanguageCurriculum);
+        await addQuickQuestions(languageId, quickQuestionResults.questions);
 
         revalidatePath('/admin/languages');
         revalidatePath('/languages');
         revalidatePath('/dashboard');
+        revalidatePath('/ai-assistant');
         
         return {
             success: true,
-            message: `${name} was added with ${aiResult.topics.length} starter topics.`,
+            message: `${name} was added with ${topicResults.topics.length} starter topics and ${quickQuestionResults.questions.length} quick questions.`,
         }
 
     } catch (error) {
         console.error("Failed to add language:", error);
         return {
-            error: "Could not save the language. AI topic generation failed.",
+            error: "Could not save the language. AI generation failed.",
         };
     }
 }

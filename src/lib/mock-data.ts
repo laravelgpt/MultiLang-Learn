@@ -15,6 +15,49 @@ export type LanguageSummary = {
     progress: number;
 }
 
+export let quickQuestionsData: Record<string, string[]> = {
+    js: [
+        "What is the difference between `let`, `const`, and `var`?",
+        "Explain closures in JavaScript.",
+        "Show an example of an async/await function."
+    ],
+    py: [
+        "What are decorators in Python?",
+        "Explain list comprehensions with an example.",
+        "How does garbage collection work in Python?"
+    ],
+    go: [
+        "What is a goroutine?",
+        "Explain the difference between a slice and an array.",
+        "How do channels work in Go?"
+    ],
+    java: [
+        "What is the difference between an interface and an abstract class?",
+        "Explain the Java Virtual Machine (JVM).",
+        "Show an example of exception handling."
+    ],
+    csharp: [
+        "What is the purpose of LINQ?",
+        "Explain the difference between `struct` and `class`.",
+        "Show an example of using `async` and `await` in C#."
+    ],
+    typescript: [
+        "What are generics in TypeScript?",
+        "Explain the difference between an `interface` and a `type`.",
+        "What is a `never` type?"
+    ],
+    cpp: [
+        "Explain pointers vs. references in C++.",
+        "What is RAII (Resource Acquisition Is Initialization)?",
+        "Show an example of a simple class with a constructor."
+    ],
+    rust: [
+        "What is the borrow checker?",
+        "Explain ownership in Rust.",
+        "Show an example of using the `match` control flow operator."
+    ]
+};
+
 const createCurriculum = (name: string, topicsList: string[]): LanguageCurriculum => {
     const langId = name.toLowerCase().replace(/#/g, 'sharp').replace(/\+/g, 'plus');
     return {

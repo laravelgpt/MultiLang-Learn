@@ -14,6 +14,7 @@ import { useLanguage } from '@/context/language-provider';
 import { useProgrammingLanguage, type LanguageId } from '@/context/programming-language-provider';
 import { chatbot } from '@/ai/flows/chatbot';
 import { useToast } from '@/hooks/use-toast';
+import { getQuickQuestions } from '@/services/languageService';
 
 type Message = {
     sender: 'user' | 'ai';
@@ -27,52 +28,6 @@ const languageNameMap: Record<string, string> = {
     ruby: 'Ruby', sql: 'SQL', dart: 'Dart', r: 'R', elixir: 'Elixir',
     haskell: 'Haskell', lua: 'Lua', perl: 'Perl', scala: 'Scala', bash: 'Bash',
 };
-
-
-// Data for quick question suggestions
-const quickQuestionsData: Partial<Record<LanguageId, string[]>> = {
-    js: [
-        "What is the difference between `let`, `const`, and `var`?",
-        "Explain closures in JavaScript.",
-        "Show an example of an async/await function."
-    ],
-    py: [
-        "What are decorators in Python?",
-        "Explain list comprehensions with an example.",
-        "How does garbage collection work in Python?"
-    ],
-    go: [
-        "What is a goroutine?",
-        "Explain the difference between a slice and an array.",
-        "How do channels work in Go?"
-    ],
-    java: [
-        "What is the difference between an interface and an abstract class?",
-        "Explain the Java Virtual Machine (JVM).",
-        "Show an example of exception handling."
-    ],
-    csharp: [
-        "What is the purpose of LINQ?",
-        "Explain the difference between `struct` and `class`.",
-        "Show an example of using `async` and `await` in C#."
-    ],
-    typescript: [
-        "What are generics in TypeScript?",
-        "Explain the difference between an `interface` and a `type`.",
-        "What is a `never` type?"
-    ],
-    cpp: [
-        "Explain pointers vs. references in C++.",
-        "What is RAII (Resource Acquisition Is Initialization)?",
-        "Show an example of a simple class with a constructor."
-    ],
-    rust: [
-        "What is the borrow checker?",
-        "Explain ownership in Rust.",
-        "Show an example of using the `match` control flow operator."
-    ]
-};
-
 
 export default function AiAssistantPage() {
     const { t } = useLanguage();
@@ -132,11 +87,16 @@ export default function AiAssistantPage() {
         const greeting = t('ai_greeting_context', { language: languageContext });
         setMessages([{ sender: 'ai', text: greeting }]);
 
-        if (selectedLanguage !== 'all' && quickQuestionsData[selectedLanguage]) {
-            setQuickQuestions(quickQuestionsData[selectedLanguage] || []);
-        } else {
-            setQuickQuestions([]);
+        async function fetchQuickQuestions() {
+            if (selectedLanguage === 'all') {
+                setQuickQuestions([]);
+                return;
+            }
+            const questions = await getQuickQuestions(selectedLanguage);
+            setQuickQuestions(questions || []);
         }
+
+        fetchQuickQuestions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedLanguage, t]);
 

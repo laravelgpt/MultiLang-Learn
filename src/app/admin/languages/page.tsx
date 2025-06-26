@@ -205,6 +205,19 @@ export default function LanguagesPage() {
                   required
                 />
               </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="quick-questions-count" className="text-right">Quick Questions</Label>
+                <Input
+                  id="quick-questions-count"
+                  name="quickQuestionsCount"
+                  type="number"
+                  defaultValue={3}
+                  className="col-span-3"
+                  min="3"
+                  max="5"
+                  required
+                />
+              </div>
             </div>
             <DialogFooter>
               <DialogClose asChild>
