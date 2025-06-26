@@ -1,184 +1,49 @@
+
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/admin/page-header";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MoreHorizontal, PlusCircle } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 const languagesData = [
-  { id: 'py', name: 'Python', icon: 'https://placehold.co/32x32.png', topics: 15, lessons: 120, popularity: 5210, difficulty: 'Beginner' },
-  { id: 'js', name: 'JavaScript', icon: 'https://placehold.co/32x32.png', topics: 18, lessons: 150, popularity: 4890, difficulty: 'Beginner' },
-  { id: 'java', name: 'Java', icon: 'https://placehold.co/32x32.png', topics: 20, lessons: 180, popularity: 3120, difficulty: 'Intermediate' },
-  { id: 'cpp', name: 'C++', icon: 'https://placehold.co/32x32.png', topics: 22, lessons: 200, popularity: 2540, difficulty: 'Advanced' },
-  { id: 'go', name: 'Go', icon: 'https://placehold.co/32x32.png', topics: 12, lessons: 90, popularity: 1980, difficulty: 'Intermediate' },
+  { id: 'py', name: 'Python', icon: 'https://placehold.co/64x64.png', description: 'A versatile language for web development, data science, and more.' },
+  { id: 'js', name: 'JavaScript', icon: 'https://placehold.co/64x64.png', description: 'The language of the web, for building interactive front-ends.' },
+  { id: 'java', name: 'Java', icon: 'https://placehold.co/64x64.png', description: 'A robust language for large-scale enterprise applications.' },
+  { id: 'cpp', name: 'C++', icon: 'https://placehold.co/64x64.png', description: 'High-performance programming for systems and game development.' },
+  { id: 'go', name: 'Go', icon: 'https://placehold.co/64x64.png', description: 'A modern language from Google for concurrent programming.' },
 ];
 
-type Language = typeof languagesData[0];
-
-export default function LanguagesPage() {
-  const router = useRouter();
-  const [languages, setLanguages] = useState(languagesData);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingLanguage, setEditingLanguage] = useState<Partial<Language> | null>(null);
-
-  const handleAddNew = () => {
-    setEditingLanguage({ name: '', icon: 'https://placehold.co/32x32.png', difficulty: 'Beginner' });
-    setIsDialogOpen(true);
-  };
-
-  const handleEdit = (lang: Language) => {
-    setEditingLanguage({ ...lang });
-    setIsDialogOpen(true);
-  };
-
-  const handleDelete = (langId: string) => {
-    setLanguages(languages.filter(l => l.id !== langId));
-  }
-
-  const handleSave = () => {
-    if (!editingLanguage) return;
-
-    if ('id' in editingLanguage && editingLanguage.id) {
-      // Editing existing language
-      setLanguages(languages.map(l => l.id === editingLanguage.id ? editingLanguage as Language : l));
-    } else {
-      // Adding new language
-      const newLanguage: Language = {
-        id: (Math.random() + 1).toString(36).substring(7),
-        topics: 0,
-        lessons: 0,
-        popularity: 0,
-        ...editingLanguage
-      } as Language;
-      setLanguages([...languages, newLanguage]);
-    }
-    setIsDialogOpen(false);
-    setEditingLanguage(null);
-  };
-  
+export default function UserLanguagesPage() {
   return (
     <>
       <PageHeader
-        title="Languages & Topics"
-        description="Manage programming languages, topics, and lessons."
-      >
-        <Button onClick={handleAddNew}>
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Add New Language
-        </Button>
-      </PageHeader>
-      <Card>
-        <CardHeader>
-          <CardTitle>All Languages</CardTitle>
-          <CardDescription>A list of all available programming languages.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Language</TableHead>
-                <TableHead>Topics</TableHead>
-                <TableHead>Lessons</TableHead>
-                <TableHead>Enrolled Users</TableHead>
-                <TableHead>Difficulty</TableHead>
-                <TableHead>
-                  <span className="sr-only">Actions</span>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {languages.map((lang) => (
-                <TableRow key={lang.id}>
-                  <TableCell className="font-medium">
-                    <div className="flex items-center gap-3">
-                      <Image src={lang.icon} alt={lang.name} width={32} height={32} className="rounded-sm" data-ai-hint="language logo" />
-                      <span>{lang.name}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>{lang.topics}</TableCell>
-                  <TableCell>{lang.lessons}</TableCell>
-                  <TableCell>{lang.popularity.toLocaleString()}</TableCell>
-                  <TableCell>
-                    <Badge variant={
-                      lang.difficulty === 'Beginner' ? 'secondary' :
-                      lang.difficulty === 'Intermediate' ? 'outline' : 'default'
-                    }>{lang.difficulty}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button aria-haspopup="true" size="icon" variant="ghost">
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Toggle menu</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onSelect={() => router.push(`/languages/${lang.id}`)}>Manage Topics & Lessons</DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => handleEdit(lang)}>Edit</DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-destructive" onSelect={() => handleDelete(lang.id)}>Delete</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>{editingLanguage?.id ? 'Edit Language' : 'Add New Language'}</DialogTitle>
-            <DialogDescription>
-              {editingLanguage?.id ? 'Update the details of this language.' : 'Add a new programming language to the platform.'}
-            </DialogDescription>
-          </DialogHeader>
-          {editingLanguage && (
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">Name</Label>
-                <Input id="name" value={editingLanguage.name} onChange={(e) => setEditingLanguage({...editingLanguage, name: e.target.value})} className="col-span-3" />
+        title="Choose a Language"
+        description="Select a language to start your learning journey."
+      />
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {languagesData.map((lang) => (
+          <Card key={lang.id} className="flex flex-col">
+            <CardHeader className="flex-row items-center gap-4">
+              <Image src={lang.icon} alt={lang.name} width={64} height={64} className="rounded-lg" data-ai-hint="language logo" />
+              <div>
+                <CardTitle>{lang.name}</CardTitle>
+                <CardDescription>{lang.description}</CardDescription>
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="icon" className="text-right">Icon URL</Label>
-                <Input id="icon" value={editingLanguage.icon} onChange={(e) => setEditingLanguage({...editingLanguage, icon: e.target.value})} className="col-span-3" />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="difficulty" className="text-right">Difficulty</Label>
-                <Select value={editingLanguage.difficulty} onValueChange={(value) => setEditingLanguage({...editingLanguage, difficulty: value})}>
-                  <SelectTrigger className="col-span-3">
-                    <SelectValue placeholder="Select difficulty" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Beginner">Beginner</SelectItem>
-                    <SelectItem value="Intermediate">Intermediate</SelectItem>
-                    <SelectItem value="Advanced">Advanced</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          )}
-          <DialogFooter>
-            <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <Button onClick={handleSave}>Save changes</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            </CardHeader>
+            <CardContent className="flex-grow" />
+            <CardFooter>
+              <Button asChild className="w-full">
+                <Link href={`/languages/${lang.id}`}>
+                  Start Learning <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
     </>
   );
 }

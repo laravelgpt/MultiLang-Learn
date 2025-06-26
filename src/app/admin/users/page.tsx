@@ -12,8 +12,10 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { MoreHorizontal, PlusCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Label } from "@/components/ui/label";
 
 const usersData = [
     { id: 'usr_1', name: 'John Doe', email: 'john.doe@example.com', role: 'User', joined: '2023-10-25', status: 'Active', avatar: 'https://placehold.co/40x40.png' },
@@ -29,6 +31,8 @@ export default function UsersPage() {
     const [users, setUsers] = useState(usersData);
     const [isConfirmOpen, setConfirmOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const [isAddUserDialogOpen, setAddUserDialogOpen] = useState(false);
+    const [newUser, setNewUser] = useState({ name: '', email: '', role: 'User' });
     const { toast } = useToast();
 
     const handleDeactivateClick = (user: User) => {
@@ -49,13 +53,44 @@ export default function UsersPage() {
         setSelectedUser(null);
     };
     
+    const handleAddNewUser = () => {
+        setNewUser({ name: '', email: '', role: 'User' });
+        setAddUserDialogOpen(true);
+    };
+
+    const handleSaveNewUser = () => {
+        if (!newUser.name || !newUser.email) {
+            toast({
+                title: "Error",
+                description: "Name and email are required.",
+                variant: "destructive"
+            });
+            return;
+        }
+
+        const userToAdd: User = {
+            id: `usr_${Date.now()}`,
+            ...newUser,
+            joined: new Date().toISOString().split('T')[0],
+            status: 'Active',
+            avatar: 'https://placehold.co/40x40.png'
+        };
+
+        setUsers([userToAdd, ...users]);
+        setAddUserDialogOpen(false);
+        toast({
+            title: "User Added",
+            description: `${newUser.name} has been added to the system.`
+        });
+    };
+
     return (
         <>
             <PageHeader
                 title="User Management"
                 description="View, manage, and promote users."
             >
-                <Button>
+                <Button onClick={handleAddNewUser}>
                     <PlusCircle className="mr-2 h-4 w-4" />
                     Add User
                 </Button>
@@ -148,6 +183,43 @@ export default function UsersPage() {
                     </Table>
                 </CardContent>
             </Card>
+
+            <Dialog open={isAddUserDialogOpen} onOpenChange={setAddUserDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Add New User</DialogTitle>
+                        <DialogDescription>
+                            Enter the details for the new user. An invitation will be sent to their email.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="name">Full Name</Label>
+                            <Input id="name" value={newUser.name} onChange={(e) => setNewUser({...newUser, name: e.target.value})} placeholder="John Doe" />
+                        </div>
+                         <div className="space-y-2">
+                            <Label htmlFor="email">Email Address</Label>
+                            <Input id="email" type="email" value={newUser.email} onChange={(e) => setNewUser({...newUser, email: e.target.value})} placeholder="user@example.com" />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="role">Role</Label>
+                            <Select value={newUser.role} onValueChange={(value) => setNewUser({...newUser, role: value as 'User' | 'Admin'})}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select a role" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="User">User</SelectItem>
+                                    <SelectItem value="Admin">Admin</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
+                        <Button onClick={handleSaveNewUser}>Add User</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
             <AlertDialog open={isConfirmOpen} onOpenChange={setConfirmOpen}>
                 <AlertDialogContent>

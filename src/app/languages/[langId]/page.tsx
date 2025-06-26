@@ -1,20 +1,16 @@
+
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { PageHeader } from "@/components/admin/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { MoreVertical, PlusCircle, Edit, Trash2, FileText, Youtube, Code, Link as LinkIcon, ArrowLeft } from "lucide-react";
+import { ArrowLeft, FileText, Youtube, Code, Link as LinkIcon, BookOpen } from "lucide-react";
 import Link from 'next/link';
 
-// Mock Data
+// Mock Data - should be the same as the admin page
 const languagesData: Record<string, { name: string; topics: Topic[] }> = {
   py: { 
     name: 'Python', 
@@ -55,234 +51,77 @@ const AttachmentIcon = ({ type }: { type: Attachment['type'] }) => {
   }
 };
 
-export default function LanguageTopicsPage({ params }: { params: { langId: string } }) {
+export default function LanguageCurriculumPage({ params }: { params: { langId: string } }) {
   const language = useMemo(() => languagesData[params.langId] || { name: 'Unknown', topics: [] }, [params.langId]);
-  const [topics, setTopics] = useState<Topic[]>(language.topics);
-
-  const [isTopicDialogOpen, setTopicDialogOpen] = useState(false);
-  const [editingTopic, setEditingTopic] = useState<Partial<Topic> | null>(null);
   
-  const [isLessonDialogOpen, setLessonDialogOpen] = useState(false);
-  const [editingLesson, setEditingLesson] = useState<Partial<Lesson> | null>(null);
-  const [currentTopicId, setCurrentTopicId] = useState<string | null>(null);
-
-  // Topic Handlers
-  const handleAddNewTopic = () => {
-    setEditingTopic({ title: '' });
-    setTopicDialogOpen(true);
-  };
-  
-  const handleEditTopic = (topic: Topic) => {
-    setEditingTopic({ ...topic });
-    setTopicDialogOpen(true);
-  };
-
-  const handleDeleteTopic = (topicId: string) => {
-    setTopics(topics.filter(t => t.id !== topicId));
-  };
-
-  const handleSaveTopic = () => {
-    if (!editingTopic?.title) return;
-    if (editingTopic.id) {
-      setTopics(topics.map(t => t.id === editingTopic.id ? editingTopic as Topic : t));
-    } else {
-      const newTopic: Topic = { id: `t${Date.now()}`, lessons: [], ...editingTopic } as Topic;
-      setTopics([...topics, newTopic]);
-    }
-    setTopicDialogOpen(false);
-    setEditingTopic(null);
-  };
-  
-  // Lesson Handlers
-  const handleAddNewLesson = (topicId: string) => {
-    setCurrentTopicId(topicId);
-    setEditingLesson({ title: '', difficulty: 'Beginner', attachments: [] });
-    setLessonDialogOpen(true);
-  };
-
-  const handleEditLesson = (lesson: Lesson, topicId: string) => {
-    setCurrentTopicId(topicId);
-    setEditingLesson({ ...lesson });
-    setLessonDialogOpen(true);
-  };
-
-  const handleDeleteLesson = (lessonId: string, topicId: string) => {
-    setTopics(topics.map(t => 
-      t.id === topicId 
-        ? { ...t, lessons: t.lessons.filter(l => l.id !== lessonId) } 
-        : t
-    ));
-  };
-
-  const handleSaveLesson = () => {
-    if (!editingLesson?.title || !currentTopicId) return;
-    
-    const lessonToSave: Lesson = editingLesson.id
-      ? editingLesson as Lesson
-      : { id: `l${Date.now()}`, attachments: [], difficulty: 'Beginner', ...editingLesson } as Lesson;
-
-    setTopics(topics.map(t => {
-      if (t.id === currentTopicId) {
-        const lessonExists = t.lessons.some(l => l.id === lessonToSave.id);
-        const newLessons = lessonExists
-          ? t.lessons.map(l => l.id === lessonToSave.id ? lessonToSave : l)
-          : [...t.lessons, lessonToSave];
-        return { ...t, lessons: newLessons };
-      }
-      return t;
-    }));
-
-    setLessonDialogOpen(false);
-    setEditingLesson(null);
-    setCurrentTopicId(null);
-  };
-
   return (
     <>
-      <PageHeader title={`Manage: ${language.name}`}>
-        <div className="flex items-center gap-4">
-          <Button variant="outline" asChild>
-            <Link href="/languages"><ArrowLeft className="mr-2 h-4 w-4" /> Back to Languages</Link>
-          </Button>
-          <Button onClick={handleAddNewTopic}>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add New Topic
-          </Button>
-        </div>
+      <PageHeader title={`${language.name} Curriculum`}>
+        <Button variant="outline" asChild>
+          <Link href="/languages"><ArrowLeft className="mr-2 h-4 w-4" /> Back to Languages</Link>
+        </Button>
       </PageHeader>
       
       <Card>
         <CardHeader>
           <CardTitle>Topics & Lessons</CardTitle>
-          <CardDescription>Organize lessons under different topics for {language.name}.</CardDescription>
+          <CardDescription>Follow the path to master {language.name}.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Accordion type="multiple" className="w-full" defaultValue={topics.length > 0 ? [topics[0].id] : []}>
-            {topics.map((topic) => (
+          <Accordion type="multiple" className="w-full" defaultValue={language.topics.length > 0 ? [language.topics[0].id] : []}>
+            {language.topics.map((topic) => (
               <AccordionItem value={topic.id} key={topic.id}>
-                <div className="flex items-center w-full group hover:bg-muted/50 rounded-t-md">
-                  <AccordionTrigger className="flex-1 px-4 py-3 text-lg font-semibold hover:no-underline">
-                    {topic.title}
-                  </AccordionTrigger>
-                  <div className="px-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon"><MoreVertical className="h-5 w-5" /></Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onSelect={() => handleEditTopic(topic)}><Edit className="mr-2 h-4 w-4" />Edit Topic</DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => handleDeleteTopic(topic.id)} className="text-destructive"><Trash2 className="mr-2 h-4 w-4" />Delete Topic</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </div>
+                <AccordionTrigger className="px-4 py-3 text-lg font-semibold hover:no-underline">
+                  {topic.title}
+                </AccordionTrigger>
                 <AccordionContent className="border-t bg-background">
                   <div className="p-4 space-y-4">
                     {topic.lessons.length === 0 ? (
                       <div className="text-center py-8 text-muted-foreground">
-                        <p>No lessons in this topic yet.</p>
+                        <p>Lessons are coming soon for this topic!</p>
                       </div>
                     ) : (
                       <div className="space-y-3">
                         {topic.lessons.map(lesson => (
                           <div key={lesson.id} className="flex items-center justify-between p-3 rounded-md border bg-card hover:bg-muted/50">
-                            <div>
-                              <p className="font-medium">{lesson.title}</p>
-                              <div className="flex items-center gap-4 mt-1">
-                                 <Badge variant={
-                                    lesson.difficulty === 'Beginner' ? 'secondary' :
-                                    lesson.difficulty === 'Intermediate' ? 'outline' : 'default'
-                                  }>{lesson.difficulty}</Badge>
-                                  {lesson.attachments.map((att, i) => (
-                                    <a key={i} href={att.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary">
-                                      <AttachmentIcon type={att.type} />
-                                    </a>
-                                  ))}
+                            <div className="flex items-center gap-4">
+                              <BookOpen className="w-5 h-5 text-primary"/>
+                              <div>
+                                <p className="font-medium">{lesson.title}</p>
+                                <div className="flex items-center gap-4 mt-1">
+                                   <Badge variant={
+                                      lesson.difficulty === 'Beginner' ? 'secondary' :
+                                      lesson.difficulty === 'Intermediate' ? 'outline' : 'default'
+                                    }>{lesson.difficulty}</Badge>
+                                    {lesson.attachments.length > 0 && (
+                                        <div className="flex items-center gap-2">
+                                        {lesson.attachments.map((att, i) => (
+                                            <a key={i} href={att.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary">
+                                            <AttachmentIcon type={att.type} />
+                                            </a>
+                                        ))}
+                                        </div>
+                                    )}
+                                </div>
                               </div>
                             </div>
-                            <div className="flex items-center">
-                              <Button variant="outline" size="sm" onClick={() => handleEditLesson(lesson, topic.id)}><Edit className="mr-2 h-4 w-4" /> Edit</Button>
-                              <Button variant="ghost" size="icon" className="ml-2 text-destructive hover:text-destructive" onClick={() => handleDeleteLesson(lesson.id, topic.id)}><Trash2 className="h-4 w-4" /></Button>
-                            </div>
+                            <Button size="sm" variant="ghost">Start Lesson</Button>
                           </div>
                         ))}
                       </div>
                     )}
-                    <div className="pt-4 border-t border-dashed">
-                      <Button variant="secondary" onClick={() => handleAddNewLesson(topic.id)}>
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        Add New Lesson to Topic
-                      </Button>
-                    </div>
                   </div>
                 </AccordionContent>
               </AccordionItem>
             ))}
-             {topics.length === 0 && (
+             {language.topics.length === 0 && (
               <div className="text-center py-12 text-muted-foreground">
-                  <p className="mb-2">No topics found for {language.name}.</p>
-                  <Button onClick={handleAddNewTopic}>
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    Add the First Topic
-                  </Button>
+                  <p>Curriculum coming soon for {language.name}.</p>
               </div>
             )}
           </Accordion>
         </CardContent>
       </Card>
-      
-      {/* Topic Dialog */}
-      <Dialog open={isTopicDialogOpen} onOpenChange={setTopicDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{editingTopic?.id ? 'Edit Topic' : 'Add New Topic'}</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <Label htmlFor="topic-title">Topic Title</Label>
-            <Input id="topic-title" value={editingTopic?.title || ''} onChange={(e) => setEditingTopic({...editingTopic, title: e.target.value})} placeholder="e.g., Object-Oriented Programming" />
-          </div>
-          <DialogFooter>
-            <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
-            <Button onClick={handleSaveTopic}>Save Topic</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      
-      {/* Lesson Dialog */}
-      <Dialog open={isLessonDialogOpen} onOpenChange={setLessonDialogOpen}>
-        <DialogContent className="sm:max-w-xl">
-          <DialogHeader>
-            <DialogTitle>{editingLesson?.id ? 'Edit Lesson' : 'Add New Lesson'}</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-6 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="lesson-title">Lesson Title</Label>
-              <Input id="lesson-title" value={editingLesson?.title || ''} onChange={(e) => setEditingLesson({...editingLesson, title: e.target.value})} placeholder="e.g., Understanding Classes and Objects" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="lesson-difficulty">Difficulty</Label>
-              <Select value={editingLesson?.difficulty || 'Beginner'} onValueChange={(value: Lesson['difficulty']) => setEditingLesson({...editingLesson, difficulty: value})}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select difficulty" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Beginner">Beginner</SelectItem>
-                  <SelectItem value="Intermediate">Intermediate</SelectItem>
-                  <SelectItem value="Advanced">Advanced</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Attachments (mocked)</Label>
-              <p className="text-sm text-muted-foreground">Attachment management UI is not implemented yet. This is a placeholder.</p>
-            </div>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
-            <Button onClick={handleSaveLesson}>Save Lesson</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </>
   );
 }

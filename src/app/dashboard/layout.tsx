@@ -1,6 +1,7 @@
+
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LogOut, Bot, BookOpenCheck } from "lucide-react";
+import { LogOut, BookOpenCheck } from "lucide-react";
 import Link from "next/link";
 
 export default function DashboardLayout({
@@ -17,6 +18,12 @@ export default function DashboardLayout({
               <BookOpenCheck className="h-6 w-6 text-primary" />
               <span className="font-bold sm:inline-block">MultiLang Learn</span>
             </Link>
+             <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
+                <Link href="/dashboard" className="transition-colors hover:text-primary">Dashboard</Link>
+                <Link href="/languages" className="transition-colors hover:text-primary text-muted-foreground">Languages</Link>
+                <Link href="#" className="transition-colors hover:text-primary text-muted-foreground">My Progress</Link>
+                <Link href="#" className="transition-colors hover:text-primary text-muted-foreground">Community</Link>
+            </nav>
           </div>
           <div className="flex flex-1 items-center justify-end space-x-4">
              <div className="flex items-center gap-3">

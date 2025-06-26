@@ -1,10 +1,11 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Book, Code, Trophy, Bot } from "lucide-react";
 import Link from "next/link";
 
 const learningModules = [
-  { title: "Learn Guide", description: "Start with the basics of the language.", icon: Book, href: "#", cta: "Start Learning" },
+  { title: "Learn Guide", description: "Start with the basics of the language.", icon: Book, href: "/languages", cta: "Start Learning" },
   { title: "Practice & Examples", description: "Apply what you've learned with hands-on examples.", icon: Code, href: "#", cta: "Practice Now" },
   { title: "Challenge Tasks", description: "Test your skills with real-world challenges.", icon: Trophy, href: "#", cta: "Take Challenge" },
   { title: "Learning Assistant Bot", description: "Ask questions and get instant help from our AI tutor.", icon: Bot, href: "#", cta: "Chat with AI" },
