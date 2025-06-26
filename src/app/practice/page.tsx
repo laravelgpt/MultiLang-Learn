@@ -7,48 +7,72 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { Code, FileCode, Play, RefreshCw, Copy, Save, BrainCircuit, Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { Code, Play, RefreshCw, Copy, Save, BrainCircuit, Loader2, CheckCircle, XCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { explainCode } from '@/ai/flows/explain-code';
 import { useLanguage } from '@/context/language-provider';
 import { cn } from '@/lib/utils';
-import { generateCodeExample } from '@/ai/flows/generate-code-example';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 
 const initialCode = `// Welcome to the Practice Zone!
-// Try writing some code and run it to see the output
+// Select an example from the left or write your own code.
 
-function greetUser(name) {
-  return 'Hello, ' + name + '! Welcome to LearnCode.';
+function greet(name) {
+  return 'Hello, ' + name + '! Welcome to the Practice Zone.';
 }
 
-// Test the function
-console.log(greetUser("Programmer"));
+console.log(greet("Learner"));`;
 
-// Try modifying the code and run it again!`;
+const practiceTopics = [
+    {
+        title: "JavaScript: Hello World",
+        description: "A simple 'Hello World' to get started.",
+        language: "javascript",
+        code: `console.log("Hello, World!");`,
+    },
+    {
+        title: "JavaScript: Variables",
+        description: "Learn how to declare and use variables.",
+        language: "javascript",
+        code: `let name = "Alice";\nconst score = 95;\n\nconsole.log(name + " scored " + score + " points.");`,
+    },
+    {
+        title: "JavaScript: Functions",
+        description: "Define and call a simple function.",
+        language: "javascript",
+        code: `function add(a, b) {\n  return a + b;\n}\n\nconsole.log("The sum is:", add(5, 3));`,
+    },
+    {
+        title: "Python: User Input",
+        description: "A simple example of how to take input from a user.",
+        language: "python",
+        code: `name = input("Enter your name: ")\nprint("Hello, " + name)`,
+    },
+    {
+        title: "Python: List Iteration",
+        description: "Learn how to loop through a list of items.",
+        language: "python",
+        code: `fruits = ["apple", "banana", "cherry"]\nfor fruit in fruits:\n  print(fruit)`,
+    },
+];
 
 export default function PracticePage() {
+    const { toast } = useToast();
+    const { t } = useLanguage();
+    
     const [code, setCode] = useState(initialCode);
     const [output, setOutput] = useState("");
     const [error, setError] = useState<{ message: string, lineNumber: number | null } | null>(null);
     const [explanation, setExplanation] = useState("");
-    const { toast } = useToast();
-    const { t } = useLanguage();
     const [isRunning, setIsRunning] = useState(false);
     const [isExplaining, setIsExplaining] = useState(false);
     const [activeTab, setActiveTab] = useState("editor");
-    const workerRef = useRef<Worker | null>(null);
-    
-    const [isGenerating, setIsGenerating] = useState(false);
     const [selectedLanguage, setSelectedLanguage] = useState("javascript");
-    const [topic, setTopic] = useState("");
-    const [difficulty, setDifficulty] = useState("Medium");
-    const [generatedTitle, setGeneratedTitle] = useState("");
-    const [generatedDescription, setGeneratedDescription] = useState("");
+    const [currentTopic, setCurrentTopic] = useState({
+        title: "Interactive Code Editor",
+        description: "Select an example from the left or write your own code."
+    });
+    const workerRef = useRef<Worker | null>(null);
 
     const parseLineNumber = (stack: string): number | null => {
         const match = /<anonymous>:(\d+):/.exec(stack);
@@ -83,6 +107,20 @@ export default function PracticePage() {
             workerRef.current?.terminate();
         };
     }, []);
+    
+    const handleLoadExample = (example: typeof practiceTopics[0]) => {
+        setCode(example.code);
+        setSelectedLanguage(example.language);
+        setCurrentTopic({ title: example.title, description: example.description });
+        setOutput("");
+        setError(null);
+        setExplanation("");
+        setActiveTab("editor");
+        toast({
+            title: `Loaded: ${example.title}`,
+            description: "The example code is ready in the editor.",
+        });
+    };
 
     const handleRunCode = () => {
         if (!workerRef.current) return;
@@ -119,43 +157,24 @@ export default function PracticePage() {
         }
     };
     
-    const handleGenerateExample = async () => {
-        if (!topic) {
-            toast({ title: "Topic is required", description: "Please enter a topic to generate an example.", variant: "destructive" });
-            return;
-        }
-        setIsGenerating(true);
-        setCode("// Generating example...");
-        setGeneratedTitle("");
-        setGeneratedDescription("");
-        setExplanation("");
+    const handleReset = () => {
+        setCode(initialCode);
+        setCurrentTopic({
+            title: "Interactive Code Editor",
+            description: "Select an example from the left or write your own code."
+        });
+        setSelectedLanguage("javascript");
         setOutput("");
         setError(null);
-
-        try {
-            const result = await generateCodeExample({
-                language: selectedLanguage,
-                topic,
-                difficulty
-            });
-            setCode(result.code);
-            setGeneratedTitle(result.title);
-            setGeneratedDescription(result.description);
-            setActiveTab("editor");
-        } catch (error) {
-            console.error("Failed to generate code example:", error);
-            toast({ title: "Generation Failed", description: "Could not generate an example. Please try again.", variant: "destructive" });
-            setCode("// Failed to generate example. Please try again.");
-        } finally {
-            setIsGenerating(false);
-        }
+        setExplanation("");
+        setActiveTab("editor");
+        toast({ title: "Editor Reset", description: "The editor has been reset to the default state." });
     };
-
 
     return (
         <>
             <div className="flex items-center gap-4 mb-8">
-                <FileCode size={40} className="text-primary shrink-0" />
+                <Code size={40} className="text-primary shrink-0" />
                 <div>
                     <h1 className="font-headline text-3xl font-bold text-primary">{t('practice_and_examples')}</h1>
                     <p className="text-lg text-muted-foreground">{t('practice_skills_interactive')}</p>
@@ -163,54 +182,41 @@ export default function PracticePage() {
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-                {/* Left Column: Code Examples */}
                 <div className="lg:col-span-1 space-y-4">
                      <Card>
                         <CardHeader>
-                            <CardTitle>Generate Error Example</CardTitle>
-                            <CardDescription>Create a custom code challenge with a hidden error.</CardDescription>
+                            <CardTitle>Practice Topics</CardTitle>
+                            <CardDescription>Select a topic to load it into the editor and try it yourself.</CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="topic">Topic</Label>
-                                <Input id="topic" value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="e.g., JavaScript closures" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="difficulty">Difficulty</Label>
-                                <Select value={difficulty} onValueChange={(value) => setDifficulty(value)}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select difficulty" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="Easy">Easy</SelectItem>
-                                        <SelectItem value="Medium">Medium</SelectItem>
-                                        <SelectItem value="Hard">Hard</SelectItem>
-                                        <SelectItem value="Heavy Hard">Heavy Hard</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <Button onClick={handleGenerateExample} disabled={isGenerating} className="w-full">
-                                {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <BrainCircuit className="mr-2 h-4 w-4" />}
-                                {isGenerating ? "Generating..." : "Generate Example"}
-                            </Button>
+                        <CardContent className="flex flex-col gap-3">
+                            {practiceTopics.map((example) => (
+                                <button
+                                    key={example.title}
+                                    onClick={() => handleLoadExample(example)}
+                                    className="p-3 rounded-md border text-left hover:bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
+                                >
+                                    <p className="font-semibold">{example.title}</p>
+                                    <p className="text-sm text-muted-foreground">{example.description}</p>
+                                </button>
+                            ))}
                         </CardContent>
                     </Card>
-                    {generatedTitle && (
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>{generatedTitle}</CardTitle>
-                                <CardDescription>{generatedDescription}</CardDescription>
-                            </CardHeader>
-                        </Card>
-                    )}
                 </div>
 
-                {/* Right Column: Interactive Code Editor */}
                 <div className="lg:col-span-2">
                     <Card>
                          <CardHeader>
-                            <div className="flex flex-wrap items-center justify-between gap-4">
-                                <CardTitle className="text-xl flex items-center gap-2"><Code className="h-5 w-5" /> {t('interactive_code_editor')}</CardTitle>
+                            <CardTitle>{currentTopic.title}</CardTitle>
+                            <CardDescription>{currentTopic.description}</CardDescription>
+                            <div className="flex flex-wrap items-center justify-between gap-4 pt-4 mt-4 border-t -mx-6 px-6">
+                                <div className="flex items-center gap-2">
+                                    <Button variant="ghost" size="sm" onClick={handleExplainCode} disabled={isExplaining}>
+                                        <BrainCircuit /> {isExplaining ? t('ai_explaining') : t('explain_code')}
+                                    </Button>
+                                    <Button variant="ghost" size="sm" onClick={handleCopy}><Copy /> {t('copy_code')}</Button>
+                                    <Button variant="ghost" size="sm" onClick={handleReset}><RefreshCw /> {t('reset_code')}</Button>
+                                    <Button variant="ghost" size="sm" onClick={() => toast({ title: t('save_feature_soon_title'), description: t('save_feature_soon_desc')})}><Save /> {t('save_feature')}</Button>
+                                </div>
                                 <div className="flex items-center gap-2">
                                     <Select value={selectedLanguage} onValueChange={(val) => setSelectedLanguage(val)}>
                                         <SelectTrigger className="w-[180px]">
@@ -229,14 +235,6 @@ export default function PracticePage() {
                                         {isRunning ? t('running') : t('run')}
                                     </Button>
                                 </div>
-                            </div>
-                             <div className="flex items-center gap-2 pt-4 mt-4 border-t -mx-6 px-6">
-                                <Button variant="ghost" size="sm" onClick={handleExplainCode} disabled={isExplaining}>
-                                    <BrainCircuit /> {isExplaining ? t('ai_explaining') : t('explain_code')}
-                                </Button>
-                                <Button variant="ghost" size="sm" onClick={handleCopy}><Copy /> {t('copy_code')}</Button>
-                                <Button variant="ghost" size="sm" onClick={() => setCode(initialCode)}><RefreshCw /> {t('reset_code')}</Button>
-                                <Button variant="ghost" size="sm" onClick={() => toast({ title: t('save_feature_soon_title'), description: t('save_feature_soon_desc')})}><Save /> {t('save_feature')}</Button>
                             </div>
                         </CardHeader>
                         <CardContent>
@@ -298,7 +296,7 @@ export default function PracticePage() {
                                             </div>
                                         )}
                                         {explanation && !isExplaining && (
-                                            <p className="text-sm whitespace-pre-wrap">{explanation}</p>
+                                            <div className="prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: explanation.replace(/\\n/g, '<br />') }} />
                                         )}
                                         {!explanation && !isExplaining && (
                                             <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
@@ -315,4 +313,3 @@ export default function PracticePage() {
             </div>
         </>
     );
-}
