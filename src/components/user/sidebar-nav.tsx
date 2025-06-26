@@ -19,7 +19,8 @@ import {
   Award,
   Check,
   Code,
-  Globe
+  Globe,
+  ClipboardList
 } from "lucide-react";
 import { useLanguage } from "@/context/language-provider";
 import { useProgrammingLanguage, type LanguageId } from "@/context/programming-language-provider";
@@ -74,6 +75,7 @@ export function UserSidebarNav() {
     { href: "/challenges", label: t('challenges'), icon: Trophy },
     { href: "/problem-solving", label: t('problem_solving'), icon: Zap },
     { href: "/projects", label: t('mini_projects'), icon: FolderKanban },
+    { href: "/tasks", label: t('tasks_title'), icon: ClipboardList },
     { href: "/ai-assistant", label: t('ai_assistant'), icon: Bot },
     { href: "/progress", label: t('progress_tracker'), icon: TrendingUp },
   ];

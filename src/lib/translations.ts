@@ -171,6 +171,13 @@ export const translations: Record<Language, Record<string, string>> = {
     "completed_lesson": "Completed lesson",
     "solved_challenge": "Solved challenge",
     "started_project": "Started project",
+    // tasks/page.tsx
+    "tasks_title": "My Tasks",
+    "tasks_description": "Organize your learning with a personal task board.",
+    "add_new_task": "Add New Task",
+    "todo": "To Do",
+    "in_progress": "In Progress",
+    "done": "Done",
   },
   bn: {
     welcome_back: "ফিরে আসার জন্য স্বাগতম, গিট ফ্রপ!",
@@ -341,6 +348,13 @@ export const translations: Record<Language, Record<string, string>> = {
     "completed_lesson": "পাঠ সম্পন্ন হয়েছে",
     "solved_challenge": "চ্যালেঞ্জ সমাধান করা হয়েছে",
     "started_project": "প্রকল্প শুরু হয়েছে",
+    // tasks/page.tsx
+    "tasks_title": "আমার কাজ",
+    "tasks_description": "একটি ব্যক্তিগত টাস্ক বোর্ডের সাথে আপনার শেখা সংগঠিত করুন।",
+    "add_new_task": "নতুন কাজ যোগ করুন",
+    "todo": "করতে হবে",
+    "in_progress": "চলছে",
+    "done": "সম্পন্ন",
   },
   hi: {
     welcome_back: "वापस स्वागत है, गिट फ्रप!",
@@ -511,6 +525,13 @@ export const translations: Record<Language, Record<string, string>> = {
     "completed_lesson": "पाठ पूरा हुआ",
     "solved_challenge": "चुनौती हल हो गई",
     "started_project": "परियोजना शुरू हुई",
+    // tasks/page.tsx
+    "tasks_title": "मेरे कार्य",
+    "tasks_description": "एक व्यक्तिगत कार्य बोर्ड के साथ अपनी शिक्षा को व्यवस्थित करें।",
+    "add_new_task": "नया कार्य जोड़ें",
+    "todo": "करने के लिए",
+    "in_progress": "प्रगति में",
+    "done": "पूर्ण",
   },
   ur: {
     welcome_back: "واپس خوش آمدید، گٹ فرپ!",
@@ -681,5 +702,12 @@ export const translations: Record<Language, Record<string, string>> = {
     "completed_lesson": "سبق مکمل ہوا",
     "solved_challenge": "چیلنج حل ہو گیا",
     "started_project": "پروجیکٹ شروع ہوا",
+    // tasks/page.tsx
+    "tasks_title": "میرے ٹاسک",
+    "tasks_description": "ذاتی ٹاسک بورڈ کے ساتھ اپنی تعلیم کو منظم کریں۔",
+    "add_new_task": "نیا ٹاسک شامل کریں",
+    "todo": "کرنا ہے",
+    "in_progress": "جاری ہے",
+    "done": "مکمل",
   },
 };
