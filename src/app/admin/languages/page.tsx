@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MoreHorizontal, PlusCircle } from "lucide-react";
 import Image from "next/image";
 
-const languagesData = [
+const initialLanguagesData = [
   { id: 'py', name: 'Python', icon: 'https://placehold.co/32x32.png', topics: 9, lessons: 25, popularity: 5210, difficulty: 'Beginner' },
   { id: 'js', name: 'JavaScript', icon: 'https://placehold.co/32x32.png', topics: 6, lessons: 15, popularity: 4890, difficulty: 'Beginner' },
   { id: 'java', name: 'Java', icon: 'https://placehold.co/32x32.png', topics: 5, lessons: 12, popularity: 3120, difficulty: 'Intermediate' },
@@ -24,11 +24,11 @@ const languagesData = [
   { id: 'go', name: 'Go', icon: 'https://placehold.co/32x32.png', topics: 4, lessons: 8, popularity: 1980, difficulty: 'Intermediate' },
 ];
 
-type Language = typeof languagesData[0];
+type Language = typeof initialLanguagesData[0];
 
 export default function LanguagesPage() {
   const router = useRouter();
-  const [languages, setLanguages] = useState(languagesData);
+  const [languages, setLanguages] = useState(initialLanguagesData);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingLanguage, setEditingLanguage] = useState<Partial<Language> | null>(null);
 
@@ -47,7 +47,7 @@ export default function LanguagesPage() {
   }
 
   const handleSave = () => {
-    if (!editingLanguage) return;
+    if (!editingLanguage || !editingLanguage.name) return;
 
     if ('id' in editingLanguage && editingLanguage.id) {
       // Editing existing language
@@ -55,7 +55,7 @@ export default function LanguagesPage() {
     } else {
       // Adding new language
       const newLanguage: Language = {
-        id: (Math.random() + 1).toString(36).substring(7),
+        id: editingLanguage.name.toLowerCase().replace(/\s/g, '-'),
         topics: 0,
         lessons: 0,
         popularity: 0,
@@ -159,7 +159,7 @@ export default function LanguagesPage() {
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="difficulty" className="text-right">Difficulty</Label>
-                <Select value={editingLanguage.difficulty} onValueChange={(value) => setEditingLanguage({...editingLanguage, difficulty: value})}>
+                <Select value={editingLanguage.difficulty} onValueChange={(value) => setEditingLanguage({...editingLanguage, difficulty: value as Language['difficulty']})}>
                   <SelectTrigger className="col-span-3">
                     <SelectValue placeholder="Select difficulty" />
                   </SelectTrigger>

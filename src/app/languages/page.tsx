@@ -10,17 +10,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { useLanguage } from "@/context/language-provider";
 
-const languagesDataArr = [
-  { id: 'py', name: 'Python', icon: 'https://placehold.co/64x64.png', description: 'A versatile language for web development, data science, and more.' },
-  { id: 'js', name: 'JavaScript', icon: 'https://placehold.co/64x64.png', description: 'The language of the web, for building interactive front-ends.' },
-  { id: 'java', name: 'Java', icon: 'https://placehold.co/64x64.png', description: 'A robust language for large-scale enterprise applications.' },
-  { id: 'cpp', name: 'C++', icon: 'https://placehold.co/64x64.png', description: 'High-performance programming for systems and game development.' },
-  { id: 'go', name: 'Go', icon: 'https://placehold.co/64x64.png', description: 'A modern language from Google for concurrent programming.' },
+const initialLanguagesData = [
+  { id: 'py', name: 'Python', icon: 'https://placehold.co/64x64.png', description: 'A versatile language for web development, data science, and more.', hint: 'python logo' },
+  { id: 'js', name: 'JavaScript', icon: 'https://placehold.co/64x64.png', description: 'The language of the web, for building interactive front-ends.', hint: 'javascript logo' },
+  { id: 'java', name: 'Java', icon: 'https://placehold.co/64x64.png', description: 'A robust language for large-scale enterprise applications.', hint: 'java logo' },
+  { id: 'cpp', name: 'C++', icon: 'https://placehold.co/64x64.png', description: 'High-performance programming for systems and game development.', hint: 'c++ logo' },
+  { id: 'go', name: 'Go', icon: 'https://placehold.co/64x64.png', description: 'A modern language from Google for concurrent programming.', hint: 'go logo' },
 ];
 
 export default function UserLanguagesPage() {
   const { t } = useLanguage();
-  const [languagesData, setLanguagesData] = useState(languagesDataArr);
+  const [languagesData, setLanguagesData] = useState(initialLanguagesData);
 
   return (
     <>
@@ -32,7 +32,7 @@ export default function UserLanguagesPage() {
         {languagesData.map((lang) => (
           <Card key={lang.id} className="flex flex-col">
             <CardHeader className="flex-row items-center gap-4">
-              <Image src={lang.icon} alt={lang.name} width={64} height={64} className="rounded-lg" data-ai-hint="language logo" />
+              <Image src={lang.icon} alt={lang.name} width={64} height={64} className="rounded-lg" data-ai-hint={lang.hint} />
               <div>
                 <CardTitle>{lang.name}</CardTitle>
                 <CardDescription>{lang.description}</CardDescription>
