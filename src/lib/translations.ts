@@ -152,6 +152,9 @@ export const translations: Record<Language, Record<string, string>> = {
     "ai_suggestion": "AI Suggestion",
     "ai_suggestion_placeholder": "Click the 'Get AI Suggestion' button to receive an analysis and suggestions for your code.",
     "click_to_generate_example": "Click to generate a random {difficulty} example.",
+    "generate_new_error_example": "Generate a new code example with a random error.",
+    "difficulty": "Difficulty",
+    "generate_example": "Generate Example",
     // projects/page.tsx
     "apply_your_skills": "Apply your skills by building real-world projects.",
     "all_projects": "All Projects",
@@ -329,6 +332,9 @@ export const translations: Record<Language, Record<string, string>> = {
     "ai_suggestion": "এআই পরামর্শ",
     "ai_suggestion_placeholder": "আপনার কোডের বিশ্লেষণ এবং পরামর্শ পেতে 'এআই পরামর্শ নিন' বোতামে ক্লিক করুন।",
     "click_to_generate_example": "একটি এলোমেলো {difficulty} উদাহরণ তৈরি করতে ক্লিক করুন।",
+    "generate_new_error_example": "একটি এলোমেলো ত্রুটি সহ একটি নতুন কোড উদাহরণ তৈরি করুন।",
+    "difficulty": "কঠিনতা",
+    "generate_example": "উদাহরণ তৈরি করুন",
     // projects/page.tsx
     "apply_your_skills": "বাস্তব-বিশ্বের প্রকল্প তৈরি করে আপনার দক্ষতা প্রয়োগ করুন।",
     "all_projects": "সমস্ত প্রকল্প",
@@ -506,6 +512,9 @@ export const translations: Record<Language, Record<string, string>> = {
     "ai_suggestion": "एआई सुझाव",
     "ai_suggestion_placeholder": "अपने कोड का विश्लेषण और सुझाव प्राप्त करने के लिए 'एआई सुझाव प्राप्त करें' बटन पर क्लिक करें।",
     "click_to_generate_example": "एक यादृच्छिक {difficulty} उदाहरण उत्पन्न करने के लिए क्लिक करें।",
+    "generate_new_error_example": "एक यादृच्छिक त्रुटि के साथ एक नया कोड उदाहरण उत्पन्न करें।",
+    "difficulty": "कठिनाई",
+    "generate_example": "उदाहरण उत्पन्न करें",
     // projects/page.tsx
     "apply_your_skills": "वास्तविक-विश्व परियोजनाओं का निर्माण करके अपने कौशल को लागू करें।",
     "all_projects": "सभी परियोजनाएं",
@@ -683,6 +692,9 @@ export const translations: Record<Language, Record<string, string>> = {
     "ai_suggestion": "اے آئی کا مشورہ",
     "ai_suggestion_placeholder": "اپنے کوڈ کا تجزیہ اور تجاویز حاصل کرنے کے لیے 'اے آئی سے مشورہ لیں' بٹن پر کلک کریں۔",
     "click_to_generate_example": "ایک بے ترتیب {difficulty} مثال بنانے کے لیے کلک کریں۔",
+    "generate_new_error_example": "ایک بے ترتیب خرابی کے ساتھ ایک نیا کوڈ مثال بنائیں۔",
+    "difficulty": "مشکل",
+    "generate_example": "مثال بنائیں",
     // projects/page.tsx
     "apply_your_skills": "حقیقی دنیا کے منصوبے بنا کر اپنی صلاحیتوں کا اطلاق کریں۔",
     "all_projects": "تمام پروجیکٹس",

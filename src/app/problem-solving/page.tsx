@@ -10,7 +10,7 @@ import { decomposeProblem, type DecomposeProblemOutput } from '@/ai/flows/decomp
 import { explainCode } from '@/ai/flows/explain-code';
 import { generateCodeExample, type GenerateCodeExampleOutput } from '@/ai/flows/generate-code-example';
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
@@ -20,6 +20,7 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import Image from "next/image";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 
 
@@ -151,18 +152,20 @@ const ProblemDecomposer = () => {
 const CodeExplainer = () => {
     const { t } = useLanguage();
     const { toast } = useToast();
-    const [code, setCode] = useState('// Click a category on the left to generate an error example');
+    const [code, setCode] = useState('// Select a difficulty and click "Generate Example" to start');
     const [output, setOutput] = useState("");
     const [suggestion, setSuggestion] = useState("");
     const [exampleDetails, setExampleDetails] = useState<GenerateCodeExampleOutput | null>(null);
     const [isRunning, setIsRunning] = useState(false);
     const [isExplaining, setIsExplaining] = useState(false);
-    const [isGenerating, setIsGenerating] = useState<string | null>(null);
+    const [isGenerating, setIsGenerating] = useState(false);
     const [activeTab, setActiveTab] = useState("editor");
     const workerRef = useRef<Worker | null>(null);
     const [selectedLanguage, setSelectedLanguage] = useState("javascript");
+    const [selectedDifficulty, setSelectedDifficulty] = useState("Easy");
 
-    const difficulties = ["Easy", "Medium", "Hard", "Heavy Hard"];
+    type Difficulty = "Easy" | "Medium" | "Hard" | "Heavy Hard";
+    const difficulties: Difficulty[] = ["Easy", "Medium", "Hard", "Heavy Hard"];
 
     useEffect(() => {
         workerRef.current = new Worker('/code-runner.js');
@@ -192,15 +195,15 @@ const CodeExplainer = () => {
         workerRef.current.postMessage({ code });
     };
 
-    const handleGenerateExample = async (difficulty: string) => {
-      setIsGenerating(difficulty);
+    const handleGenerateExample = async () => {
+      setIsGenerating(true);
       setExampleDetails(null);
       setCode("");
       setOutput("");
       setSuggestion("");
       setActiveTab("editor");
       try {
-        const result = await generateCodeExample({ language: selectedLanguage, difficulty });
+        const result = await generateCodeExample({ language: selectedLanguage, difficulty: selectedDifficulty });
         setExampleDetails(result);
         setCode(result.code);
       } catch (error) {
@@ -210,9 +213,9 @@ const CodeExplainer = () => {
           description: "Could not generate a new code example. Please try again.",
           variant: "destructive",
         });
-        setCode(`// Failed to generate example for ${difficulty} ${selectedLanguage}.`);
+        setCode(`// Failed to generate example for ${selectedDifficulty} ${selectedLanguage}.`);
       } finally {
-        setIsGenerating(null);
+        setIsGenerating(false);
       }
     };
 
@@ -239,27 +242,31 @@ const CodeExplainer = () => {
     return (
          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start mt-6">
             <div className="lg:col-span-1 space-y-4">
-                <h2 className="text-xl font-bold flex items-center gap-2"><FileCode className="h-5 w-5" /> {t('error_examples')}</h2>
-                {difficulties.map((difficulty) => (
-                     <Card key={difficulty} className="cursor-pointer hover:border-primary" onClick={() => handleGenerateExample(difficulty)}>
-                        <CardHeader>
-                            <div className="flex justify-between items-start gap-2">
-                                <CardTitle className="text-lg">{difficulty}</CardTitle>
-                                {isGenerating === difficulty ? (
-                                  <Loader2 className="h-5 w-5 animate-spin" />
-                                ) : (
-                                  <Badge variant={
-                                      difficulty === 'Easy' ? 'secondary' :
-                                      difficulty === 'Medium' ? 'outline' :
-                                      difficulty === 'Hard' ? 'default' :
-                                      'destructive'
-                                  }>{difficulty}</Badge>
-                                )}
-                            </div>
-                            <CardDescription>{t('click_to_generate_example', {difficulty: difficulty.toLowerCase()})}</CardDescription>
-                        </CardHeader>
-                    </Card>
-                ))}
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('error_examples')}</CardTitle>
+                        <CardDescription>{t('generate_new_error_example')}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div>
+                            <Label htmlFor="difficulty-select">{t('difficulty')}</Label>
+                            <Select value={selectedDifficulty} onValueChange={(val: Difficulty) => setSelectedDifficulty(val)}>
+                                <SelectTrigger id="difficulty-select">
+                                    <SelectValue placeholder="Select difficulty" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {difficulties.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </CardContent>
+                    <CardFooter>
+                        <Button className="w-full" onClick={handleGenerateExample} disabled={isGenerating}>
+                            {isGenerating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            {t('generate_example')}
+                        </Button>
+                    </CardFooter>
+                </Card>
             </div>
 
             <div className="lg:col-span-2">
