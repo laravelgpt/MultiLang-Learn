@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Bot, Send, User, Loader2 } from 'lucide-react';
+import { Bot, Send, User, Loader2, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/context/language-provider';
 import { useProgrammingLanguage, type LanguageId } from '@/context/programming-language-provider';
@@ -20,15 +20,37 @@ type Message = {
     text: string;
 }
 
-const languageNameMap: Record<LanguageId, string> = {
-    all: 'General Programming',
-    js: 'JavaScript',
-    py: 'Python',
-    go: 'Go',
-    rust: 'Rust',
-    java: 'Java',
-    cpp: 'C++',
-    pascal: 'Pascal',
+const languageNameMap: Record<string, string> = {
+    all: 'General Programming', js: 'JavaScript', py: 'Python', go: 'Go', rust: 'Rust',
+    java: 'Java', cpp: 'C++', pascal: 'Pascal', csharp: 'C#',
+    typescript: 'TypeScript', swift: 'Swift', kotlin: 'Kotlin', php: 'PHP',
+    ruby: 'Ruby', sql: 'SQL', dart: 'Dart', r: 'R', elixir: 'Elixir',
+    haskell: 'Haskell', lua: 'Lua', perl: 'Perl', scala: 'Scala', bash: 'Bash',
+};
+
+
+// Data for quick question suggestions
+const quickQuestionsData: Partial<Record<LanguageId, string[]>> = {
+    js: [
+        "What is the difference between `let`, `const`, and `var`?",
+        "Explain closures in JavaScript.",
+        "Show an example of an async/await function."
+    ],
+    py: [
+        "What are decorators in Python?",
+        "Explain list comprehensions with an example.",
+        "How does garbage collection work in Python?"
+    ],
+    go: [
+        "What is a goroutine?",
+        "Explain the difference between a slice and an array.",
+        "How do channels work in Go?"
+    ],
+    java: [
+        "What is the difference between an interface and an abstract class?",
+        "Explain the Java Virtual Machine (JVM).",
+        "Show an example of exception handling."
+    ]
 };
 
 
@@ -41,19 +63,19 @@ export default function AiAssistantPage() {
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const scrollAreaRef = useRef<HTMLDivElement>(null);
+    const [quickQuestions, setQuickQuestions] = useState<string[]>([]);
 
-    const handleSendMessage = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!input.trim() || isLoading) return;
+    const sendMessage = async (messageText: string) => {
+        if (!messageText.trim() || isLoading) return;
 
-        const userMessage: Message = { sender: 'user', text: input };
+        const userMessage: Message = { sender: 'user', text: messageText };
         setMessages(prev => [...prev, userMessage]);
-        setInput('');
+        setInput(''); // Clear input after sending
         setIsLoading(true);
 
         try {
-            const languageContext = languageNameMap[selectedLanguage];
-            const result = await chatbot({ query: input, language: languageContext });
+            const languageContext = languageNameMap[selectedLanguage] || 'General Programming';
+            const result = await chatbot({ query: messageText, language: languageContext });
             const aiResponse: Message = { sender: 'ai', text: result.response };
             setMessages(prev => [...prev, aiResponse]);
         } catch (error) {
@@ -68,6 +90,11 @@ export default function AiAssistantPage() {
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const handleSendMessage = async (e: React.FormEvent) => {
+        e.preventDefault();
+        sendMessage(input);
     }
     
     useEffect(() => {
@@ -81,9 +108,15 @@ export default function AiAssistantPage() {
     }, [messages, isLoading]);
     
     useEffect(() => {
-        const languageContext = languageNameMap[selectedLanguage];
+        const languageContext = languageNameMap[selectedLanguage] || 'General Programming';
         const greeting = t('ai_greeting_context', { language: languageContext });
         setMessages([{ sender: 'ai', text: greeting }]);
+
+        if (selectedLanguage !== 'all' && quickQuestionsData[selectedLanguage]) {
+            setQuickQuestions(quickQuestionsData[selectedLanguage] || []);
+        } else {
+            setQuickQuestions([]);
+        }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedLanguage, t]);
 
@@ -139,7 +172,22 @@ export default function AiAssistantPage() {
                         </div>
                     </ScrollArea>
                 </CardContent>
-                <CardFooter>
+                <CardFooter className="flex-col items-start gap-4">
+                    {quickQuestions.length > 0 && (
+                         <div className="w-full">
+                            <div className="flex items-center gap-2 mb-2">
+                                <Sparkles className="h-4 w-4 text-primary" />
+                                <h4 className="text-sm font-semibold">{t('quick_questions')}</h4>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                                {quickQuestions.map((q, i) => (
+                                    <Button key={i} variant="outline" size="sm" onClick={() => sendMessage(q)} disabled={isLoading}>
+                                        {q}
+                                    </Button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                     <form onSubmit={handleSendMessage} className="flex w-full items-center space-x-2">
                         <Input
                             value={input}

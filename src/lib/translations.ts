@@ -130,6 +130,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "ai_greeting": "Hello! I'm your AI programming assistant. How can I help you today?",
     "ai_greeting_context": "Hello! I'm your AI programming assistant. I see you're working on {language}. How can I help you today?",
     "ai_mock_response": "That's a great question! Let me help you with that.",
+    "quick_questions": "Quick Questions",
     // community/page.tsx
     "community_hub": "Community Hub",
     "ask_share_connect": "Ask questions, share knowledge, and connect with other learners.",
@@ -362,6 +363,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "ai_greeting": "হ্যালো! আমি আপনার এআই প্রোগ্রামিং সহকারী। আমি আজ আপনাকে কিভাবে সাহায্য করতে পারি?",
     "ai_greeting_context": "হ্যালো! আমি আপনার এআই প্রোগ্রামিং সহকারী। আমি দেখছি আপনি {language} নিয়ে কাজ করছেন। আমি আপনাকে আজ কিভাবে সাহায্য করতে পারি?",
     "ai_mock_response": "এটি একটি দুর্দান্ত প্রশ্ন! আমাকে আপনাকে সাহায্য করতে দিন।",
+    "quick_questions": "দ্রুত প্রশ্ন",
     // community/page.tsx
     "community_hub": "কমিউনিটি হাব",
     "ask_share_connect": "প্রশ্ন জিজ্ঞাসা করুন, জ্ঞান ভাগ করুন, এবং অন্যান্য শিক্ষার্থীদের সাথে সংযোগ স্থাপন করুন।",
@@ -594,6 +596,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "ai_greeting": "नमस्ते! मैं आपका एआई प्रोग्रामिंग सहायक हूँ। मैं आज आपकी कैसे मदद कर सकता हूँ?",
     "ai_greeting_context": "नमस्ते! मैं आपका एआई प्रोग्रामिंग सहायक हूँ। मैं देख रहा हूँ कि आप {language} पर काम कर रहे हैं। मैं आज आपकी कैसे मदद कर सकता हूँ?",
     "ai_mock_response": "यह एक बहुत अच्छा सवाल है! मुझे आपकी मदद करने दीजिए।",
+    "quick_questions": "त्वरित प्रश्न",
     // community/page.tsx
     "community_hub": "सामुदायिक केंद्र",
     "ask_share_connect": "प्रश्न पूछें, ज्ञान साझा करें, और अन्य शिक्षार्थियों से जुड़ें।",
@@ -825,6 +828,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "ai_greeting": "ہیلو! میں آپ کا اے آئی پروگرامنگ اسسٹنٹ ہوں۔ میں آج آپ کی کس طرح مدد کر سکتا ہوں؟",
     "ai_greeting_context": "ہیلو! میں آپ کا اے آئی پروگرامنگ اسسٹنٹ ہوں۔ میں دیکھ رہا ہوں کہ آپ {language} پر کام کر رہے ہیں۔ میں آج آپ کی کس طرح مدد کر سکتا ہوں؟",
     "ai_mock_response": "یہ ایک بہت اچھا سوال ہے! مجھے آپ کی مدد کرنے دیں۔",
+    "quick_questions": "فوری سوالات",
     // community/page.tsx
     "community_hub": "کمیونٹی ہب",
     "ask_share_connect": "سوالات پوچھیں، علم کا اشتراک کریں، اور دوسرے سیکھنے والوں سے جڑیں۔",
