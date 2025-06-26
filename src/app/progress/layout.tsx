@@ -24,7 +24,7 @@ export default function DashboardLayout({
                 <BookOpenCheck className="w-8 h-8 text-primary" />
                 <h1 className="font-headline text-xl font-semibold group-data-[collapsed=true]/sidebar:hidden">LearnCode</h1>
               </div>
-              <SidebarToggle />
+              <SidebarToggle className="ml-auto" />
             </SidebarHeader>
             <SidebarContent className="p-0">
               <UserSidebarNav />
@@ -48,6 +48,7 @@ export default function DashboardLayout({
             </SidebarFooter>
           </Sidebar>
           <SidebarInset>
+            <SidebarToggle className="fixed left-4 top-4 z-50 md:hidden" />
             <div className="flex flex-col h-screen overflow-hidden">
               <UserHeader />
               <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">{children}</main>

@@ -152,33 +152,14 @@ export const SidebarFooter = React.forwardRef<HTMLDivElement, React.HTMLAttribut
 SidebarFooter.displayName = "SidebarFooter"
 
 export function SidebarToggle({ className, ...props }: React.ComponentProps<typeof Button>) {
-  const { isCollapsed, toggle, isMobile } = useSidebar()
-  const [isClient, setIsClient] = React.useState(false)
-
-  React.useEffect(() => {
-    setIsClient(true)
-  }, [])
+  const { isCollapsed, toggle } = useSidebar()
   
-  if (isClient && isMobile) {
-      return (
-           <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggle}
-            className={cn("fixed left-4 top-3 z-50", className)}
-            {...props}
-           >
-            {isCollapsed ? <ChevronsRight /> : <ChevronsLeft />}
-           </Button>
-      )
-  }
-
   return (
     <Button
       variant="ghost"
       size="icon"
       onClick={toggle}
-      className={cn("ml-auto shrink-0", className)}
+      className={cn("shrink-0", className)}
       {...props}
     >
       {isCollapsed ? <ChevronsRight /> : <ChevronsLeft />}

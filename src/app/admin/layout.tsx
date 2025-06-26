@@ -17,7 +17,7 @@ export default function AdminLayout({
             <Bot className="w-8 h-8 text-primary" />
             <h1 className="font-headline text-xl font-semibold group-data-[collapsed=true]/sidebar:hidden">MultiLang Learn</h1>
           </div>
-          <SidebarToggle />
+          <SidebarToggle className="ml-auto" />
         </SidebarHeader>
         <SidebarContent className="p-0">
           <SidebarNav />
@@ -39,7 +39,7 @@ export default function AdminLayout({
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
-        <SidebarToggle className="md:hidden" />
+        <SidebarToggle className="fixed left-4 top-4 z-50 md:hidden" />
         <main className="p-4 sm:p-6 lg:p-8">{children}</main>
       </SidebarInset>
     </SidebarProvider>
