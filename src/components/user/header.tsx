@@ -3,11 +3,11 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Bell, Moon, Flame } from "lucide-react";
+import { Bell, Flame } from "lucide-react";
 import Link from "next/link";
+import { ThemeToggle } from "./theme-toggle";
 
 export function UserHeader() {
-  // This is a mock implementation. Theme and notification logic would be needed.
   return (
     <header className="flex h-16 shrink-0 items-center justify-between border-b bg-background px-4 sm:px-6 lg:px-8">
       <div className="flex items-center gap-2">
@@ -19,10 +19,7 @@ export function UserHeader() {
           <Flame className="h-4 w-4 text-orange-500" />
           <span>0 Day Streak</span>
         </Button>
-        <Button variant="ghost" size="icon">
-          <Moon className="h-5 w-5" />
-          <span className="sr-only">Toggle Theme</span>
-        </Button>
+        <ThemeToggle />
         <div className="relative">
             <Button variant="ghost" size="icon">
                 <Bell className="h-5 w-5" />
