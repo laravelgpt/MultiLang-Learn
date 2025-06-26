@@ -20,6 +20,7 @@ import {
   Check,
   Code
 } from "lucide-react";
+import { useLanguage } from "@/context/language-provider";
 
 const programmingLanguages = [
     {
@@ -52,17 +53,6 @@ const programmingLanguages = [
     },
 ];
 
-const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/languages", label: "Learn Guide", icon: BookOpen },
-  { href: "/practice", label: "Practice & Examples", icon: FileCode },
-  { href: "/challenges", label: "Challenges", icon: Trophy },
-  { href: "#", label: "Problem Solving", icon: Zap },
-  { href: "#", label: "Mini Projects", icon: FolderKanban },
-  { href: "/ai-assistant", label: "AI Assistant", icon: Bot },
-  { href: "#", label: "Progress Tracker", icon: TrendingUp },
-];
-
 const recentBadges = [
     { name: "First Steps", icon: Award, color: "bg-yellow-400" },
     { name: "JS Basics", icon: Check, color: "bg-green-500" },
@@ -71,6 +61,18 @@ const recentBadges = [
 
 export function UserSidebarNav() {
   const pathname = usePathname();
+  const { t } = useLanguage();
+
+  const navItems = [
+    { href: "/dashboard", label: t('dashboard'), icon: LayoutDashboard },
+    { href: "/languages", label: t('learn_guide'), icon: BookOpen },
+    { href: "/practice", label: t('practice_examples'), icon: FileCode },
+    { href: "/challenges", label: t('challenges'), icon: Trophy },
+    { href: "#", label: t('problem_solving'), icon: Zap },
+    { href: "#", label: t('mini_projects'), icon: FolderKanban },
+    { href: "/ai-assistant", label: t('ai_assistant'), icon: Bot },
+    { href: "#", label: t('progress_tracker'), icon: TrendingUp },
+  ];
 
   const isActive = (href: string) => {
     if (href === "/dashboard" || href === "/practice" || href === "/ai-assistant") return pathname === href;
@@ -81,7 +83,7 @@ export function UserSidebarNav() {
   return (
     <div className="flex flex-col h-full">
       <div className="p-4 space-y-4 group-data-[collapsed=true]/sidebar:p-2 group-data-[collapsed=true]/sidebar:space-y-2">
-        <p className="text-xs font-semibold text-muted-foreground uppercase group-data-[collapsed=true]/sidebar:hidden">Programming Languages</p>
+        <p className="text-xs font-semibold text-muted-foreground uppercase group-data-[collapsed=true]/sidebar:hidden">{t('sidebar_languages')}</p>
         <div className="space-y-3">
           {programmingLanguages.map(lang => (
             <Link href={`/languages/${lang.id}`} key={lang.id} className="flex items-center gap-3 group-data-[collapsed=true]/sidebar:justify-center">
@@ -89,7 +91,7 @@ export function UserSidebarNav() {
               <div className="flex-1 group-data-[collapsed=true]/sidebar:hidden">
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-medium">{lang.name}</span>
-                  <span className="text-muted-foreground text-xs">{lang.progress > 0 ? `${lang.progress}% Complete` : 'Not Started'}</span>
+                  <span className="text-muted-foreground text-xs">{lang.progress > 0 ? `${lang.progress}% ${t('complete')}` : t('not_started')}</span>
                 </div>
                 <Progress value={lang.progress} className="h-1 mt-1" />
               </div>
@@ -121,7 +123,7 @@ export function UserSidebarNav() {
 
       <div className="p-4 space-y-2 group-data-[collapsed=true]/sidebar:p-2 group-data-[collapsed=true]/sidebar:space-y-2">
          <p className="flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase group-data-[collapsed=true]/sidebar:hidden">
-           Recent Badges <Award className="h-4 w-4" />
+           {t('recent_badges')} <Award className="h-4 w-4" />
          </p>
          <div className="flex gap-2 group-data-[collapsed=false]/sidebar:justify-start group-data-[collapsed=true]/sidebar:justify-center">
             {recentBadges.map(badge => (
@@ -134,5 +136,3 @@ export function UserSidebarNav() {
     </div>
   );
 }
-
-    

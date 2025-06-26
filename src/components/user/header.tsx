@@ -5,14 +5,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Bell, Flame } from "lucide-react";
-import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
+import { useLanguage } from "@/context/language-provider";
+import type { Language } from "@/lib/translations";
 
 export function UserHeader() {
+  const { language, setLanguage, t } = useLanguage();
+
   return (
     <header className="flex h-16 shrink-0 items-center justify-between border-b bg-background px-4 sm:px-6 lg:px-8">
       <div className="flex items-center gap-2">
-        <Select defaultValue="en">
+        <Select value={language} onValueChange={(value: Language) => setLanguage(value)}>
           <SelectTrigger className="w-auto sm:w-[180px]">
             <SelectValue placeholder="Language" />
           </SelectTrigger>
@@ -27,7 +30,7 @@ export function UserHeader() {
       <div className="flex items-center gap-4">
         <Button variant="outline" className="flex items-center gap-2">
           <Flame className="h-4 w-4 text-orange-500" />
-          <span className="hidden sm:inline">0 Day Streak</span>
+          <span className="hidden sm:inline">14 {t('day_streak_header')}</span>
         </Button>
         <ThemeToggle />
         <div className="relative">

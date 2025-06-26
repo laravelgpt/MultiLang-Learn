@@ -14,20 +14,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "@/components/ui/chart"
+import { useLanguage } from "@/context/language-provider";
 
-
-const statCards = [
-  { title: "Topics Completed", value: "25", change: "+2 from last week", icon: BookOpen, iconBg: "bg-blue-100 dark:bg-blue-900/50", iconColor: "text-blue-500 dark:text-blue-400" },
-  { title: "Challenges Solved", value: "12", change: "+5 from last week", icon: CheckCircle, iconBg: "bg-green-100 dark:bg-green-900/50", iconColor: "text-green-500 dark:text-green-400" },
-  { title: "Projects Created", value: "3", change: "+1 from last week", icon: Code, iconBg: "bg-purple-100 dark:bg-purple-900/50", iconColor: "text-purple-500 dark:text-purple-400" },
-  { title: "Current Streak", value: "14", change: "Day streak", icon: TrendingUp, iconBg: "bg-orange-100 dark:bg-orange-900/50", iconColor: "text-orange-500 dark:text-orange-400" },
-];
-
-const quickActions = [
-    { title: "Continue Learning", icon: BookOpen, href: "/languages" },
-    { title: "Daily Challenge", icon: Target, href: "/challenges" },
-    { title: "AI Assistant", icon: Bot, href: "/ai-assistant" },
-];
 
 const programmingLanguages = [
     {
@@ -81,6 +69,22 @@ const awards = [
 ];
 
 export default function UserDashboardPage() {
+  const { t } = useLanguage();
+
+  const statCards = [
+    { title: t('topics_completed'), value: "25", change: t('from_last_week', {change: 2}), icon: BookOpen, iconBg: "bg-blue-100 dark:bg-blue-900/50", iconColor: "text-blue-500 dark:text-blue-400" },
+    { title: t('challenges_solved'), value: "12", change: t('from_last_week', {change: 5}), icon: CheckCircle, iconBg: "bg-green-100 dark:bg-green-900/50", iconColor: "text-green-500 dark:text-green-400" },
+    { title: t('projects_created'), value: "3", change: t('from_last_week', {change: 1}), icon: Code, iconBg: "bg-purple-100 dark:bg-purple-900/50", iconColor: "text-purple-500 dark:text-purple-400" },
+    { title: t('current_streak'), value: "14", change: t('day_streak_card'), icon: TrendingUp, iconBg: "bg-orange-100 dark:bg-orange-900/50", iconColor: "text-orange-500 dark:text-orange-400" },
+  ];
+
+  const quickActions = [
+      { title: t('continue_learning'), icon: BookOpen, href: "/languages" },
+      { title: t('daily_challenge'), icon: Target, href: "/challenges" },
+      { title: t('ai_assistant'), icon: Bot, href: "/ai-assistant" },
+  ];
+
+
   return (
     <div className="flex flex-col gap-8">
       {/* Welcome Banner */}
@@ -92,11 +96,11 @@ export default function UserDashboardPage() {
                     <AvatarFallback className="text-3xl bg-primary-foreground text-primary">GF</AvatarFallback>
                 </Avatar>
                 <div>
-                    <h1 className="text-3xl font-bold font-headline">Welcome back, Git Frp!</h1>
-                    <p className="text-lg text-primary-foreground/80 mt-1">Continue your programming journey.</p>
+                    <h1 className="text-3xl font-bold font-headline">{t('welcome_back')}</h1>
+                    <p className="text-lg text-primary-foreground/80 mt-1">{t('continue_journey')}</p>
                     <div className="flex items-center gap-2 mt-2">
-                        <span className="px-3 py-1 text-xs font-semibold bg-primary-foreground/20 rounded-full">Beginner</span>
-                        <span className="text-xs text-primary-foreground/80">Member since 2025</span>
+                        <span className="px-3 py-1 text-xs font-semibold bg-primary-foreground/20 rounded-full">{t('beginner')}</span>
+                        <span className="text-xs text-primary-foreground/80">{t('member_since')}</span>
                     </div>
                 </div>
             </div>
@@ -104,16 +108,16 @@ export default function UserDashboardPage() {
                 <div className="flex gap-8">
                     <div>
                         <p className="text-4xl font-bold font-headline">14</p>
-                        <p className="text-sm text-primary-foreground/80">Day Streak</p>
+                        <p className="text-sm text-primary-foreground/80">{t('day_streak_banner')}</p>
                     </div>
                     <div>
                         <p className="text-4xl font-bold font-headline">2,350</p>
-                        <p className="text-sm text-primary-foreground/80">Total Points</p>
+                        <p className="text-sm text-primary-foreground/80">{t('total_points')}</p>
                     </div>
                 </div>
                  <Button variant="secondary" size="sm" className="mt-4 bg-white/20 hover:bg-white/30 text-white">
                     <Settings className="mr-2 h-4 w-4" />
-                    Settings
+                    {t('settings')}
                 </Button>
             </div>
         </CardContent>
@@ -121,10 +125,10 @@ export default function UserDashboardPage() {
       
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="bg-transparent p-0 inline-flex border-b w-full mb-6">
-          <TabsTrigger value="overview" className="bg-transparent text-muted-foreground data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-primary">Overview</TabsTrigger>
-          <TabsTrigger value="progress" className="bg-transparent text-muted-foreground data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-primary">Progress</TabsTrigger>
-          <TabsTrigger value="awards" className="bg-transparent text-muted-foreground data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-primary">Awards</TabsTrigger>
-          <TabsTrigger value="settings" className="bg-transparent text-muted-foreground data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-primary">Settings</TabsTrigger>
+          <TabsTrigger value="overview" className="bg-transparent text-muted-foreground data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-primary">{t('overview')}</TabsTrigger>
+          <TabsTrigger value="progress" className="bg-transparent text-muted-foreground data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-primary">{t('progress_tab')}</TabsTrigger>
+          <TabsTrigger value="awards" className="bg-transparent text-muted-foreground data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-primary">{t('awards')}</TabsTrigger>
+          <TabsTrigger value="settings" className="bg-transparent text-muted-foreground data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none border-b-2 border-transparent data-[state=active]:border-primary">{t('settings')}</TabsTrigger>
         </TabsList>
         <TabsContent value="overview">
             <div className="grid gap-8">
@@ -152,8 +156,8 @@ export default function UserDashboardPage() {
 
                 {/* Quick Actions */}
                 <div>
-                    <h2 className="text-2xl font-bold font-headline mb-1">Quick Actions</h2>
-                    <p className="text-muted-foreground mb-4">Jump back into your learning journey.</p>
+                    <h2 className="text-2xl font-bold font-headline mb-1">{t('quick_actions')}</h2>
+                    <p className="text-muted-foreground mb-4">{t('jump_back')}</p>
                     <div className="grid gap-6 sm:grid-cols-3">
                         {quickActions.map((action) => (
                              <Card key={action.title} className="hover:border-primary hover:shadow-lg transition-all cursor-pointer">
@@ -172,8 +176,8 @@ export default function UserDashboardPage() {
 
                 {/* Your Programming Languages */}
                  <div>
-                    <h2 className="text-2xl font-bold font-headline mb-1">Your Programming Languages</h2>
-                    <p className="text-muted-foreground mb-4">Master multiple languages and expand your skills.</p>
+                    <h2 className="text-2xl font-bold font-headline mb-1">{t('your_languages')}</h2>
+                    <p className="text-muted-foreground mb-4">{t('master_languages')}</p>
                     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         {programmingLanguages.map((lang) => (
                             <Card key={lang.id} className="flex flex-col">
@@ -188,7 +192,7 @@ export default function UserDashboardPage() {
                                 </CardHeader>
                                 <CardContent className="flex-grow space-y-2">
                                      <div className="flex justify-between items-center text-sm text-muted-foreground">
-                                         <span>Progress</span>
+                                         <span>{t('progress_bar')}</span>
                                          <span>{lang.progress}%</span>
                                      </div>
                                      <Progress value={lang.progress} />
@@ -196,7 +200,7 @@ export default function UserDashboardPage() {
                                 <CardFooter>
                                     <Button asChild className="w-full" variant="outline">
                                         <Link href={`/languages/${lang.id}`}>
-                                            Start Learning <ArrowRight className="ml-2 h-4 w-4" />
+                                            {t('start_learning')} <ArrowRight className="ml-2 h-4 w-4" />
                                         </Link>
                                     </Button>
                                 </CardFooter>
@@ -209,8 +213,8 @@ export default function UserDashboardPage() {
         <TabsContent value="progress">
             <Card>
                 <CardHeader>
-                    <CardTitle>Your Progress</CardTitle>
-                    <CardDescription>Track your learning activity over time.</CardDescription>
+                    <CardTitle>{t('your_progress')}</CardTitle>
+                    <CardDescription>{t('track_progress')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
@@ -228,8 +232,8 @@ export default function UserDashboardPage() {
         <TabsContent value="awards">
             <Card>
                 <CardHeader>
-                    <CardTitle>Your Awards</CardTitle>
-                    <CardDescription>All the badges and awards you've earned.</CardDescription>
+                    <CardTitle>{t('your_awards')}</CardTitle>
+                    <CardDescription>{t('all_awards')}</CardDescription>
                 </CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {awards.map((award) => (
@@ -248,32 +252,32 @@ export default function UserDashboardPage() {
         <TabsContent value="settings">
             <Card>
                 <CardHeader>
-                    <CardTitle>Profile Settings</CardTitle>
-                    <CardDescription>Manage your profile information and preferences.</CardDescription>
+                    <CardTitle>{t('profile_settings')}</CardTitle>
+                    <CardDescription>{t('manage_profile')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-2">
-                        <Label htmlFor="fullName">Full Name</Label>
+                        <Label htmlFor="fullName">{t('full_name')}</Label>
                         <Input id="fullName" defaultValue="Git Frp" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="email">Email Address</Label>
+                        <Label htmlFor="email">{t('email_address')}</Label>
                         <Input id="email" type="email" defaultValue="git.frp@example.com" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="password">New Password</Label>
-                        <Input id="password" type="password" placeholder="Enter new password" />
+                        <Label htmlFor="password">{t('new_password')}</Label>
+                        <Input id="password" type="password" placeholder={t('enter_new_password')} />
                     </div>
                      <div className="flex items-center justify-between rounded-lg border p-4">
                         <div>
-                            <Label htmlFor="notifications">Email Notifications</Label>
-                            <p className="text-sm text-muted-foreground">Receive emails about course updates and announcements.</p>
+                            <Label htmlFor="notifications">{t('email_notifications')}</Label>
+                            <p className="text-sm text-muted-foreground">{t('receive_emails')}</p>
                         </div>
                         <Switch id="notifications" defaultChecked/>
                     </div>
                 </CardContent>
                 <CardFooter>
-                    <Button>Save Settings</Button>
+                    <Button>{t('save_settings')}</Button>
                 </CardFooter>
             </Card>
         </TabsContent>
@@ -281,5 +285,3 @@ export default function UserDashboardPage() {
     </div>
   );
 }
-
-    
