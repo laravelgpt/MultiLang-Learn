@@ -27,46 +27,129 @@ const decomposerFormSchema = z.object({
 });
 
 const buggyCodeExamples = [
+    // Easy
+    {
+        title: "Missing Parenthesis",
+        description: "A simple syntax error where a closing parenthesis is missing.",
+        tag: "javascript",
+        difficulty: "Easy",
+        code: `function greet(name) {
+  console.log("Hello, " + name;
+}
+greet("World");`
+    },
     {
         title: "Incorrect Loop Condition",
-        description: "A classic off-by-one error in a loop.",
+        description: "A classic off-by-one error that attempts to access an index out of bounds.",
         tag: "javascript",
+        difficulty: "Easy",
         code: `const fruits = ["Apple", "Banana", "Cherry"];
-
-// The loop runs one time too many, causing an error
 for (let i = 0; i <= fruits.length; i++) {
   console.log(fruits[i]);
 }`
     },
+    // Medium
     {
         title: "Misunderstanding 'this'",
-        description: "Incorrect usage of 'this' inside a method.",
+        description: "Incorrect usage of 'this' inside a callback function, leading to lost context.",
         tag: "javascript",
+        difficulty: "Medium",
         code: `const person = {
   name: "John",
   greet: function() {
-    // 'this' refers to the wrong context here
+    console.log("Hi, I am " + this.name);
     setTimeout(function() {
-      console.log("Hello, " + this.name);
+      // 'this' here refers to the global object (or is undefined in strict mode), not 'person'.
+      console.log("After 1 second, my name is " + this.name);
     }, 1000);
   }
 };
-
-person.greet(); // Outputs "Hello, undefined"`
+person.greet();`
     },
     {
-        title: "Mutation of Props in React",
-        description: "A common mistake in React where a component tries to modify its props.",
+        title: "Forgetting to Await",
+        description: "Calling an async function without 'await' can lead to race conditions or incorrect data.",
         tag: "javascript",
-        code: `// In React, props are read-only. This will cause an error.
-function Welcome(props) {
-  // Trying to change a prop is not allowed.
-  props.name = "New Name"; 
-  return <h1>Hello, {props.name}</h1>;
+        difficulty: "Medium",
+        code: `async function fetchData() {
+    return new Promise(resolve => setTimeout(() => resolve("Data fetched!"), 500));
 }
 
-// Correct approach is using state.
-`
+async function process() {
+    const data = fetchData(); // Forgot to await the promise
+    console.log(data); // This will log the Promise object, not the resolved value "Data fetched!"
+}
+
+process();`
+    },
+    // Hard
+    {
+        title: "Uncontrolled Recursion",
+        description: "A recursive function without a proper base case, leading to a stack overflow.",
+        tag: "javascript",
+        difficulty: "Hard",
+        code: `function countDown(number) {
+  console.log(number);
+  // The base case is missing, so it will count down indefinitely.
+  countDown(number - 1);
+}
+
+countDown(5);`
+    },
+    {
+        title: "State Mutation in React",
+        description: "Directly mutating state in React doesn't trigger re-renders and is an anti-pattern.",
+        tag: "react",
+        difficulty: "Hard",
+        code: `import { useState } from 'react';
+
+function Counter() {
+  const [user, setUser] = useState({ name: 'Bob', age: 30 });
+
+  function handleAgeIncrease() {
+    // This is a direct mutation. React won't detect this change.
+    user.age += 1;
+    setUser(user); // The object reference is the same, so no re-render
+    console.log(user.age);
+  }
+
+  return (
+    <div>
+      <p>{user.name} is {user.age} years old.</p>
+      <button onClick={handleAgeIncrease}>Get Older</button>
+    </div>
+  );
+}`
+    },
+    // Heavy Hard
+    {
+        title: "Race Condition with Closures",
+        description: "A subtle race condition where multiple async operations close over the same loop variable.",
+        tag: "javascript",
+        difficulty: "Heavy Hard",
+        code: `// Goal: Log 0, 1, 2, 3, 4 each after a delay.
+// Problem: By the time setTimeout callbacks run, the loop has finished and 'i' is 5.
+for (var i = 0; i < 5; i++) {
+  setTimeout(function() {
+    console.log(i); // Logs '5' five times.
+  }, i * 100);
+}
+
+// How would you fix this to log 0, 1, 2, 3, 4?`
+    },
+    {
+        title: "Floating Point Imprecision",
+        description: "A classic computer science problem where floating point math leads to unexpected results.",
+        tag: "javascript",
+        difficulty: "Heavy Hard",
+        code: `const value1 = 0.1;
+const value2 = 0.2;
+const result = value1 + value2;
+
+console.log(result); // Outputs 0.30000000000000004
+console.log(result === 0.3); // Outputs false
+
+// Why does this happen and how can you reliably compare floating point numbers?`
     }
 ];
 
@@ -265,7 +348,15 @@ const CodeExplainer = () => {
                 {buggyCodeExamples.map((example, index) => (
                     <Card key={index} className="cursor-pointer hover:border-primary" onClick={() => handleExampleClick(example.code)}>
                         <CardHeader>
-                            <CardTitle className="text-lg">{example.title}</CardTitle>
+                            <div className="flex justify-between items-start gap-2">
+                                <CardTitle className="text-lg">{example.title}</CardTitle>
+                                <Badge variant={
+                                    example.difficulty === 'Easy' ? 'secondary' :
+                                    example.difficulty === 'Medium' ? 'outline' :
+                                    example.difficulty === 'Hard' ? 'default' :
+                                    'destructive'
+                                }>{example.difficulty}</Badge>
+                            </div>
                             <CardDescription>{example.description}</CardDescription>
                         </CardHeader>
                         <CardContent>
