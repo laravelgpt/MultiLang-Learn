@@ -21,7 +21,7 @@ const languageSchema = z.object({
     icon: z.string().url("Must be a valid URL."),
     difficulty: z.enum(['Beginner', 'Intermediate', 'Advanced']),
     topicCount: z.coerce.number().min(10).max(20),
-    lessonCount: z.coerce.number().min(1).max(5),
+    lessonCount: z.coerce.number().min(10).max(100),
     quickQuestionsCount: z.coerce.number().min(3).max(5),
 });
 

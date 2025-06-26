@@ -211,10 +211,10 @@ export default function LanguagesPage() {
                   id="lesson-count"
                   name="lessonCount"
                   type="number"
-                  defaultValue={3}
+                  defaultValue={10}
                   className="col-span-3"
-                  min="1"
-                  max="5"
+                  min="10"
+                  max="100"
                   required
                 />
               </div>
