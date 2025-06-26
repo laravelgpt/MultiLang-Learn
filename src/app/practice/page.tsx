@@ -10,10 +10,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { Code, FileCode, Play, RefreshCw, Copy, Save, BrainCircuit, Loader2 } from 'lucide-react';
+import { Code, FileCode, Play, RefreshCw, Copy, Save, BrainCircuit, Loader2, CheckCircle, XCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { explainCode } from '@/ai/flows/explain-code';
 import { useLanguage } from '@/context/language-provider';
+import { cn } from '@/lib/utils';
 
 
 const codeExamplesData = [
@@ -234,21 +235,42 @@ export default function PracticePage() {
                                     <Textarea 
                                         value={code}
                                         onChange={(e) => setCode(e.target.value)}
-                                        className="font-mono h-96 bg-muted rounded-md border" 
+                                        className="font-mono h-96 bg-muted/50 dark:bg-zinc-900 rounded-md border" 
                                         placeholder="Write your code here..."
                                     />
                                 </TabsContent>
                                 <TabsContent value="output">
-                                    <div className="font-mono h-96 bg-muted rounded-md border p-4 overflow-auto">
-                                        {error ? (
-                                            <Alert variant="destructive">
-                                                <AlertTitle>Error on line {error.lineNumber || 'N/A'}</AlertTitle>
-                                                <AlertDescription>
+                                    <div className={cn(
+                                        "font-mono h-96 rounded-md border p-4 overflow-auto transition-colors",
+                                        !output && "bg-muted",
+                                        output && error && "bg-red-50 dark:bg-destructive/10 border-destructive/30",
+                                        output && !error && "bg-green-50 dark:bg-green-950/30 border-green-500/30"
+                                    )}>
+                                        {isRunning ? (
+                                            <div className="flex items-center justify-center h-full text-muted-foreground">
+                                                <Loader2 className="h-6 w-6 animate-spin" />
+                                                <p className="ml-3">{t('running')}</p>
+                                            </div>
+                                        ) : error ? (
+                                            <div className="flex items-start gap-4 text-destructive">
+                                                <XCircle className="h-6 w-6 flex-shrink-0" />
+                                                <div>
+                                                    <h3 className="font-bold mb-2">Error on line {error.lineNumber || 'N/A'}</h3>
                                                     <pre className="font-mono text-sm whitespace-pre-wrap">{error.message}</pre>
-                                                </AlertDescription>
-                                            </Alert>
+                                                </div>
+                                            </div>
+                                        ) : output ? (
+                                            <div className="flex items-start gap-4 text-green-700 dark:text-green-300">
+                                                <CheckCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                                                <div>
+                                                    <h3 className="font-bold mb-2">Success!</h3>
+                                                    <pre className="text-sm whitespace-pre-wrap">{output}</pre>
+                                                </div>
+                                            </div>
                                         ) : (
-                                            <pre className="text-sm whitespace-pre-wrap">{output || t('run_to_see_output')}</pre>
+                                            <div className="flex items-center justify-center h-full text-muted-foreground">
+                                                <p>{t('run_to_see_output')}</p>
+                                            </div>
                                         )}
                                     </div>
                                 </TabsContent>
