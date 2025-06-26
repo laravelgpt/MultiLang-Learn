@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/admin/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ const languagesData = [
 type Language = typeof languagesData[0];
 
 export default function LanguagesPage() {
+  const router = useRouter();
   const [languages, setLanguages] = useState(languagesData);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingLanguage, setEditingLanguage] = useState<Partial<Language> | null>(null);
@@ -122,7 +124,7 @@ export default function LanguagesPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>Manage Topics & Lessons</DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => router.push(`/languages/${lang.id}`)}>Manage Topics & Lessons</DropdownMenuItem>
                         <DropdownMenuItem onSelect={() => handleEdit(lang)}>Edit</DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem className="text-destructive" onSelect={() => handleDelete(lang.id)}>Delete</DropdownMenuItem>
