@@ -20,7 +20,7 @@ const languageSchema = z.object({
     name: z.string().min(1, "Name is required."),
     icon: z.string().url("Must be a valid URL."),
     difficulty: z.enum(['Beginner', 'Intermediate', 'Advanced']),
-    topicCount: z.coerce.number().min(3).max(10),
+    topicCount: z.coerce.number().min(10).max(20),
     lessonCount: z.coerce.number().min(1).max(5),
     quickQuestionsCount: z.coerce.number().min(3).max(5),
 });
@@ -147,7 +147,7 @@ export async function deleteLanguageAction(langId: string) {
 const generateTopicsSchema = z.object({
     langId: z.string(),
     languageName: z.string(),
-    topicCount: z.coerce.number().min(1).max(10),
+    topicCount: z.coerce.number().min(10).max(20),
 });
 
 export async function generateTopicsAction(formData: FormData) {

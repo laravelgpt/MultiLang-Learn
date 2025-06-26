@@ -350,10 +350,10 @@ export default function LanguageTopicsPage({ params }: { params: { langId: strin
                     id="topic-count"
                     name="topicCount"
                     type="number"
-                    defaultValue={5}
+                    defaultValue={10}
                     className="col-span-3"
-                    min="1"
-                    max="10"
+                    min="10"
+                    max="20"
                     required
                   />
               </div>
