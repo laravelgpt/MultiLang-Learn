@@ -241,7 +241,7 @@ export default function PracticePage() {
                                 </TabsContent>
                                 <TabsContent value="output">
                                     <div className={cn(
-                                        "font-mono h-96 rounded-md border p-4 overflow-auto transition-colors",
+                                        "font-mono h-96 rounded-md border p-4 overflow-auto transition-colors text-sm",
                                         !output && "bg-muted",
                                         output && error && "bg-red-50 dark:bg-destructive/10 border-destructive/30",
                                         output && !error && "bg-green-50 dark:bg-green-950/30 border-green-500/30"
@@ -253,7 +253,7 @@ export default function PracticePage() {
                                             </div>
                                         ) : error ? (
                                             <div className="flex items-start gap-4 text-destructive">
-                                                <XCircle className="h-6 w-6 flex-shrink-0" />
+                                                <XCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
                                                 <div>
                                                     <h3 className="font-bold mb-2">Error on line {error.lineNumber || 'N/A'}</h3>
                                                     <pre className="font-mono text-sm whitespace-pre-wrap">{error.message}</pre>
@@ -264,7 +264,7 @@ export default function PracticePage() {
                                                 <CheckCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
                                                 <div>
                                                     <h3 className="font-bold mb-2">Success!</h3>
-                                                    <pre className="text-sm whitespace-pre-wrap">{output}</pre>
+                                                    <pre className="whitespace-pre-wrap">{output}</pre>
                                                 </div>
                                             </div>
                                         ) : (

@@ -210,7 +210,7 @@ export default function LessonPage({ params }: { params: { langId: string, lesso
                     {isRunning ? t('running') : t('run')}
                 </Button>
                 <div className="pt-2">
-                     <h4 className="font-semibold text-sm mb-2">Output</h4>
+                     <h4 className="font-semibold text-sm mb-2">{t('output')}</h4>
                      <div className={cn(
                         "font-mono h-48 rounded-md border p-4 overflow-auto transition-colors text-sm",
                         !output && "bg-muted",

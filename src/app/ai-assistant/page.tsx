@@ -85,7 +85,7 @@ export default function AiAssistantPage() {
         const greeting = t('ai_greeting_context', { language: languageContext });
         setMessages([{ sender: 'ai', text: greeting }]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedLanguage]);
+    }, [selectedLanguage, t]);
 
     return (
         <div className="h-[calc(100vh-120px)] flex flex-col">
