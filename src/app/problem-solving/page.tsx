@@ -162,7 +162,7 @@ const CodeExplainer = () => {
     const [activeTab, setActiveTab] = useState("editor");
     const workerRef = useRef<Worker | null>(null);
     const [selectedLanguage, setSelectedLanguage] = useState("javascript");
-    const [selectedDifficulty, setSelectedDifficulty] = useState("Easy");
+    const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty | '' >('');
 
     type Difficulty = "Easy" | "Medium" | "Hard" | "Heavy Hard";
     const difficulties: Difficulty[] = ["Easy", "Medium", "Hard", "Heavy Hard"];
@@ -195,15 +195,16 @@ const CodeExplainer = () => {
         workerRef.current.postMessage({ code });
     };
 
-    const handleGenerateExample = async () => {
+    const handleGenerateExample = async (difficulty: Difficulty) => {
       setIsGenerating(true);
+      setSelectedDifficulty(difficulty);
       setExampleDetails(null);
       setCode("");
       setOutput("");
       setSuggestion("");
       setActiveTab("editor");
       try {
-        const result = await generateCodeExample({ language: selectedLanguage, difficulty: selectedDifficulty });
+        const result = await generateCodeExample({ language: selectedLanguage, difficulty: difficulty });
         setExampleDetails(result);
         setCode(result.code);
       } catch (error) {
@@ -213,7 +214,7 @@ const CodeExplainer = () => {
           description: "Could not generate a new code example. Please try again.",
           variant: "destructive",
         });
-        setCode(`// Failed to generate example for ${selectedDifficulty} ${selectedLanguage}.`);
+        setCode(`// Failed to generate example for ${difficulty} ${selectedLanguage}.`);
       } finally {
         setIsGenerating(false);
       }
@@ -245,27 +246,25 @@ const CodeExplainer = () => {
                 <Card>
                     <CardHeader>
                         <CardTitle>{t('error_examples')}</CardTitle>
-                        <CardDescription>{t('generate_new_error_example')}</CardDescription>
+                        <CardDescription>{t('generate_new_error_example_from_card')}</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div>
-                            <Label htmlFor="difficulty-select">{t('difficulty')}</Label>
-                            <Select value={selectedDifficulty} onValueChange={(val: Difficulty) => setSelectedDifficulty(val)}>
-                                <SelectTrigger id="difficulty-select">
-                                    <SelectValue placeholder="Select difficulty" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {difficulties.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}
-                                </SelectContent>
-                            </Select>
-                        </div>
+                    <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {difficulties.map((difficulty) => (
+                            <Button
+                                key={difficulty}
+                                variant="outline"
+                                className="p-4 h-20 text-base"
+                                onClick={() => handleGenerateExample(difficulty)}
+                                disabled={isGenerating}
+                            >
+                                {isGenerating && selectedDifficulty === difficulty ? (
+                                    <Loader2 className="h-6 w-6 animate-spin" />
+                                ) : (
+                                    difficulty
+                                )}
+                            </Button>
+                        ))}
                     </CardContent>
-                    <CardFooter>
-                        <Button className="w-full" onClick={handleGenerateExample} disabled={isGenerating}>
-                            {isGenerating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            {t('generate_example')}
-                        </Button>
-                    </CardFooter>
                 </Card>
             </div>
 
