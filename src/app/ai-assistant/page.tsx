@@ -2,51 +2,90 @@
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import ReactMarkdown from 'react-markdown';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Bot, Send, User } from 'lucide-react';
+import { Bot, Send, User, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/context/language-provider';
+import { useProgrammingLanguage, type LanguageId } from '@/context/programming-language-provider';
+import { chatbot } from '@/ai/flows/chatbot';
+import { useToast } from '@/hooks/use-toast';
 
 type Message = {
     sender: 'user' | 'ai';
     text: string;
 }
 
+const languageNameMap: Record<LanguageId, string> = {
+    all: 'General Programming',
+    js: 'JavaScript',
+    py: 'Python',
+    go: 'Go',
+    rust: 'Rust',
+    java: 'Java',
+    cpp: 'C++',
+    pascal: 'Pascal',
+};
+
+
 export default function AiAssistantPage() {
     const { t } = useLanguage();
-    const [messages, setMessages] = useState<Message[]>([
-        { sender: 'ai', text: t('ai_greeting') }
-    ]);
+    const { selectedLanguage } = useProgrammingLanguage();
+    const { toast } = useToast();
+
+    const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-    const handleSendMessage = (e: React.FormEvent) => {
+    const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!input.trim()) return;
+        if (!input.trim() || isLoading) return;
 
         const userMessage: Message = { sender: 'user', text: input };
         setMessages(prev => [...prev, userMessage]);
         setInput('');
+        setIsLoading(true);
 
-        // Mock AI response
-        setTimeout(() => {
-            const aiResponse: Message = { sender: 'ai', text: t('ai_mock_response') };
+        try {
+            const languageContext = languageNameMap[selectedLanguage];
+            const result = await chatbot({ query: input, language: languageContext });
+            const aiResponse: Message = { sender: 'ai', text: result.response };
             setMessages(prev => [...prev, aiResponse]);
-        }, 1000);
+        } catch (error) {
+            console.error("Error calling chatbot flow:", error);
+            toast({
+                title: "An Error Occurred",
+                description: "Failed to get a response from the AI assistant. Please try again.",
+                variant: "destructive",
+            });
+            const errorMessage: Message = { sender: 'ai', text: "I'm sorry, I encountered an error. Please try again." };
+            setMessages(prev => [...prev, errorMessage]);
+        } finally {
+            setIsLoading(false);
+        }
     }
     
     useEffect(() => {
-      if (scrollAreaRef.current) {
-        scrollAreaRef.current.scrollTo({
-            top: scrollAreaRef.current.scrollHeight,
-            behavior: 'smooth',
-        });
-      }
-    }, [messages]);
+        const viewport = scrollAreaRef.current?.querySelector('div[data-radix-scroll-area-viewport]');
+        if (viewport) {
+            viewport.scrollTo({
+                top: viewport.scrollHeight,
+                behavior: 'smooth',
+            });
+        }
+    }, [messages, isLoading]);
+    
+    useEffect(() => {
+        const languageContext = languageNameMap[selectedLanguage];
+        const greeting = t('ai_greeting_context', { language: languageContext });
+        setMessages([{ sender: 'ai', text: greeting }]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedLanguage]);
 
     return (
         <div className="h-[calc(100vh-120px)] flex flex-col">
@@ -54,7 +93,7 @@ export default function AiAssistantPage() {
                 <Bot size={40} className="text-primary shrink-0" />
                 <div>
                     <h1 className="font-headline text-3xl font-bold text-primary">{t('ai_assistant_page_title')}</h1>
-                    <p className="text-lg text-muted-foreground">{t('ask_coding_questions')}</p>
+                    <p className="text-lg text-muted-foreground">{t('ask_coding_questions')} ({languageNameMap[selectedLanguage]})</p>
                 </div>
             </div>
 
@@ -68,23 +107,35 @@ export default function AiAssistantPage() {
                             {messages.map((message, index) => (
                                 <div key={index} className={cn("flex items-start gap-4", message.sender === 'user' ? 'justify-end' : 'justify-start')}>
                                     {message.sender === 'ai' && (
-                                        <Avatar className="h-8 w-8 border">
+                                        <Avatar className="h-8 w-8 border shrink-0">
                                             <AvatarFallback className="bg-primary text-primary-foreground"><Bot className="h-5 w-5" /></AvatarFallback>
                                         </Avatar>
                                     )}
                                     <div className={cn(
-                                        "max-w-md p-3 rounded-lg",
+                                        "max-w-2xl p-3 rounded-lg",
                                         message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'
                                     )}>
-                                        <p className="text-sm">{message.text}</p>
+                                        <ReactMarkdown className="prose prose-sm dark:prose-invert max-w-none prose-p:my-0 prose-headings:my-2 prose-pre:my-2 prose-pre:bg-background/50 prose-pre:p-2 prose-pre:rounded-sm">
+                                            {message.text}
+                                        </ReactMarkdown>
                                     </div>
                                     {message.sender === 'user' && (
-                                        <Avatar className="h-8 w-8 border">
+                                        <Avatar className="h-8 w-8 border shrink-0">
                                             <AvatarFallback><User className="h-5 w-5" /></AvatarFallback>
                                         </Avatar>
                                     )}
                                 </div>
                             ))}
+                            {isLoading && (
+                                <div className="flex items-start gap-4 justify-start">
+                                    <Avatar className="h-8 w-8 border shrink-0">
+                                        <AvatarFallback className="bg-primary text-primary-foreground"><Bot className="h-5 w-5" /></AvatarFallback>
+                                    </Avatar>
+                                    <div className="max-w-md p-3 rounded-lg bg-muted flex items-center">
+                                        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground"/>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </ScrollArea>
                 </CardContent>
@@ -94,9 +145,11 @@ export default function AiAssistantPage() {
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             placeholder={t('type_your_question')}
+                            disabled={isLoading}
                         />
-                        <Button type="submit">
-                            <Send className="h-4 w-4 mr-2" /> {t('send')}
+                        <Button type="submit" disabled={isLoading} className="w-[90px]">
+                            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                            <span className={cn(isLoading && "sr-only")}>{t('send')}</span>
                         </Button>
                     </form>
                 </CardFooter>

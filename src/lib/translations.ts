@@ -104,6 +104,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "type_your_question": "Type your question...",
     "send": "Send",
     "ai_greeting": "Hello! I'm your AI programming assistant. How can I help you today?",
+    "ai_greeting_context": "Hello! I'm your AI programming assistant. I see you're working on {language}. How can I help you today?",
     "ai_mock_response": "That's a great question! Let me help you with that.",
     // community/page.tsx
     "community_hub": "Community Hub",
@@ -227,6 +228,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "type_your_question": "আপনার প্রশ্ন টাইপ করুন...",
     "send": "প্রেরণ",
     "ai_greeting": "হ্যালো! আমি আপনার এআই প্রোগ্রামিং সহকারী। আমি আজ আপনাকে কিভাবে সাহায্য করতে পারি?",
+    "ai_greeting_context": "হ্যালো! আমি আপনার এআই প্রোগ্রামিং সহকারী। আমি দেখছি আপনি {language} নিয়ে কাজ করছেন। আমি আপনাকে আজ কিভাবে সাহায্য করতে পারি?",
     "ai_mock_response": "এটি একটি দুর্দান্ত প্রশ্ন! আমাকে আপনাকে সাহায্য করতে দিন।",
     // community/page.tsx
     "community_hub": "কমিউনিটি হাব",
@@ -350,6 +352,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "type_your_question": "अपना प्रश्न टाइप करें...",
     "send": "भेजें",
     "ai_greeting": "नमस्ते! मैं आपका एआई प्रोग्रामिंग सहायक हूँ। मैं आज आपकी कैसे मदद कर सकता हूँ?",
+    "ai_greeting_context": "नमस्ते! मैं आपका एआई प्रोग्रामिंग सहायक हूँ। मैं देख रहा हूँ कि आप {language} पर काम कर रहे हैं। मैं आज आपकी कैसे मदद कर सकता हूँ?",
     "ai_mock_response": "यह एक बहुत अच्छा सवाल है! मुझे आपकी मदद करने दीजिए।",
     // community/page.tsx
     "community_hub": "सामुदायिक केंद्र",
@@ -473,6 +476,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "type_your_question": "اپنا سوال ٹائپ کریں...",
     "send": "بھیجیں",
     "ai_greeting": "ہیلو! میں آپ کا اے آئی پروگرامنگ اسسٹنٹ ہوں۔ میں آج آپ کی کس طرح مدد کر سکتا ہوں؟",
+    "ai_greeting_context": "ہیلو! میں آپ کا اے آئی پروگرامنگ اسسٹنٹ ہوں۔ میں دیکھ رہا ہوں کہ آپ {language} پر کام کر رہے ہیں۔ میں آج آپ کی کس طرح مدد کر سکتا ہوں؟",
     "ai_mock_response": "یہ ایک بہت اچھا سوال ہے! مجھے آپ کی مدد کرنے دیں۔",
     // community/page.tsx
     "community_hub": "کمیونٹی ہب",
