@@ -78,7 +78,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "ai_explanation": "AI Explanation",
     "run_to_see_output": "Run code to see output...",
     "ai_is_thinking": "AI is thinking...",
-    "click_ai_button_for_explanation": "Click the purple AI button to get an explanation of your code.",
+    "click_ai_button_for_explanation": "Click the 'Explain Code' button to get an explanation of your code.",
     "copied_to_clipboard_title": "Copied!",
     "copied_to_clipboard_desc": "Code copied to clipboard.",
     "cannot_explain_empty_title": "Cannot explain empty code",
@@ -89,6 +89,11 @@ export const translations: Record<Language, Record<string, string>> = {
     "save_feature_soon_desc": "Saving your code snippets will be available in a future update.",
     "code_copied_title": "Copied to Clipboard",
     "code_copied_desc": "The code has been copied to your clipboard.",
+    "save_feature": "Save",
+    "explain_code": "Explain Code",
+    "copy_code": "Copy",
+    "reset_code": "Reset",
+    "ai_explaining": "Explaining...",
 
     // challenges/page.tsx
     "challenge_yourself": "Challenge yourself with coding problems and improve your programming skills.",
@@ -204,7 +209,8 @@ export const translations: Record<Language, Record<string, string>> = {
     "from_topic": "From topic",
     "lesson_content_coming_soon": "Content for this lesson is coming soon!",
     "try_it_yourself": "Try it Yourself",
-    "run_and_edit_from_lesson": "Run and edit the code from this lesson.",
+    "try_it_yourself_desc": "Run, modify, and understand the code from this lesson.",
+    "code_explanation_placeholder": "Click 'Explain Code' to get an AI-powered breakdown of this snippet.",
   },
   bn: {
     welcome_back: "ফিরে আসার জন্য স্বাগতম, গিট ফ্রপ!",
@@ -293,6 +299,11 @@ export const translations: Record<Language, Record<string, string>> = {
     "save_feature_soon_desc": "আপনার কোড স্নিপেটগুলি সংরক্ষণ করা ভবিষ্যতের আপডেটে উপলব্ধ হবে।",
     "code_copied_title": "ক্লিপবোর্ডে অনুলিপি করা হয়েছে",
     "code_copied_desc": "কোডটি আপনার ক্লিপবোর্ডে অনুলিপি করা হয়েছে।",
+    "save_feature": "সংরক্ষণ",
+    "explain_code": "কোড ব্যাখ্যা করুন",
+    "copy_code": "অনুলিপি",
+    "reset_code": "রিসেট",
+    "ai_explaining": "ব্যাখ্যা করা হচ্ছে...",
 
     // challenges/page.tsx
     "challenge_yourself": "কোডিং সমস্যাগুলির সাথে নিজেকে চ্যালেঞ্জ করুন এবং আপনার প্রোগ্রামিং দক্ষতা উন্নত করুন।",
@@ -408,7 +419,8 @@ export const translations: Record<Language, Record<string, string>> = {
     "from_topic": "বিষয় থেকে",
     "lesson_content_coming_soon": "এই পাঠের জন্য বিষয়বস্তু শীঘ্রই আসছে!",
     "try_it_yourself": "নিজে চেষ্টা করুন",
-    "run_and_edit_from_lesson": "এই পাঠ থেকে কোড চালান এবং সম্পাদনা করুন।",
+    "try_it_yourself_desc": "এই পাঠ থেকে কোড চালান এবং সম্পাদনা করুন।",
+    "code_explanation_placeholder": "এই স্নিপেটের এআই-চালিত ভাঙ্গন পেতে 'কোড ব্যাখ্যা করুন' ক্লিক করুন।",
   },
   hi: {
     welcome_back: "वापस स्वागत है, गिट फ्रप!",
@@ -497,6 +509,11 @@ export const translations: Record<Language, Record<string, string>> = {
     "save_feature_soon_desc": "आपके कोड स्निपेट को सहेजना भविष्य के अपडेट में उपलब्ध होगा।",
     "code_copied_title": "क्लिपबोर्ड पर कॉपी किया गया",
     "code_copied_desc": "कोड आपके क्लिपबोर्ड पर कॉपी कर दिया गया है।",
+    "save_feature": "सहेजें",
+    "explain_code": "कोड की व्याख्या करें",
+    "copy_code": "प्रतिलिपि",
+    "reset_code": "रीसेट",
+    "ai_explaining": "व्याख्या कर रहा है...",
 
     // challenges/page.tsx
     "challenge_yourself": "कोडिंग समस्याओं के साथ खुद को चुनौती दें और अपने प्रोग्रामिंग कौशल में सुधार करें।",
@@ -612,7 +629,8 @@ export const translations: Record<Language, Record<string, string>> = {
     "from_topic": "विषय से",
     "lesson_content_coming_soon": "इस पाठ के लिए सामग्री जल्द ही आ रही है!",
     "try_it_yourself": "स्वयं চেষ্টা করুন",
-    "run_and_edit_from_lesson": "इस पाठ से कोड चलाएं और संपादित करें।",
+    "try_it_yourself_desc": "इस पाठ से कोड चलाएं और संपादित करें।",
+    "code_explanation_placeholder": "इस स्निपेट का एआई-संचालित ब्रेकडाउन प्राप्त करने के लिए 'कोड समझाएं' पर क्लिक करें।",
   },
   ur: {
     welcome_back: "واپس خوش آمدید، گٹ فرپ!",
@@ -701,6 +719,11 @@ export const translations: Record<Language, Record<string, string>> = {
     "save_feature_soon_desc": "آپ کے کوڈ کے ٹکڑوں کو محفوظ کرنا مستقبل کی تازہ کاری میں دستیاب ہوگا۔",
     "code_copied_title": "کلپ بورڈ پر کاپی کیا گیا",
     "code_copied_desc": "کوڈ آپ کے کلپ بورڈ پر کاپی کر دیا گیا ہے۔",
+    "save_feature": "محفوظ کریں",
+    "explain_code": "کوڈ کی وضاحت کریں",
+    "copy_code": "کاپی",
+    "reset_code": "ری سیٹ",
+    "ai_explaining": "وضاحت کی جا رہی ہے...",
 
     // challenges/page.tsx
     "challenge_yourself": "کوڈنگ کے مسائل سے خود کو چیلنج کریں اور اپنی پروگرامنگ کی مہارت کو بہتر بنائیں۔",
@@ -816,6 +839,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "from_topic": "موضوع سے",
     "lesson_content_coming_soon": "اس سبق کے لیے مواد جلد آرہا ہے!",
     "try_it_yourself": "خود کوشش کریں",
-    "run_and_edit_from_lesson": "اس سبق سے کوڈ چلائیں اور ترمیم کریں۔",
+    "try_it_yourself_desc": "اس سبق سے کوڈ چلائیں اور ترمیم کریں۔",
+    "code_explanation_placeholder": "اس ٹکڑے کا اے آئی سے چلنے والا بریک ڈاؤن حاصل کرنے کے لیے 'کوڈ کی وضاحت کریں' پر کلک کریں۔",
   },
 };

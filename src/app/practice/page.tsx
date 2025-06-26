@@ -15,56 +15,9 @@ import { useToast } from '@/hooks/use-toast';
 import { explainCode } from '@/ai/flows/explain-code';
 import { useLanguage } from '@/context/language-provider';
 import { cn } from '@/lib/utils';
-
-
-const codeExamplesData = [
-    {
-        title: "Variables and Data Types",
-        description: "Learn about different variable declarations and data types",
-        tag: "javascript",
-        code: `// Variables can be declared using var, let, or const
-let message = "Hello, World!"; // string
-const score = 100; // number
-var isStudent = true; // boolean
-
-console.log(message);
-console.log("Score:", score);
-console.log("Is student?", isStudent);`
-    },
-    {
-        title: "Functions and Scope",
-        description: "Understanding function declarations, expressions, and scope",
-        tag: "javascript",
-        code: `// Function Declaration
-function greet(name) {
-  return 'Hello, ' + name + '!';
-}
-
-// Function Expression
-const add = function(a, b) {
-  return a + b;
-};
-
-console.log(greet("Alice"));
-console.log("Sum:", add(5, 3));`
-    },
-    {
-        title: "Arrays and Loops",
-        description: "Working with arrays and different loop structures",
-        tag: "javascript",
-        code: `const fruits = ["Apple", "Banana", "Cherry"];
-
-// for loop
-for (let i = 0; i < fruits.length; i++) {
-  console.log(fruits[i]);
-}
-
-// for...of loop
-for (const fruit of fruits) {
-  console.log(fruit);
-}`
-    }
-];
+import { generateCodeExample } from '@/ai/flows/generate-code-example';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 
 const initialCode = `// Welcome to the Practice Zone!
 // Try writing some code and run it to see the output
@@ -89,8 +42,14 @@ export default function PracticePage() {
     const [isExplaining, setIsExplaining] = useState(false);
     const [activeTab, setActiveTab] = useState("editor");
     const workerRef = useRef<Worker | null>(null);
-    const [codeExamples, setCodeExamples] = useState(codeExamplesData);
     
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [selectedLanguage, setSelectedLanguage] = useState("javascript");
+    const [topic, setTopic] = useState("");
+    const [difficulty, setDifficulty] = useState("Medium");
+    const [generatedTitle, setGeneratedTitle] = useState("");
+    const [generatedDescription, setGeneratedDescription] = useState("");
+
     const parseLineNumber = (stack: string): number | null => {
         const match = /<anonymous>:(\d+):/.exec(stack);
         if (match && match[1]) {
@@ -135,14 +94,6 @@ export default function PracticePage() {
         workerRef.current.postMessage({ code });
     };
     
-    const handleExampleClick = (exampleCode: string) => {
-        setCode(exampleCode);
-        setOutput("");
-        setError(null);
-        setExplanation("");
-        setActiveTab("editor");
-    };
-
     const handleCopy = () => {
         navigator.clipboard.writeText(code);
         toast({ title: t('code_copied_title'), description: t('code_copied_desc') });
@@ -167,6 +118,38 @@ export default function PracticePage() {
             setIsExplaining(false);
         }
     };
+    
+    const handleGenerateExample = async () => {
+        if (!topic) {
+            toast({ title: "Topic is required", description: "Please enter a topic to generate an example.", variant: "destructive" });
+            return;
+        }
+        setIsGenerating(true);
+        setCode("// Generating example...");
+        setGeneratedTitle("");
+        setGeneratedDescription("");
+        setExplanation("");
+        setOutput("");
+        setError(null);
+
+        try {
+            const result = await generateCodeExample({
+                language: selectedLanguage,
+                topic,
+                difficulty
+            });
+            setCode(result.code);
+            setGeneratedTitle(result.title);
+            setGeneratedDescription(result.description);
+            setActiveTab("editor");
+        } catch (error) {
+            console.error("Failed to generate code example:", error);
+            toast({ title: "Generation Failed", description: "Could not generate an example. Please try again.", variant: "destructive" });
+            setCode("// Failed to generate example. Please try again.");
+        } finally {
+            setIsGenerating(false);
+        }
+    };
 
 
     return (
@@ -182,29 +165,55 @@ export default function PracticePage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
                 {/* Left Column: Code Examples */}
                 <div className="lg:col-span-1 space-y-4">
-                    <h2 className="text-xl font-bold flex items-center gap-2"><FileCode className="h-5 w-5" /> {t('code_examples')}</h2>
-                    {codeExamples.map((example, index) => (
-                        <Card key={index} className="cursor-pointer hover:border-primary" onClick={() => handleExampleClick(example.code)}>
+                     <Card>
+                        <CardHeader>
+                            <CardTitle>Generate Error Example</CardTitle>
+                            <CardDescription>Create a custom code challenge with a hidden error.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="topic">Topic</Label>
+                                <Input id="topic" value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="e.g., JavaScript closures" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="difficulty">Difficulty</Label>
+                                <Select value={difficulty} onValueChange={(value) => setDifficulty(value)}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select difficulty" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Easy">Easy</SelectItem>
+                                        <SelectItem value="Medium">Medium</SelectItem>
+                                        <SelectItem value="Hard">Hard</SelectItem>
+                                        <SelectItem value="Heavy Hard">Heavy Hard</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <Button onClick={handleGenerateExample} disabled={isGenerating} className="w-full">
+                                {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <BrainCircuit className="mr-2 h-4 w-4" />}
+                                {isGenerating ? "Generating..." : "Generate Example"}
+                            </Button>
+                        </CardContent>
+                    </Card>
+                    {generatedTitle && (
+                        <Card>
                             <CardHeader>
-                                <CardTitle className="text-lg">{example.title}</CardTitle>
-                                <CardDescription>{example.description}</CardDescription>
+                                <CardTitle>{generatedTitle}</CardTitle>
+                                <CardDescription>{generatedDescription}</CardDescription>
                             </CardHeader>
-                            <CardContent>
-                                <Badge variant="outline">{example.tag}</Badge>
-                            </CardContent>
                         </Card>
-                    ))}
+                    )}
                 </div>
 
                 {/* Right Column: Interactive Code Editor */}
-                <div className="lg:col-span-2 relative">
+                <div className="lg:col-span-2">
                     <Card>
-                        <CardHeader>
+                         <CardHeader>
                             <div className="flex flex-wrap items-center justify-between gap-4">
                                 <CardTitle className="text-xl flex items-center gap-2"><Code className="h-5 w-5" /> {t('interactive_code_editor')}</CardTitle>
                                 <div className="flex items-center gap-2">
-                                    <Select defaultValue="javascript">
-                                        <SelectTrigger className="w-auto">
+                                    <Select value={selectedLanguage} onValueChange={(val) => setSelectedLanguage(val)}>
+                                        <SelectTrigger className="w-[180px]">
                                             <div className='flex items-center gap-2'>
                                                 <Image src="https://placehold.co/16x16.png" width={16} height={16} alt="JS" data-ai-hint="javascript logo" />
                                                 <SelectValue placeholder={t('language')} />
@@ -213,15 +222,21 @@ export default function PracticePage() {
                                         <SelectContent>
                                             <SelectItem value="javascript">JavaScript</SelectItem>
                                             <SelectItem value="python">Python</SelectItem>
-                                            <SelectItem value="pascal" disabled>Pascal</SelectItem>
                                         </SelectContent>
                                     </Select>
-                                    <Button variant="outline" size="icon" onClick={() => setCode(initialCode)}><RefreshCw className="h-4 w-4" /></Button>
                                     <Button onClick={handleRunCode} disabled={isRunning} className="bg-green-600 hover:bg-green-700 text-white w-[90px]">
                                         {isRunning ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Play className="mr-2 h-4 w-4" />}
                                         {isRunning ? t('running') : t('run')}
                                     </Button>
                                 </div>
+                            </div>
+                             <div className="flex items-center gap-2 pt-4 mt-4 border-t -mx-6 px-6">
+                                <Button variant="ghost" size="sm" onClick={handleExplainCode} disabled={isExplaining}>
+                                    <BrainCircuit /> {isExplaining ? t('ai_explaining') : t('explain_code')}
+                                </Button>
+                                <Button variant="ghost" size="sm" onClick={handleCopy}><Copy /> {t('copy_code')}</Button>
+                                <Button variant="ghost" size="sm" onClick={() => setCode(initialCode)}><RefreshCw /> {t('reset_code')}</Button>
+                                <Button variant="ghost" size="sm" onClick={() => toast({ title: t('save_feature_soon_title'), description: t('save_feature_soon_desc')})}><Save /> {t('save_feature')}</Button>
                             </div>
                         </CardHeader>
                         <CardContent>
@@ -296,17 +311,6 @@ export default function PracticePage() {
                             </Tabs>
                         </CardContent>
                     </Card>
-                    <div className="absolute right-4 -bottom-4 flex flex-col gap-2">
-                         <Button onClick={handleExplainCode} disabled={isExplaining} variant="secondary" size="icon" className="rounded-full shadow-lg h-10 w-10 bg-purple-500 hover:bg-purple-600 text-white">
-                            {isExplaining ? <Loader2 className="h-5 w-5 animate-spin" /> : <BrainCircuit className="h-5 w-5" />}
-                        </Button>
-                        <Button onClick={handleCopy} variant="secondary" size="icon" className="rounded-full shadow-lg h-10 w-10 bg-blue-500 hover:bg-blue-600 text-white">
-                            <Copy className="h-5 w-5" />
-                        </Button>
-                        <Button variant="secondary" size="icon" className="rounded-full shadow-lg h-10 w-10 bg-primary hover:bg-primary/90 text-white" onClick={() => toast({ title: t('save_feature_soon_title'), description: t('save_feature_soon_desc')})}>
-                            <Save className="h-5 w-5" />
-                        </Button>
-                    </div>
                 </div>
             </div>
         </>
