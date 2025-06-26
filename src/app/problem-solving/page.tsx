@@ -24,6 +24,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import { useProgrammingLanguage, type LanguageId } from '@/context/programming-language-provider';
 import { Badge } from '@/components/ui/badge';
+import { languageNameMap } from '@/lib/language-map';
 
 
 const decomposerFormSchema = z.object({
@@ -168,14 +169,6 @@ const CodeDebugger = () => {
     const [difficulty, setDifficulty] = useState("Medium");
     const [generatedTitle, setGeneratedTitle] = useState("");
     const [generatedDescription, setGeneratedDescription] = useState("");
-
-    const languageNameMap: Record<string, string> = {
-        all: 'Overall', js: 'JavaScript', py: 'Python', go: 'Go', rust: 'Rust',
-        java: 'Java', cpp: 'C++', pascal: 'Pascal', csharp: 'C#',
-        typescript: 'TypeScript', swift: 'Swift', kotlin: 'Kotlin', php: 'PHP',
-        ruby: 'Ruby', sql: 'SQL', dart: 'Dart', r: 'R', elixir: 'Elixir',
-        haskell: 'Haskell', lua: 'Lua', perl: 'Perl', scala: 'Scala', bash: 'Bash',
-    };
 
     const parseLineNumber = (stack: string): number | null => {
         const match = /<anonymous>:(\d+):/.exec(stack);

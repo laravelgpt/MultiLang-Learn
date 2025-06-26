@@ -9,6 +9,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import {getCurriculumForLanguage} from '@/ai/tools/curriculum-tool';
 
 const ChatbotInputSchema = z.object({
   query: z.string().describe("The user's question."),
@@ -29,8 +30,11 @@ const prompt = ai.definePrompt({
   name: 'chatbotPrompt',
   input: {schema: ChatbotInputSchema},
   output: {schema: ChatbotOutputSchema},
+  tools: [getCurriculumForLanguage],
   prompt: `You are a friendly, encouraging, and expert programming tutor.
 Your current area of focus is {{language}}.
+
+If the user asks what they should learn, what topics are available, or for a learning path, use the getCurriculumForLanguage tool to see the available curriculum for the current language context and suggest topics based on that.
 
 A user has asked the following question:
 "{{{query}}}"

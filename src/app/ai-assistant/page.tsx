@@ -19,6 +19,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Label } from '@/components/ui/label';
+import { languageNameMap } from '@/lib/language-map';
 
 type Message = {
     sender: 'user' | 'ai';
@@ -31,14 +32,6 @@ type Conversation = {
     messages: Message[];
     timestamp: number;
     language: string;
-};
-
-const languageNameMap: Record<string, string> = {
-    all: 'General Programming', js: 'JavaScript', py: 'Python', go: 'Go', rust: 'Rust',
-    java: 'Java', cpp: 'C++', pascal: 'Pascal', csharp: 'C#',
-    typescript: 'TypeScript', swift: 'Swift', kotlin: 'Kotlin', php: 'PHP',
-    ruby: 'Ruby', sql: 'SQL', dart: 'Dart', r: 'R', elixir: 'Elixir',
-    haskell: 'Haskell', lua: 'Lua', perl: 'Perl', scala: 'Scala', bash: 'Bash',
 };
 
 export default function AiAssistantPage() {
