@@ -13,8 +13,8 @@ export function UserHeader() {
   const { language, setLanguage, t } = useLanguage();
 
   return (
-    <header className="flex h-16 shrink-0 items-center justify-between border-b bg-background px-4 sm:px-6 lg:px-8">
-      <div className="flex items-center gap-2">
+    <div className="flex items-center gap-4 h-16 shrink-0 border-b bg-background px-4 sm:px-6 lg:px-8 md:border-0 md:px-0">
+      <div className="hidden md:flex items-center gap-2 flex-1">
         <Select value={language} onValueChange={(value: Language) => setLanguage(value)}>
           <SelectTrigger className="w-auto sm:w-[180px]">
             <SelectValue placeholder="Language" />
@@ -45,6 +45,6 @@ export function UserHeader() {
           <AvatarFallback>GF</AvatarFallback>
         </Avatar>
       </div>
-    </header>
+    </div>
   );
 }

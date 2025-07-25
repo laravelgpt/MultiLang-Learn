@@ -26,11 +26,13 @@ export function useSidebar() {
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const isMobile = useIsMobile()
-  const [isCollapsed, setIsCollapsed] = React.useState(false);
+  const [isCollapsed, setIsCollapsed] = React.useState(isMobile);
 
   React.useEffect(() => {
     if (isMobile) {
       setIsCollapsed(true)
+    } else {
+      setIsCollapsed(false)
     }
   }, [isMobile])
 
@@ -152,7 +154,9 @@ export const SidebarFooter = React.forwardRef<HTMLDivElement, React.HTMLAttribut
 SidebarFooter.displayName = "SidebarFooter"
 
 export function SidebarToggle({ className, ...props }: React.ComponentProps<typeof Button>) {
-  const { isCollapsed, toggle } = useSidebar()
+  const { isCollapsed, toggle, isMobile } = useSidebar()
+
+  if(isMobile) return null;
   
   return (
     <Button
