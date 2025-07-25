@@ -1,0 +1,16 @@
+{
+  "node": {
+    "407160db3b7d2fd48b18d82f4f5606c9c6428b3ac9": {
+      "workers": {
+        "app/settings/page": {
+          "moduleId": "[project]/.next-internal/server/app/settings/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/generate-default-chatbot-persona.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/settings/page": "action-browser"
+      }
+    }
+  },
+  "edge": {}
+}

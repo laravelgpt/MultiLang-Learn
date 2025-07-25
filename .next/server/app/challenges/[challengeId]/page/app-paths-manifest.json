@@ -1,0 +1,3 @@
+{
+  "/challenges/[challengeId]/page": "app/challenges/[challengeId]/page.js"
+}

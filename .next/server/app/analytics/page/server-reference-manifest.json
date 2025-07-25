@@ -1,0 +1,16 @@
+{
+  "node": {
+    "40a1e5d53a79d4c38b5afbb3ec323235309f6800cf": {
+      "workers": {
+        "app/analytics/page": {
+          "moduleId": "[project]/.next-internal/server/app/analytics/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/analyze-learning-struggle-points.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/analytics/page": "action-browser"
+      }
+    }
+  },
+  "edge": {}
+}

@@ -1,0 +1,38 @@
+{
+  "node": {
+    "0001cd73d14dadd1754434a98d572a0a4ca7da57a9": {
+      "workers": {
+        "app/ai-assistant/page": {
+          "moduleId": "[project]/.next-internal/server/app/ai-assistant/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/chatbot.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/ai-assistant/page": "action-browser"
+      }
+    },
+    "405c7426e6a61756380e156da312b030969c3a3e80": {
+      "workers": {
+        "app/ai-assistant/page": {
+          "moduleId": "[project]/.next-internal/server/app/ai-assistant/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/chatbot.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/ai-assistant/page": "action-browser"
+      }
+    },
+    "4074b1f68ea5d629f32da905e2e63aad7ee5297684": {
+      "workers": {
+        "app/ai-assistant/page": {
+          "moduleId": "[project]/.next-internal/server/app/ai-assistant/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/chatbot.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/ai-assistant/page": "action-browser"
+      }
+    }
+  },
+  "edge": {}
+}

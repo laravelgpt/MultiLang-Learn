@@ -1,0 +1,38 @@
+{
+  "node": {
+    "40720c285ca81c3f33336f3fa0d779b719d70936f8": {
+      "workers": {
+        "app/admin/languages/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/languages/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/languageActions.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/admin/languages/page": "action-browser"
+      }
+    },
+    "40c6f17ecb48a4ad90798d4fce13a6eb2b879199cf": {
+      "workers": {
+        "app/admin/languages/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/languages/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/languageActions.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/admin/languages/page": "action-browser"
+      }
+    },
+    "0001cd73d14dadd1754434a98d572a0a4ca7da57a9": {
+      "workers": {
+        "app/admin/languages/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/languages/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/languageActions.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/admin/languages/page": "action-browser"
+      }
+    }
+  },
+  "edge": {}
+}

@@ -1,0 +1,38 @@
+{
+  "node": {
+    "0001cd73d14dadd1754434a98d572a0a4ca7da57a9": {
+      "workers": {
+        "app/challenges/[challengeId]/page": {
+          "moduleId": "[project]/.next-internal/server/app/challenges/[challengeId]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/explain-code.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/challenges/[challengeId]/page": "action-browser"
+      }
+    },
+    "40c2bdf4266b2eb3ac7f500435141c83d6248251cc": {
+      "workers": {
+        "app/challenges/[challengeId]/page": {
+          "moduleId": "[project]/.next-internal/server/app/challenges/[challengeId]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/explain-code.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/challenges/[challengeId]/page": "action-browser"
+      }
+    },
+    "409ab27ac407a98400bab86235173070f0f9437c42": {
+      "workers": {
+        "app/challenges/[challengeId]/page": {
+          "moduleId": "[project]/.next-internal/server/app/challenges/[challengeId]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/explain-code.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/challenges/[challengeId]/page": "action-browser"
+      }
+    }
+  },
+  "edge": {}
+}

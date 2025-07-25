@@ -1,0 +1,27 @@
+{
+  "node": {
+    "0001cd73d14dadd1754434a98d572a0a4ca7da57a9": {
+      "workers": {
+        "app/tasks/page": {
+          "moduleId": "[project]/.next-internal/server/app/tasks/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/generate-tasks-for-topic.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/tasks/page": "action-browser"
+      }
+    },
+    "4073c1e5eb5e3915f21ebf984776b404d6efb30506": {
+      "workers": {
+        "app/tasks/page": {
+          "moduleId": "[project]/.next-internal/server/app/tasks/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/generate-tasks-for-topic.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/tasks/page": "action-browser"
+      }
+    }
+  },
+  "edge": {}
+}

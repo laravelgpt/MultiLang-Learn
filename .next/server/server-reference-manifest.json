@@ -1,0 +1,128 @@
+{
+  "node": {
+    "0001cd73d14dadd1754434a98d572a0a4ca7da57a9": {
+      "workers": {
+        "app/challenges/page": {
+          "moduleId": "[project]/.next-internal/server/app/challenges/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        },
+        "app/dashboard/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        },
+        "app/languages/[langId]/lessons/[lessonId]/page": {
+          "moduleId": "[project]/.next-internal/server/app/languages/[langId]/lessons/[lessonId]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/explain-code.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        },
+        "app/languages/[langId]/page": {
+          "moduleId": "[project]/.next-internal/server/app/languages/[langId]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        },
+        "app/languages/page": {
+          "moduleId": "[project]/.next-internal/server/app/languages/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        },
+        "app/practice/page": {
+          "moduleId": "[project]/.next-internal/server/app/practice/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/explain-code.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        },
+        "app/problem-solving/page": {
+          "moduleId": "[project]/.next-internal/server/app/problem-solving/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/decompose-problem.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE2 => \"[project]/src/ai/flows/explain-code.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE3 => \"[project]/src/ai/flows/generate-code-example.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/challenges/page": "action-browser",
+        "app/dashboard/page": "action-browser",
+        "app/languages/[langId]/lessons/[lessonId]/page": "action-browser",
+        "app/languages/[langId]/page": "action-browser",
+        "app/languages/page": "action-browser",
+        "app/practice/page": "action-browser",
+        "app/problem-solving/page": "action-browser"
+      }
+    },
+    "409e24a56fa86aa41a62f80b6c5f29591b55da155f": {
+      "workers": {
+        "app/languages/[langId]/lessons/[lessonId]/page": {
+          "moduleId": "[project]/.next-internal/server/app/languages/[langId]/lessons/[lessonId]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/explain-code.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        },
+        "app/languages/[langId]/page": {
+          "moduleId": "[project]/.next-internal/server/app/languages/[langId]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/languages/[langId]/lessons/[lessonId]/page": "action-browser",
+        "app/languages/[langId]/page": "action-browser"
+      }
+    },
+    "409ab27ac407a98400bab86235173070f0f9437c42": {
+      "workers": {
+        "app/languages/[langId]/lessons/[lessonId]/page": {
+          "moduleId": "[project]/.next-internal/server/app/languages/[langId]/lessons/[lessonId]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/explain-code.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        },
+        "app/practice/page": {
+          "moduleId": "[project]/.next-internal/server/app/practice/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/explain-code.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        },
+        "app/problem-solving/page": {
+          "moduleId": "[project]/.next-internal/server/app/problem-solving/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/decompose-problem.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE2 => \"[project]/src/ai/flows/explain-code.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE3 => \"[project]/src/ai/flows/generate-code-example.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/languages/[langId]/lessons/[lessonId]/page": "action-browser",
+        "app/practice/page": "action-browser",
+        "app/problem-solving/page": "action-browser"
+      }
+    },
+    "40b284aeeefbe69d5962673b9848aaf797c3807561": {
+      "workers": {
+        "app/problem-solving/page": {
+          "moduleId": "[project]/.next-internal/server/app/problem-solving/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/decompose-problem.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE2 => \"[project]/src/ai/flows/explain-code.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE3 => \"[project]/src/ai/flows/generate-code-example.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/problem-solving/page": "action-browser"
+      }
+    },
+    "4000b094df142172b940a618d089a10164d4ce1a27": {
+      "workers": {
+        "app/problem-solving/page": {
+          "moduleId": "[project]/.next-internal/server/app/problem-solving/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/decompose-problem.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE2 => \"[project]/src/ai/flows/explain-code.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE3 => \"[project]/src/ai/flows/generate-code-example.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/problem-solving/page": "action-browser"
+      }
+    },
+    "006acf43ded3b8954aed227081a982fd20808cd23b": {
+      "workers": {
+        "app/challenges/page": {
+          "moduleId": "[project]/.next-internal/server/app/challenges/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/challenges/page": "action-browser"
+      }
+    },
+    "00035e06d9703fd744301cc22bf4def569234beda9": {
+      "workers": {
+        "app/challenges/page": {
+          "moduleId": "[project]/.next-internal/server/app/challenges/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/services/languageService.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/challenges/page": "action-browser"
+      }
+    }
+  },
+  "edge": {},
+  "encryptionKey": "zqZ3dNQTuFPI8cXngxcwpqTBFEb7BLzDOjz23YjBZBo="
+}
